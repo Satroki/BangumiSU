@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sc="using:BangumiSU.SharedCode">
+    <SolidColorBrush x:Key="clr00" Color="#FF1E1E1E"/>
+    <SolidColorBrush x:Key="clr01" Color="#FFDCDCDC"/>
+    <SolidColorBrush x:Key="clr02" Color="#FF19CAAD"/>
+    <SolidColorBrush x:Key="clr03" Color="#FF8CC7B5"/>
+    <SolidColorBrush x:Key="clr04" Color="#FFA0EEE1"/>
+    <SolidColorBrush x:Key="clr05" Color="#FFBEE7E9"/>
+    <SolidColorBrush x:Key="clr06" Color="#FFBEEDC7"/>
+    <SolidColorBrush x:Key="clr07" Color="#FFD6D5B7"/>
+    <SolidColorBrush x:Key="clr08" Color="#FFD1BA74"/>
+    <SolidColorBrush x:Key="clr09" Color="#FFE6CEAC"/>
+    <SolidColorBrush x:Key="clr10" Color="#FFE7CFAD"/>
+    <SolidColorBrush x:Key="clr11" Color="#FFECAD9E"/>
+    <SolidColorBrush x:Key="clr12" Color="#FFF4606C"/>
+    <SolidColorBrush x:Key="clr13" Color="#FF569CD6"/>
+    <SolidColorBrush x:Key="clr14" Color="#FF4EC9B0"/>
+    <SolidColorBrush x:Key="clr15" Color="#FFD69D85"/>
+
+    <Style TargetType="FontIcon">
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+    </Style>
+</ResourceDictionary>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BangumiSU.SharedCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,6 +32,12 @@ namespace BangumiSU
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
+        }
+
+        private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            await new MessageDialog(e.Message, "错误").ShowAsync();
         }
 
         /// <summary>
@@ -42,7 +50,7 @@ namespace BangumiSU
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = true;
+                //this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
@@ -99,6 +107,7 @@ namespace BangumiSU
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            AppCache.AppSettings?.Save();
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }

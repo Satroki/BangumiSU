@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sc="using:BangumiSU.SharedCode">
+    <sc:DateTimeConverter x:Key="DateTimeConverter"/>
+    <sc:TrackingStateConverter x:Key="TrackingStateConverter"/>
+    <sc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <sc:StringFormatConverter x:Key="StringFormatConverter"/>
+    <sc:NullableBoolConverter x:Key="NullableBoolConverter"/>
+    <sc:IntConverter x:Key="IntConverter"/>
+</ResourceDictionary>

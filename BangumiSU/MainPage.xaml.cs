@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using BangumiSU.Pages;
+using BangumiSU.SharedCode;
+using System;
+using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-//“空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 上有介绍
+using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU
 {
@@ -25,6 +17,44 @@ namespace BangumiSU
         public MainPage()
         {
             this.InitializeComponent();
+            getSettings();
+        }
+
+        private async void getSettings()
+        {
+            await Init(Settings.GetRoamingSetting());
+
+            pwbPassword.Password = AppSettings.UserGUID ?? string.Empty;
+            txtFolder.Text = VideoFolder?.Path ?? string.Empty;
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var token = nameof(VideoFolder);
+            var fp = new FolderPicker();
+            fp.FileTypeFilter.Add("*");
+            fp.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            var folder = await fp.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                VideoFolder = folder;
+                txtFolder.Text = folder.Path;
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, folder);
+            }
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Exit();
+        }
+
+        private async void Next_Click(object sender, RoutedEventArgs e)
+        {
+            AppSettings.UserGUID = pwbPassword.Password;
+            if (AppSettings.UserGUID.IsEmpty())
+                await this.Message("请输入GUID");
+            else
+                Frame.Navigate(typeof(IndexPage));
         }
     }
 }

@@ -1,0 +1,51 @@
+﻿<Page
+    x:Class="BangumiSU.Pages.UpdatePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BangumiSU.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:m="using:BangumiSU.Models"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <GridView x:Name="RssView" SelectionMode="Multiple" Margin="10"
+                  IsMultiSelectCheckBoxEnabled="True" ItemsSource="{x:Bind Model.RssItems,Mode=OneWay}"
+                  SelectionChanged="GridView_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="m:RssItem">
+                    <Grid Width="400" Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Margin="3,0" Click="OpenLink_Click">
+                            <SymbolIcon Symbol="PreviewLink"/>
+                        </Button>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Title}"
+                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        <CommandBar Grid.Row="1" VerticalAlignment="Bottom" VerticalContentAlignment="Top">
+            <CommandBar.Content>
+                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="10"/>
+            </CommandBar.Content>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"
+                          IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
+            <AppBarButton Icon="Download" Label="下载" Click="{x:Bind Model.Download}"
+                          IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
+        </CommandBar>
+    </Grid>
+</Page>

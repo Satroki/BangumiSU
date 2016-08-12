@@ -1,6 +1,9 @@
 ﻿{
   "dependencies": {
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+    "Microsoft.AspNetCore.JsonPatch": "1.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "Newtonsoft.Json": "9.0.1",
+    "PropertyChanged.Fody": "1.51.3"
   },
   "frameworks": {
     "uap10.0": {}
