@@ -137,7 +137,7 @@ namespace BangumiSU.ViewModels
 
         public void MusicInfo()
         {
-            var vm = new MusicViewModel(BgmList);
+            //var vm = new MusicViewModel();
             //var view = new Views.MusicView(vm);
             //view.Show();
         }

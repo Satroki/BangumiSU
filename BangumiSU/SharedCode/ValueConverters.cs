@@ -128,4 +128,30 @@ namespace BangumiSU.SharedCode
             return (int)value;
         }
     }
+
+    public class TrackingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return (Tracking)value;
+        }
+    }
+
+    public class BangumiConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return (Bangumi)value;
+        }
+    }
 }

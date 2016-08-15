@@ -9,17 +9,38 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace BangumiSU.SharedCode
 {
+    public static class NavigationHelper
+    {
+        public static void Navigate(Type type, object para)
+        {
+            var frame = Window.Current.Content as Frame;
+            frame?.Navigate(type, para);
+        }
+    }
+
     public static class ImageHelper
     {
         public static async Task<ImageSource> GetImage(Bangumi b)
         {
-            var img = await GetImageById(b.Id.ToString());
-            return img ?? await GetRemoteImage(b);
+            try
+            {
+                var img = await GetImageById(b.Id.ToString());
+                img = img ?? await GetRemoteImage(b);
+                b.Cover = img;
+                return img;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static async Task<ImageSource> GetImageById(string id)

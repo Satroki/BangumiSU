@@ -1,5 +1,7 @@
 ﻿using BangumiSU.Models;
 using BangumiSU.Pages.Controls;
+using BangumiSU.SharedCode;
+using BangumiSU.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,28 +25,60 @@ namespace BangumiSU.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class TrackingsPage : Page
+    public sealed partial class TrackingsPage : Page, IContentPage
     {
         public TrackingsPage()
         {
             this.InitializeComponent();
+            Model = new MainViewModel();
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
+        public MainViewModel Model { get; set; }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var bgm = await SharedCode.AppCache.BClient.GetBangumi(1234);
-            await new BangumiDialog(bgm).ShowAsync();
+            Model.Search(args.QueryText);
         }
 
-        private async void button1_Click(object sender, RoutedEventArgs e)
+        private void MusicInfo_Click(object sender, RoutedEventArgs e)
         {
-            var t = new Tracking
-            {
-                Count = 1,
-                Progress = 1,
-                KeyWords = "123131",
-            };
-            await new TrackingDialog(t).ShowAsync();
+
+        }
+
+        private void VisitBgm_Click(object sender, RoutedEventArgs e)
+        {
+            Model.VisitBgm();
+        }
+
+        private void VisitHP_Click(object sender, RoutedEventArgs e)
+        {
+            Model.VisitHP();
+        }
+
+        private void AdjustTime_Click(object sender, RoutedEventArgs e)
+        {
+            Model.AdjustTime();
+        }
+
+        private async void AddProgress_Click(object sender, RoutedEventArgs e)
+        {
+            await Model.AddProgress();
+        }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var t = (sender as Button).DataContext as Tracking;
+            Model.SelectedTracking = t;
+        }
+
+        public void Arrived()
+        {
+
+        }
+
+        public void Leaved()
+        {
+
         }
     }
 }

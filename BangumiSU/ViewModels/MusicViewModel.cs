@@ -3,6 +3,7 @@ using BangumiSU.SharedCode;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System;
 
 namespace BangumiSU.ViewModels
 {
@@ -10,20 +11,28 @@ namespace BangumiSU.ViewModels
     {
         public MusicViewModel(IEnumerable<Bangumi> list)
         {
-            List = new ObservableCollection<Bangumi>(list);
-            foreach (var item in List)
+            Bangumis = new ObservableCollection<Bangumi>(list);
+            foreach (var item in Bangumis)
                 item.PropertyChanged += Item_PropertyChanged;
         }
 
-        public ObservableCollection<Bangumi> List { get; set; }
+        public ObservableCollection<Bangumi> Bangumis { get; set; }
         private List<Bangumi> changedList = new List<Bangumi>();
 
         public async Task Save()
         {
+            await LoadingTask(Update());
+        }
+
+        private async Task Update()
+        {
             foreach (var b in changedList)
                 await AppCache.BClient.Update(b);
+        }
 
-            foreach (var item in List)
+        public void Clear()
+        {
+            foreach (var item in Bangumis)
                 item.PropertyChanged -= Item_PropertyChanged;
         }
 

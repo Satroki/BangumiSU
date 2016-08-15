@@ -1,17 +1,11 @@
-﻿using BangumiSU.Models;
-using BangumiSU.ApiClients;
+﻿using BangumiSU.ApiClients;
+using BangumiSU.Models;
 using BangumiSU.SharedCode;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.ViewModels
@@ -34,93 +28,58 @@ namespace BangumiSU.ViewModels
         #region 命令
         public async Task Refresh()
         {
-            RssItems = await LoadingTask(GetRss());
+            await LoadingTask(GetRss());
         }
 
-        private async Task<List<RssItem>> GetRss()
+        private async Task GetRss()
         {
             Message = "正在获取RSS……";
-
-            //var date = AppSettings.LastUpdate;
-            var items = await rssClient.GetRss();
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (i % 3 == 0)
-                    items[i].IsSelected = true;
-            }
-           
-            Message = "获取完成，开始扫描……";
-            scanItems(items, "");
-            return items;
+            var date = AppSettings.LastUpdate;
+            var items = await rssClient.GetRss(date);
+            ScanItems(items);
+            RssItems = items;
         }
 
         public async Task Download()
         {
-            //IsButtonEnabled = false;
-            //await Task.Run(() =>
-            //{
-            //    try
-            //    {
-            //        while (SelectedItems.Count > 0)
-            //        {
-            //            string file = SelectedItems[0].Magnet;
-            //            //Process.Start(file);
-            //            //Application.Current.Dispatcher.Invoke(() => SelectedItems.RemoveAt(0));
-            //            //if (SelectedItems.Count > 0)
-            //            //    Thread.Sleep(2000);
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Message = ex.Message;
-            //    }
-            //    finally
-            //    {
-            //        IsButtonEnabled = true;
-            //    }
-            //});
+            await LoadingTask(Launch());
+        }
+
+        private async Task Launch()
+        {
+            var tempList = SelectedItems.ToList();
+            foreach (var item in tempList)
+            {
+                await item.Magnet.LaunchAsUri();
+                item.IsSelected = false;
+                await Task.Delay(2000);
+            }
         }
 
         public async void OpenLink(RssItem item)
         {
             await item.Link.LaunchAsUri();
         }
+
+        public void Clear()
+        {
+            foreach (var item in RssItems)
+                item.IsSelected = false;
+        }
         #endregion
 
         #region 方法
-        //private string getPattern()
-        //{
-        //    if (list.IsEmpty())
-        //        return null;
-        //    var sb = new StringBuilder();
-        //    foreach (var a in list)
-        //    {
-        //        if (!string.IsNullOrEmpty(a.KeyWords))
-        //        {
-        //            var keys = a.KeyWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        //            sb.Append("((.*)");
-        //            foreach (var s in keys)
-        //                sb.Append(s).Append("(.*)");
-        //            sb.Append(")|");
-        //        }
-        //    }
-        //    var result = sb.ToString().TrimEnd('|');
-        //    return result;
-        //}
-
-        private void scanItems(IEnumerable<RssItem> list, string pattern)
+        private void ScanItems(IEnumerable<RssItem> list)
         {
             var last = AppSettings.LastUpdate;
             AppSettings.LastUpdate = list.FirstOrDefault()?.PubDate.LocalDateTime ?? DateTime.Now;
-            foreach (var item in list)
+
+            if (!AppSettings.RssPattern.IsEmpty())
             {
-                RssItems.Add(item);
-                if (pattern.IsEmpty())
-                    continue;
-                if (Regex.IsMatch(item.Title, pattern, RegexOptions.IgnoreCase))
-                    SelectedItems.Add(item);
+                foreach (var item in list)
+                    item.IsSelected = Regex.IsMatch(item.Title, AppSettings.RssPattern, RegexOptions.IgnoreCase);
             }
-            Message = "扫描完成。起始时间：" + last.ToString();
+            Message = "完成。起始时间：" + last.ToString();
         }
         #endregion
     }

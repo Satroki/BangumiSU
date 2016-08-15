@@ -9,6 +9,7 @@ using Windows.UI.Xaml;
 using System;
 using Windows.System;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 
 namespace BangumiSU.SharedCode
 {

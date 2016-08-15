@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BangumiSU.Models;
+using BangumiSU.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +27,21 @@ namespace BangumiSU.Pages
         public MusicPage()
         {
             this.InitializeComponent();
+        }
+
+        public MusicViewModel Model { get; set; }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var bangumis = e.Parameter as IEnumerable<Bangumi>;
+            Model = new MusicViewModel(bangumis);
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Model.Clear();
+            base.OnNavigatedFrom(e);
         }
     }
 }

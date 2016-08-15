@@ -43,7 +43,11 @@ namespace BangumiSU.Pages
             if (link.Page == null)
                 splitView.IsPaneOpen = !splitView.IsPaneOpen;
             else
+            {
+                (Model.SelectedPage?.Page as IContentPage)?.Leaved();
                 Model.SelectedPage = link;
+                (Model.SelectedPage?.Page as IContentPage)?.Arrived();
+            }
         }
     }
 
@@ -61,7 +65,6 @@ namespace BangumiSU.Pages
                 new PageLink("首页","\uE10F",new TrackingsPage()),
                 new PageLink("管理","\uE178",new ManagePage()),
                 new PageLink("更新","\uE118",new UpdatePage()),
-                new PageLink("音乐","\uE189",new MusicPage()),
             };
             SelectedPage = PageLinks[1];
         }
@@ -80,5 +83,4 @@ namespace BangumiSU.Pages
             Page = page;
         }
     }
-
 }

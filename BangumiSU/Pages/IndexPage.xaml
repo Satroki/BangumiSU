@@ -30,10 +30,10 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
+                    <!--<StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
                         <SymbolIcon Symbol="Setting" />
                         <TextBlock Text="设置" Margin="24,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    </StackPanel>-->
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>

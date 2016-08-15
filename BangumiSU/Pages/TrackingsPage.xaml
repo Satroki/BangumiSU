@@ -5,11 +5,84 @@
     xmlns:local="using:BangumiSU.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:c="using:BangumiSU.Controls"
+    xmlns:m="using:BangumiSU.Models"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBox Text="home" VerticalAlignment="Top"/>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Click="button_Click"/>
-        <Button x:Name="button1" Content="Button" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" Click="button1_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <GridView ItemsSource="{x:Bind Model.Trackings,Mode=OneWay}"
+                      SelectedItem="{x:Bind Model.SelectedTracking,Mode=TwoWay,Converter={StaticResource TrackingConverter}}"
+                      ScrollViewer.HorizontalScrollMode="Disabled"
+                      ScrollViewer.VerticalScrollMode="Auto" >
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Tracking">
+                        <Border BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="4"
+                                Background="{x:Bind StateBrush,Mode=OneWay}">
+                            <Grid Width="400" Height="93" Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="ms-appx:///Assets/Square150x150Logo.png"/>
+                                <Image Source="{x:Bind Bangumi.Cover,Mode=OneWay}" Stretch="UniformToFill"/>
+                                <Grid Grid.Column="1" Margin="5,0,0,0">
+                                    <Button VerticalAlignment="Top" HorizontalAlignment="Right" Tapped="Button_Tapped">
+                                        <SymbolIcon Symbol="More"/>
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Text="访问Bangumi" Click="VisitBgm_Click"/>
+                                                <MenuFlyoutItem Text="访问官网" Click="VisitHP_Click"/>
+                                                <MenuFlyoutItem Text="校正时间" Click="AdjustTime_Click"/>
+                                                <MenuFlyoutItem Text="更新进度" Click="AddProgress_Click"/>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                    <StackPanel VerticalAlignment="Top" Margin="0,0,45,0">
+                                        <TextBlock Text="{x:Bind Bangumi.LocalName,Mode=OneWay}" 
+                                                   MaxLines="2" TextWrapping="Wrap" FontSize="18"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind LastUpdate.LocalDateTime,Mode=OneWay}"/>
+                                        <TextBlock Text="{x:Bind SubGroup,Mode=OneWay}" 
+                                           Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind ProgressString,Mode=OneWay}"/>
+                                        <TextBlock Margin="10,0" Text="@"/>
+                                        <TextBlock Text="{x:Bind Bangumi.Episodes,Mode=OneWay}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
+        <CommandBar Grid.Row="1">
+            <CommandBar.Content>
+                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                            Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
+                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="300" Margin="8"/>
+            </CommandBar.Content>
+            <AppBarButton Label="完结" Click="{x:Bind Model.Finish}">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE0A2;"/>
+            </AppBarButton>
+            <AppBarButton Icon="Add" Label="更新进度" Click="{x:Bind Model.AddProgress}"/>
+            <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
+            <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.Edit}"/>
+            <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>
+            <AppBarButton Icon="Copy" Label="复制名称" Click="{x:Bind Model.CopyName}"/>
+            <AppBarSeparator/>
+            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
+        </CommandBar>
     </Grid>
 </Page>

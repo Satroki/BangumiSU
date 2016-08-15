@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BangumiSU.SharedCode;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 
@@ -121,9 +123,15 @@ namespace BangumiSU.Models
         }
 
         private ImageSource _Cover;
+        [JsonIgnore]
         public ImageSource Cover
         {
-            get { return _Cover; }
+            get
+            {
+                if (_Cover == null)
+                    ImageHelper.GetImage(this);
+                return _Cover;
+            }
             set { SetProperty(ref _Cover, value); }
         }
     }

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PropertyChanged;
+using System;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace BangumiSU.Models
 {
@@ -88,6 +92,27 @@ namespace BangumiSU.Models
         {
             get { return _Bangumi; }
             set { SetProperty(ref _Bangumi, value); }
+        }
+
+        [JsonIgnore]
+        [DependsOn(nameof(Progress), nameof(Count))]
+        public string ProgressString => $"{Progress:D2} / {Count:00.#}";
+
+        [JsonIgnore]
+        [DependsOn(nameof(Progress), nameof(Count),nameof(LastUpdate))]
+        public Brush StateBrush
+        {
+            get
+            {
+                Color clr;
+                if (Count > Progress)
+                    clr = Colors.SeaGreen;
+                else if ((DateTimeOffset.Now - LastUpdate).TotalDays >= 7)
+                    clr = Colors.IndianRed;
+                else
+                    clr = Colors.Transparent;
+                return new SolidColorBrush(clr);
+            }
         }
 
         public void GetSubGroup(string url)

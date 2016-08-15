@@ -14,7 +14,7 @@ namespace BangumiSU.ViewModels
 
         public string Message { get; set; }
 
-        public async Task<T> LoadingTask<T>(Task<T> task) where T:class
+        public async Task<T> LoadingTask<T>(Task<T> task)
         {
             try
             {
@@ -24,7 +24,26 @@ namespace BangumiSU.ViewModels
             catch (Exception ex)
             {
                 Message = ex.Message;
-                return null;
+                return default(T);
+            }
+            finally
+            {
+                OnLoading = false;
+            }
+        }
+
+        public async Task LoadingTask(Task task)
+        {
+            try
+            {
+                OnLoading = true;
+                await task;
+                return;
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                return;
             }
             finally
             {

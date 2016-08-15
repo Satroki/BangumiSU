@@ -5,11 +5,49 @@
     xmlns:local="using:BangumiSU.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:m="using:BangumiSU.Models"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Background="{StaticResource clr08}">
-            <TextBox VerticalAlignment="Top" Text="音乐"/>
-        </Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ListView SelectionMode="None" ItemsSource="{x:Bind Model.Bangumis,Mode=OneWay}" HorizontalContentAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="m:Bangumi">
+                    <Grid Margin="5" Width="720">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{x:Bind LocalName,Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True"/>
+                            <TextBlock Text="{x:Bind Name,Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True"/>
+                        </StackPanel>
+                        <Grid Grid.Column="1" Margin="0,2,0,0" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox PlaceholderText="OP" Text="{x:Bind Opening,Mode=TwoWay}"/>
+                            <TextBox PlaceholderText="ED" Text="{x:Bind Ending,Mode=TwoWay}"
+                                     Grid.Column="1"/>
+                            <TextBox PlaceholderText="…" Text="{x:Bind MusicInfo,Mode=TwoWay}" 
+                                     Grid.Column="2"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <CommandBar Grid.Row="1">
+            <AppBarButton Icon="Save" Label="保存" Click="{x:Bind Model.Save}" IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
+        </CommandBar>
     </Grid>
 </Page>

@@ -1,4 +1,6 @@
 ﻿using BangumiSU.Models;
+using BangumiSU.Pages;
+using BangumiSU.Pages.Controls;
 using BangumiSU.SharedCode;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.ViewModels
@@ -20,10 +23,16 @@ namespace BangumiSU.ViewModels
     {
         public MainViewModel()
         {
+            if (Trackings.IsEmpty())
+                Refresh();
         }
 
         #region 属性
-        public ObservableCollection<Tracking> Trackings { get; set; }
+        public ObservableCollection<Tracking> Trackings
+        {
+            get { return CurrentTrackings; }
+            set { CurrentTrackings = value; }
+        }
 
         private Tracking _SelectedTracking;
         public Tracking SelectedTracking
@@ -48,7 +57,7 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public async Task ScanFiles()
+        public async Task Refresh()
         {
             try
             {
@@ -62,34 +71,40 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public void OpenFile()
+        public async Task Open()
         {
             if (SelectedTracking != null)
             {
-                //Process.Start(SelectedTracking.Uri ?? SelectedTracking.Folder);
+                if (SelectedTracking.Online)
+                    await SelectedTracking.Folder.LaunchAsUri();
+                else
+                    await SelectedTracking.Uri.LaunchAsFile();
             }
         }
 
-        public void LocateFile()
-        {
-            if (SelectedTracking != null && !SelectedTracking.Online)
-            {
-                //ProcessStartInfo psi = new ProcessStartInfo("Explorer.exe");
-                //psi.Arguments = " /select," + SelectedTracking.Uri;
-                //Process.Start(psi);
-            }
-        }
-
-        public void Edit()
+        public async Task OpenFolder()
         {
             if (SelectedTracking != null)
             {
-                //var vm = new TrackingViewModel();
-                //vm.Tracking = SelectedTracking;
-                //vm.EditMode = true;
-                //var window = new Views.TrackingView(vm);
-                //window.Owner = win;
-                //window.ShowDialog();
+                if (SelectedTracking.Online)
+                    await SelectedTracking.Folder.LaunchAsUri();
+                else
+                    await SelectedTracking.Folder.LaunchAsFolder();
+            }
+        }
+
+        public async Task Edit()
+        {
+            if (SelectedTracking != null)
+            {
+                var d = new TrackingDialog(SelectedTracking, true);
+                var r = await d.ShowAsync();
+                if (r == ContentDialogResult.Primary)
+                {
+                    var t = d.Model.Tracking;
+                    Trackings.Replace(SelectedTracking, t);
+                    SelectedTracking = t;
+                }
             }
         }
 
@@ -103,10 +118,10 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public void Search()
+        public async void Search(string key)
         {
-            string url = AppSettings.DmhySearch + KeyWord?.Replace(' ', '+');
-           // Process.Start(url);
+            string url = AppSettings.DmhySearch + key?.Replace(' ', '+');
+            await url.LaunchAsUri();
         }
 
         public void ShowDetails()
@@ -119,24 +134,19 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public void VisitBgm()
+        public async void VisitBgm()
         {
-            //if (SelectedTracking?.Bangumi?.BangumiCode?.IsEmpty() == false)
-            //    Process.Start("http://bangumi.tv/subject/" + SelectedTracking.Bangumi.BangumiCode);
+            if (SelectedTracking?.Bangumi?.BangumiCode?.IsEmpty() == false)
+            {
+                var uri = "http://bangumi.tv/subject/" + SelectedTracking.Bangumi.BangumiCode;
+                await uri.LaunchAsUri();
+            }
         }
 
-        public void VisitHP()
+        public async void VisitHP()
         {
-            //if (SelectedTracking?.Bangumi?.HomePage?.IsEmpty() == false)
-            //    Process.Start(SelectedTracking.Bangumi.HomePage);
-        }
-
-        public async Task Update()
-        {
-            var vm = new UpdateViewModel();
-            //var win = new Views.UpdateView(vm);
-            //win.Show();
-            //await vm.Update();
+            if (SelectedTracking?.Bangumi?.HomePage?.IsEmpty() == false)
+                await SelectedTracking.Bangumi.HomePage.LaunchAsUri();
         }
 
         public async Task Finish()
@@ -150,7 +160,7 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public async void UpdateInfo()
+        public async Task UpdateInfo()
         {
             if (SelectedTracking != null)
             {
@@ -163,9 +173,7 @@ namespace BangumiSU.ViewModels
 
         public void MusicInfo()
         {
-            var vm = new MusicViewModel(Trackings.Select(a => a.Bangumi));
-            //var win = new Views.MusicView(vm);
-            //win.Show();
+            NavigationHelper.Navigate(typeof(MusicPage), Trackings.Select(a => a.Bangumi));
         }
 
         public void AdjustTime()
@@ -193,80 +201,80 @@ namespace BangumiSU.ViewModels
         {
             try
             {
-                string[] strs = AppSettings.FolderFormat.Split('|');
-                var dirs = (new DirectoryInfo(strs[0])).GetDirectories().Where(
-                    d => Regex.IsMatch(d.Name, strs[1])).ToArray();
-                sortFolder(dirs);
-                string exts =AppSettings.Extensions;
+                //string[] strs = AppSettings.FolderFormat.Split('|');
+                //var dirs = (new DirectoryInfo(strs[0])).GetDirectories().Where(
+                //    d => Regex.IsMatch(d.Name, strs[1])).ToArray();
+                //sortFolder(dirs);
+                //string exts = AppSettings.Extensions;
                 var list = new List<Tracking>();
-                foreach (var dir in dirs)
-                {
-                    var bgmDirs = dir.GetDirectories();
-                    foreach (var di in bgmDirs)
-                    {
-                        var name = stringSplit(di.Name);
-                        var idName = $"{dir}-{name[1]}";
-                        var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
-                            ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
-                        if (t == null)
-                        {
-                            t = new Tracking()
-                            {
-                                SubGroup = name[0],
-                                FileIdName = idName,
-                                Uri = di.FullName
-                            };
-                            //var vm = new TrackingViewModel()
-                            //{
-                            //    Tracking = t,
-                            //    EditMode = false
-                            //};
-                            var result = false;
-                            //Application.Current.Dispatcher.Invoke(() =>
-                            //{
-                            //    var view = new Views.TrackingView(vm);
-                            //    result = view.ShowDialog() == true;
-                            //});
-                            if (!result)
-                                continue;
-                        }
-                        if (t.Finish)
-                            continue;
-                        if (t.Folder != di.FullName)
-                            t.Folder = di.FullName;
+                //foreach (var dir in dirs)
+                //{
+                //    var bgmDirs = dir.GetDirectories();
+                //    foreach (var di in bgmDirs)
+                //    {
+                //        var name = stringSplit(di.Name);
+                //        var idName = $"{dir}-{name[1]}";
+                //        var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
+                //            ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
+                //        if (t == null)
+                //        {
+                //            t = new Tracking()
+                //            {
+                //                SubGroup = name[0],
+                //                FileIdName = idName,
+                //                Uri = di.FullName
+                //            };
+                //            //var vm = new TrackingViewModel()
+                //            //{
+                //            //    Tracking = t,
+                //            //    EditMode = false
+                //            //};
+                //            var result = false;
+                //            //Application.Current.Dispatcher.Invoke(() =>
+                //            //{
+                //            //    var view = new Views.TrackingView(vm);
+                //            //    result = view.ShowDialog() == true;
+                //            //});
+                //            if (!result)
+                //                continue;
+                //        }
+                //        if (t.Finish)
+                //            continue;
+                //        if (t.Folder != di.FullName)
+                //            t.Folder = di.FullName;
 
-                        t.Count = -1;
-                        var files = di.GetFiles().OrderBy(f => f.CreationTime);
-                        double temp = 0;
-                        foreach (var file in files)
-                        {
-                            if (file.Extension == ".torrent")
-                            {
-                                file.Delete();
-                                continue;
-                            }
-                            if (!exts.Contains(file.Extension.ToLower()))
-                                continue;
-                            var info = stringSplit(file.Name);
-                            if (info.Length < 3)
-                                continue;
-                            var macth = Regex.Match(info[2], @"\d{1,3}(\.5)?");
-                            if (!macth.Success && info.Length > 3)
-                                macth = Regex.Match(info[3], @"\d{1,3}(\.5)?");
-                            if (macth.Success)
-                            {
-                                temp = double.Parse(macth.Value);
-                                if (temp > t.Count)
-                                {
-                                    t.Count = temp;
-                                    t.LastUpdate = file.CreationTime;
-                                    t.Uri = file.FullName;
-                                }
-                            }
-                        }
-                        list.Add(t);
-                    }
-                }
+                //        t.Count = -1;
+                //        var files = di.GetFiles().OrderBy(f => f.CreationTime);
+                //        double temp = 0;
+                //        foreach (var file in files)
+                //        {
+                //            if (file.Extension == ".torrent")
+                //            {
+                //                file.Delete();
+                //                continue;
+                //            }
+                //            if (!exts.Contains(file.Extension.ToLower()))
+                //                continue;
+                //            var info = stringSplit(file.Name);
+                //            if (info.Length < 3)
+                //                continue;
+                //            var macth = Regex.Match(info[2], @"\d{1,3}(\.5)?");
+                //            if (!macth.Success && info.Length > 3)
+                //                macth = Regex.Match(info[3], @"\d{1,3}(\.5)?");
+                //            if (macth.Success)
+                //            {
+                //                temp = double.Parse(macth.Value);
+                //                if (temp > t.Count)
+                //                {
+                //                    t.Count = temp;
+                //                    t.LastUpdate = file.CreationTime;
+                //                    t.Uri = file.FullName;
+                //                }
+                //            }
+                //        }
+                //        list.Add(t);
+                //    }
+                //}
 
                 var online = BangumiCache.SelectMany(b => b.Trackings).Where(a => !a.Finish && a.Online).ToList();
                 if (online.Count > 0)
@@ -285,7 +293,7 @@ namespace BangumiSU.ViewModels
             }
             catch (Exception ex)
             {
-               // Console.WriteLine(ex);
+                // Console.WriteLine(ex);
                 return null;
             }
         }
@@ -373,6 +381,31 @@ namespace BangumiSU.ViewModels
             if (Regex.IsMatch(str, @"\[Mabors Sub\].* - \d*\["))
                 chars = new[] { '[', ']', '-' };
             return str.Split(chars).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+        }
+
+        private void SetRssPattern()
+        {
+            if (Trackings.IsEmpty())
+            {
+                AppSettings.RssPattern = null;
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                foreach (var a in Trackings)
+                {
+                    if (!string.IsNullOrEmpty(a.KeyWords))
+                    {
+                        var keys = a.KeyWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        sb.Append("((.*)");
+                        foreach (var s in keys)
+                            sb.Append(s).Append("(.*)");
+                        sb.Append(")|");
+                    }
+                }
+                var result = sb.ToString().TrimEnd('|');
+                AppSettings.RssPattern = result;
+            }
         }
         #endregion
     }

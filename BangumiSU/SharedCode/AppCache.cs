@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace BangumiSU.SharedCode
 {
@@ -27,7 +29,11 @@ namespace BangumiSU.SharedCode
 
         public static ImageClient IClient { get; private set; }
 
-        public static List<Bangumi> BangumiCache { get; set; }
+        public static List<Bangumi> BangumiCache { get; set; } = new List<Bangumi>();
+
+        public static List<Bangumi> MusicCache { get; set; } = new List<Bangumi>();
+
+        public static ObservableCollection<Tracking> CurrentTrackings { get; set; } = new ObservableCollection<Tracking>();
 
         public static StorageFolder VideoFolder { get; set; }
 
@@ -40,9 +46,20 @@ namespace BangumiSU.SharedCode
             if (access)
                 VideoFolder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token);
 
+            InitJsonConvert();
+
             BClient = new BangumiClient();
             TClient = new TrackingClient();
             IClient = new ImageClient();
+        }
+
+        private static void InitJsonConvert()
+        {
+            var setting = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            JsonConvert.DefaultSettings = () => setting;
         }
     }
 }
