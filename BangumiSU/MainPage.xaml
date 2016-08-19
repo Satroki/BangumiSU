@@ -10,7 +10,7 @@
             <TextBlock Text="{Binding}" Foreground="{StaticResource clr01}"/>
         </DataTemplate>
     </Page.Resources>
-    <Grid Background="{StaticResource clr13}">
+    <Grid Background="{ThemeResource ThumbBackground}">
         <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch" MaxWidth="400">
             <StackPanel>
                 <PasswordBox x:Name="pwbPassword" Header="用户GUID" HeaderTemplate="{StaticResource HeaderTemplate}"

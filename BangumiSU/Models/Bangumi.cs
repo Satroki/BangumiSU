@@ -1,7 +1,9 @@
 ﻿using BangumiSU.SharedCode;
 using Newtonsoft.Json;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Media;
 
 namespace BangumiSU.Models
@@ -115,8 +117,8 @@ namespace BangumiSU.Models
             set { SetProperty(ref _Finish, value); }
         }
 
-        private List<Tracking> _Trackings;
-        public virtual List<Tracking> Trackings
+        private ObservableCollection<Tracking> _Trackings;
+        public virtual ObservableCollection<Tracking> Trackings
         {
             get { return _Trackings; }
             set { SetProperty(ref _Trackings, value); }
@@ -134,5 +136,13 @@ namespace BangumiSU.Models
             }
             set { SetProperty(ref _Cover, value); }
         }
+
+        [JsonIgnore]
+        [DependsOn(nameof(OnAir))]
+        public string OnAirString => OnAir.LocalDateTime.ToString("yyyy/MM/dd HH:mm");
+
+        [JsonIgnore]
+        [DependsOn(nameof(OnAir))]
+        public string DayString => OnAir.LocalDateTime.ToString("dddd");
     }
 }

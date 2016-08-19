@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static BangumiSU.SharedCode.AppCache;
@@ -38,12 +40,8 @@ namespace BangumiSU.ViewModels
         public Tracking SelectedTracking
         {
             get { return _SelectedTracking; }
-            set { SetProperty(ref _SelectedTracking, value); KeyWord = value?.KeyWords; }
+            set { SetProperty(ref _SelectedTracking, value); }
         }
-
-        public string KeyWord { get; set; }
-
-        public string Info { get; set; }
         #endregion
 
         #region 命令
@@ -57,17 +55,17 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public async Task Refresh()
+        public async void Refresh()
         {
             try
             {
-                Info = "扫描中……";
+                Message = "扫描中……";
                 BangumiCache = await BClient.GetUnfinished();
                 Trackings = await CreateList();
             }
             finally
             {
-                Info = "";
+                Message = "";
             }
         }
 
@@ -124,16 +122,6 @@ namespace BangumiSU.ViewModels
             await url.LaunchAsUri();
         }
 
-        public void ShowDetails()
-        {
-            if (SelectedTracking != null)
-            {
-                var vm = new ManageViewModel(SelectedTracking.Bangumi);
-                //var win = new Views.ManageView(vm);
-                //win.Show();
-            }
-        }
-
         public async void VisitBgm()
         {
             if (SelectedTracking?.Bangumi?.BangumiCode?.IsEmpty() == false)
@@ -164,10 +152,10 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking != null)
             {
-                Info = "正在更新信息……";
+                Message = "正在更新信息……";
                 var bgm = await BClient.Update(SelectedTracking.Bangumi.Id);
                 Trackings.Replace(SelectedTracking, bgm.Trackings.Single(t => t.Id == SelectedTracking.Id));
-                Info = "";
+                Message = "";
             }
         }
 
@@ -201,80 +189,9 @@ namespace BangumiSU.ViewModels
         {
             try
             {
-                //string[] strs = AppSettings.FolderFormat.Split('|');
-                //var dirs = (new DirectoryInfo(strs[0])).GetDirectories().Where(
-                //    d => Regex.IsMatch(d.Name, strs[1])).ToArray();
-                //sortFolder(dirs);
-                //string exts = AppSettings.Extensions;
                 var list = new List<Tracking>();
-                //foreach (var dir in dirs)
-                //{
-                //    var bgmDirs = dir.GetDirectories();
-                //    foreach (var di in bgmDirs)
-                //    {
-                //        var name = stringSplit(di.Name);
-                //        var idName = $"{dir}-{name[1]}";
-                //        var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
-                //            ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
-                //        if (t == null)
-                //        {
-                //            t = new Tracking()
-                //            {
-                //                SubGroup = name[0],
-                //                FileIdName = idName,
-                //                Uri = di.FullName
-                //            };
-                //            //var vm = new TrackingViewModel()
-                //            //{
-                //            //    Tracking = t,
-                //            //    EditMode = false
-                //            //};
-                //            var result = false;
-                //            //Application.Current.Dispatcher.Invoke(() =>
-                //            //{
-                //            //    var view = new Views.TrackingView(vm);
-                //            //    result = view.ShowDialog() == true;
-                //            //});
-                //            if (!result)
-                //                continue;
-                //        }
-                //        if (t.Finish)
-                //            continue;
-                //        if (t.Folder != di.FullName)
-                //            t.Folder = di.FullName;
 
-                //        t.Count = -1;
-                //        var files = di.GetFiles().OrderBy(f => f.CreationTime);
-                //        double temp = 0;
-                //        foreach (var file in files)
-                //        {
-                //            if (file.Extension == ".torrent")
-                //            {
-                //                file.Delete();
-                //                continue;
-                //            }
-                //            if (!exts.Contains(file.Extension.ToLower()))
-                //                continue;
-                //            var info = stringSplit(file.Name);
-                //            if (info.Length < 3)
-                //                continue;
-                //            var macth = Regex.Match(info[2], @"\d{1,3}(\.5)?");
-                //            if (!macth.Success && info.Length > 3)
-                //                macth = Regex.Match(info[3], @"\d{1,3}(\.5)?");
-                //            if (macth.Success)
-                //            {
-                //                temp = double.Parse(macth.Value);
-                //                if (temp > t.Count)
-                //                {
-                //                    t.Count = temp;
-                //                    t.LastUpdate = file.CreationTime;
-                //                    t.Uri = file.FullName;
-                //                }
-                //            }
-                //        }
-                //        list.Add(t);
-                //    }
-                //}
+                await GetLocalFiles(list);
 
                 var online = BangumiCache.SelectMany(b => b.Trackings).Where(a => !a.Finish && a.Online).ToList();
                 if (online.Count > 0)
@@ -293,8 +210,84 @@ namespace BangumiSU.ViewModels
             }
             catch (Exception ex)
             {
-                // Console.WriteLine(ex);
+                Debug.WriteLine(ex.Message);
                 return null;
+            }
+        }
+
+        private async Task GetLocalFiles(List<Tracking> list)
+        {
+            var dirs = await VideoFolder.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
+            dirs = dirs.Where(d => Regex.IsMatch(d.Name, AppSettings.FolderFormat)).ToList();
+            await sortFolder(dirs);
+            string exts = AppSettings.Extensions;
+
+            foreach (var dir in dirs)
+            {
+                var bgmDirs = await dir.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
+                foreach (var bgmDir in bgmDirs)
+                {
+                    var name = stringSplit(bgmDir.Name);
+                    var idName = $"{dir.Name}-{name[1]}";
+                    var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
+                        ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
+                    if (t == null)
+                    {
+                        t = new Tracking()
+                        {
+                            SubGroup = name[0],
+                            FileIdName = idName,
+                            Folder = bgmDir.Path,
+                        };
+                        var dlg = new TrackingDialog(t);
+                        var result = await dlg.ShowAsync();
+                        if (result != ContentDialogResult.Primary)
+                            continue;
+                    }
+                    if (t.Finish)
+                        continue;
+                    if (t.Folder != bgmDir.Path)
+                        t.Folder = bgmDir.Path;
+
+                    t.Count = -1;
+                    var files = (await bgmDir.GetFilesAsync()).OrderBy(f => f.DateCreated);
+                    double temp = 0;
+                    var updateFlag = false;
+                    foreach (var file in files)
+                    {
+                        var ext = getExt(file).ToUpper();
+                        if (ext == ".TORRENT")
+                        {
+                            await file.DeleteAsync();
+                            continue;
+                        }
+                        if (!exts.Contains(ext))
+                            continue;
+                        var info = stringSplit(file.Name);
+                        if (info.Length < 3)
+                            continue;
+                        var macth = Regex.Match(info[2], @"\d{1,3}(\.5)?");
+                        if (!macth.Success && info.Length > 3)
+                            macth = Regex.Match(info[3], @"\d{1,3}(\.5)?");
+                        if (macth.Success)
+                        {
+                            temp = double.Parse(macth.Value);
+                            if (temp > t.Count)
+                            {
+                                t.Count = temp;
+                                if (t.LastUpdate != file.DateCreated)
+                                {
+                                    t.LastUpdate = file.DateCreated;
+                                    updateFlag = true;
+                                }
+                                t.Uri = file.Path;
+                            }
+                        }
+                    }
+                    if (updateFlag)
+                        t = await TClient.Update(t);
+                    list.Add(t);
+                }
             }
         }
 
@@ -339,34 +332,34 @@ namespace BangumiSU.ViewModels
             a.LastUpdate = a.Bangumi.OnAir.AddDays(7 * count);
         }
 
-        private void sortFolder(DirectoryInfo[] dirs)
+        private async Task sortFolder(IEnumerable<StorageFolder> dirs)
         {
             try
             {
                 foreach (var dir in dirs)
                 {
-                    var files = dir.GetFiles();
+                    var files = await dir.GetFilesAsync();
                     foreach (var f in files)
                     {
                         try
                         {
-                            var ext = f.Extension;
+                            var ext = getExt(f);
                             if (ext == ".torrent")
                             {
-                                File.Delete(f.FullName);
+                                await f.DeleteAsync();
                                 continue;
                             }
                             if (ext == ".td")
                                 continue;
                             string[] temp = stringSplit(f.Name);
                             StringBuilder sb = new StringBuilder();
-                            sb.Append(dir.FullName).Append("\\[").Append(temp[0]).Append("][").Append(temp[1]).Append(']');
-                            string dirName = sb.ToString();
-                            if (!Directory.Exists(dirName))
-                                Directory.CreateDirectory(dirName);
-                            f.MoveTo(Path.Combine(dirName, f.Name));
+                            string dirName = $"[{temp[0]}][{temp[1]}]";
+                            var folder = (await dir.TryGetItemAsync(dirName)) as StorageFolder;
+                            if (folder == null)
+                                folder = await dir.CreateFolderAsync(dirName);
+                            await f.MoveAsync(folder);
                         }
-                        catch (IOException)
+                        catch (Exception)
                         { }
                     }
                 }
@@ -381,6 +374,12 @@ namespace BangumiSU.ViewModels
             if (Regex.IsMatch(str, @"\[Mabors Sub\].* - \d*\["))
                 chars = new[] { '[', ']', '-' };
             return str.Split(chars).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+        }
+
+        private string getExt(StorageFile file)
+        {
+            var index = file.Name.LastIndexOf('.');
+            return file.Name.Substring(index);
         }
 
         private void SetRssPattern()

@@ -39,7 +39,7 @@
         </c:GridViewEx>
         <CommandBar Grid.Row="1" VerticalAlignment="Bottom" VerticalContentAlignment="Top">
             <CommandBar.Content>
-                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="10"/>
+                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14,14,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </CommandBar.Content>
             <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"
                           IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>

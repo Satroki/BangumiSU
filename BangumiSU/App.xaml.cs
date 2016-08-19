@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -35,11 +36,32 @@ namespace BangumiSU
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             this.UnhandledException += App_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         }
 
-        private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private async void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            await new MessageDialog(e.Exception.Message, "错误").ShowAsync();
+            e.SetObserved();
+        }
+
+        private async void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             await new MessageDialog(e.Message, "错误").ShowAsync();
+            e.Handled = true;
+        }
+
+        private void RegisterExceptionHandlingSynchronizationContext()
+        {
+            ExceptionHandlingSynchronizationContext
+                .Register()
+                .UnhandledException += SynchronizationContext_UnhandledException;
+        }
+
+        private async void SynchronizationContext_UnhandledException(object sender, SharedCode.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            await new MessageDialog(e.Exception.Message, "错误").ShowAsync();
         }
 
         /// <summary>
@@ -49,6 +71,8 @@ namespace BangumiSU
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            RegisterExceptionHandlingSynchronizationContext();
+
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -138,6 +162,12 @@ namespace BangumiSU
             AppCache.AppSettings?.Save();
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            RegisterExceptionHandlingSynchronizationContext();
+            base.OnActivated(args);
         }
     }
 }

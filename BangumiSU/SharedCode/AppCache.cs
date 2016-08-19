@@ -9,6 +9,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using Windows.UI.Xaml;
 
 namespace BangumiSU.SharedCode
 {
@@ -37,6 +38,8 @@ namespace BangumiSU.SharedCode
 
         public static StorageFolder VideoFolder { get; set; }
 
+        public static ElementTheme Theme { get; set; }
+
         public static async Task Init(Settings settings)
         {
             AppSettings = settings;
@@ -53,11 +56,17 @@ namespace BangumiSU.SharedCode
             IClient = new ImageClient();
         }
 
+        public static async Task Reload()
+        {
+            await Init(AppSettings);
+        }
+
         private static void InitJsonConvert()
         {
             var setting = new JsonSerializerSettings()
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
             };
             JsonConvert.DefaultSettings = () => setting;
         }

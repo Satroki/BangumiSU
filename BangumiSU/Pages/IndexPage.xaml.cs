@@ -49,6 +49,21 @@ namespace BangumiSU.Pages
                 (Model.SelectedPage?.Page as IContentPage)?.Arrived();
             }
         }
+
+        private void Theme_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            switch (RequestedTheme)
+            {
+                case ElementTheme.Default:
+                case ElementTheme.Dark:
+                    RequestedTheme = ElementTheme.Light;
+                    break;
+                case ElementTheme.Light:
+                    RequestedTheme = ElementTheme.Dark;
+                    break;
+            }
+            AppCache.Theme = RequestedTheme;
+        }
     }
 
     public class IndexViewModel : ViewModels.ViewModelBase

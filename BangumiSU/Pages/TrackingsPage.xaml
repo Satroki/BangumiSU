@@ -22,11 +22,11 @@
             <GridView ItemsSource="{x:Bind Model.Trackings,Mode=OneWay}"
                       SelectedItem="{x:Bind Model.SelectedTracking,Mode=TwoWay,Converter={StaticResource TrackingConverter}}"
                       ScrollViewer.HorizontalScrollMode="Disabled"
-                      ScrollViewer.VerticalScrollMode="Auto" >
+                      ScrollViewer.VerticalScrollMode="Auto">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="m:Tracking">
                         <Border BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="4"
-                                Background="{x:Bind StateBrush,Mode=OneWay}">
+                                Background="{x:Bind StateBrush,Mode=OneWay}" DoubleTapped="Border_DoubleTapped">
                             <Grid Width="400" Height="93" Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="90"/>
@@ -70,19 +70,19 @@
             <CommandBar.Content>
                 <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                             Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
-                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="300" Margin="8"/>
+                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Margin="8"/>
             </CommandBar.Content>
+            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Add" Label="更新进度" Click="{x:Bind Model.AddProgress}"/>
+            <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>
+            <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
+            <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.Edit}"/>
+            <AppBarButton Icon="Copy" Label="复制名称" Click="{x:Bind Model.CopyName}"/>
             <AppBarButton Label="完结" Click="{x:Bind Model.Finish}">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE0A2;"/>
             </AppBarButton>
-            <AppBarButton Icon="Add" Label="更新进度" Click="{x:Bind Model.AddProgress}"/>
-            <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
-            <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.Edit}"/>
-            <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>
-            <AppBarButton Icon="Copy" Label="复制名称" Click="{x:Bind Model.CopyName}"/>
-            <AppBarSeparator/>
-            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
-            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
         </CommandBar>
     </Grid>
 </Page>

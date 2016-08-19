@@ -54,7 +54,10 @@ namespace BangumiSU
             if (AppSettings.UserGUID.IsEmpty())
                 await this.Message("请输入GUID");
             else
+            {
+                await Reload();
                 Frame.Navigate(typeof(IndexPage));
+            }
         }
     }
 }

@@ -30,10 +30,12 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <!--<StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
-                        <SymbolIcon Symbol="Setting" />
-                        <TextBlock Text="设置" Margin="24,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>-->
+                    <ListBoxItem Grid.Row="2" Tapped="Theme_Tapped">
+                        <StackPanel Orientation="Horizontal" >
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B1;" />
+                            <TextBlock Text="主题" Margin="24,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>

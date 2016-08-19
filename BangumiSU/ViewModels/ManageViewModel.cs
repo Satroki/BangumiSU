@@ -1,11 +1,14 @@
 ﻿using BangumiSU.Models;
+using BangumiSU.Pages;
+using BangumiSU.Pages.Controls;
 using BangumiSU.SharedCode;
+using PropertyChanged;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.ViewModels
@@ -16,7 +19,7 @@ namespace BangumiSU.ViewModels
         {
             if (bgm != null)
             {
-                BgmList = new ObservableCollection<Bangumi>() { bgm };
+                Bangumis = new ObservableCollection<Bangumi>() { bgm };
                 SelectedBangumi = bgm;
             }
         }
@@ -35,81 +38,98 @@ namespace BangumiSU.ViewModels
             nameof(Bangumi.BangumiCode)
         };
 
-        public string SearchProp { get; set; } = AppSettings.LastSearch;
+        public string SearchProp
+        {
+            get { return AppSettings.LastSearch; }
+            set { AppSettings.LastSearch = value; }
+        }
 
         public Bangumi SelectedBangumi { get; set; }
 
+        [DependsOn(nameof(SelectedBangumi))]
+        public bool ShowDetail => SelectedBangumi != null;
+
         public Tracking SelectedTracking { get; set; }
 
-        public ObservableCollection<Bangumi> BgmList { get; set; }
+        public ObservableCollection<Bangumi> Bangumis { get; set; } = new ObservableCollection<Bangumi>();
         #endregion
 
         #region 方法
-        public void SaveSettings()
-        {
-           AppSettings.LastSearch = SearchProp;
-        }
 
         public async Task Search()
         {
+            Message = "查询中……";
             if (string.IsNullOrEmpty(SearchKey))
-                BgmList = new ObservableCollection<Bangumi>(await BClient.GetBangumis());
+                Bangumis = new ObservableCollection<Bangumi>(await BClient.GetBangumis());
             else
-                BgmList = new ObservableCollection<Bangumi>(await BClient.Search(SearchProp, SearchKey));
+                Bangumis = new ObservableCollection<Bangumi>(await BClient.Search(SearchProp, SearchKey));
+            Message = "";
         }
 
-        public void VisitHP()
+        public async void VisitHP()
         {
-            //if (SelectedBangumi?.HomePage?.IsEmpty() == false)
-            //    Process.Start(SelectedBangumi.HomePage);
+            if (SelectedBangumi?.HomePage?.IsEmpty() == false)
+                await SelectedBangumi.HomePage.LaunchAsUri();
         }
 
-        public void VisitBgm()
+        public async void VisitBgm()
         {
-            //if (SelectedBangumi != null)
-            //    Process.Start("http://bangumi.tv/subject/" + SelectedBangumi.BangumiCode);
+            if (SelectedBangumi != null)
+                await ("http://bangumi.tv/subject/" + SelectedBangumi.BangumiCode).LaunchAsUri();
         }
 
-        public void EditBgm()
+        public async void EditBgm()
         {
             if (SelectedBangumi != null)
             {
-                var bvm = new BangumiViewModel(SelectedBangumi);
-                //var view = new Views.BangumiView(bvm);
-                //if (view.ShowDialog() == true)
-                //{
-                //    BgmList.Replace(SelectedBangumi, bvm.Bangumi);
-                //    SelectedBangumi = bvm.Bangumi;
-                //}
+                var temp = SelectedBangumi;
+                var dlg = new BangumiDialog(temp);
+                var result = await dlg.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Bangumis.Replace(temp, dlg.Model.Bangumi);
+                    SelectedBangumi = dlg.Model.Bangumi;
+                }
             }
         }
 
-        public void EditTracking()
+        public async void EditTracking()
         {
             if (SelectedTracking != null)
             {
-                //var vm = new TrackingViewModel();
-                //vm.Tracking = SelectedTracking;
-                //vm.EditMode = true;
-                //var view = new Views.TrackingView(vm);
-                //view.Owner = win;
-                //view.ShowDialog();
+                var temp = SelectedTracking;
+                var dlg = new TrackingDialog(temp, true);
+                var result = await dlg.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var bgm = dlg.Model.Tracking.Bangumi;
+                    Bangumis.Replace(SelectedBangumi, bgm);
+                    SelectedBangumi = bgm;
+                }
             }
         }
 
-        public void OpenTracking()
+        public async void OpenTracking()
         {
-            //if (SelectedTracking?.Folder?.IsEmpty() == false)
-            //    Process.Start(SelectedTracking.Folder);
+            if (SelectedTracking?.Folder?.IsEmpty() == false)
+            {
+                if (SelectedTracking.Online)
+                    await SelectedTracking.Folder.LaunchAsUri();
+                else
+                    await SelectedTracking.Folder.LaunchAsFolder();
+            }
         }
 
-        public async void DelBgm()
+        public async void DeleteBgm()
         {
             if (SelectedBangumi != null)
             {
-                var r = await BClient.Delete(SelectedBangumi.Id);
+                Message = "等待删除……";
+                var temp = SelectedBangumi;
+                var r = await BClient.Delete(temp.Id);
                 if (r > 0)
-                    BgmList.Remove(SelectedBangumi);
+                    Bangumis.Remove(temp);
+                Message = "";
             }
         }
 
@@ -117,29 +137,46 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking != null)
             {
-                var r = await TClient.Delete(SelectedTracking.Id);
+                Message = "等待删除……";
+                var temp = SelectedTracking;
+                var bgm = SelectedBangumi;
+                var r = await TClient.Delete(temp.Id);
                 if (r > 0)
-                    SelectedBangumi.Trackings.Remove(SelectedTracking);
+                    bgm.Trackings.Remove(temp);
+                Message = "";
             }
         }
 
         public async void DropBgm(string code)
         {
+            Message = "正在添加……";
             var bgm = await BClient.CreateByCode(code);
-            BgmList.Add(bgm);
+            Bangumis.Add(bgm);
+            Message = "";
         }
 
         public async void UpdateInfo()
         {
             if (SelectedBangumi != null)
-                await BClient.Update(SelectedBangumi.Id);
+            {
+                Message = "同步中……";
+                var temp = SelectedBangumi;
+                var bgm = await BClient.Update(temp.Id);
+                Bangumis.Replace(temp, bgm);
+                SelectedBangumi = bgm;
+                Message = "";
+            }
         }
 
         public void MusicInfo()
         {
-            //var vm = new MusicViewModel();
-            //var view = new Views.MusicView(vm);
-            //view.Show();
+            NavigationHelper.Navigate(typeof(MusicPage), Bangumis);
+        }
+
+        public void OrderBy(object sender, RoutedEventArgs e)
+        {
+            var t = ((FrameworkElement)sender).Tag.ToString();
+            Bangumis = Bangumis.AsQueryable().OrderBy(t).ToObservableCollection();
         }
         #endregion
     }

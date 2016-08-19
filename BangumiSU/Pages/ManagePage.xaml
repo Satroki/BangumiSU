@@ -5,11 +5,161 @@
     xmlns:local="using:BangumiSU.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:m="using:BangumiSU.Models"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Background="{StaticResource clr01}">
-            <TextBox Text="管理" VerticalAlignment="Top"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <CommandBar>
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Margin="8">
+                    <AutoSuggestBox Width="200" QueryIcon="Find"
+                                    Text="{x:Bind Model.SearchKey,Mode=TwoWay}"
+                                    QuerySubmitted="{x:Bind Model.Search}"/>
+                    <ComboBox ItemsSource="{x:Bind Model.SearchMode}" Width="150"
+                              SelectedItem="{x:Bind Model.SearchProp,Mode=TwoWay}"/>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Model.Bangumis.Count,Mode=OneWay,ConverterParameter='共 {0} 项',Converter={StaticResource StringFormatConverter}}"
+                               Margin="10,0,0,0"/>
+                </StackPanel>
+            </CommandBar.Content>
+            <AppBarButton Icon="Sort" Label="排序">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="按时间" Click="{x:Bind Model.OrderBy}" Tag="OnAir"/>
+                        <MenuFlyoutItem Text="按星期" Click="{x:Bind Model.OrderBy}" Tag="DayString"/>
+                        <MenuFlyoutItem Text="按名称" Click="{x:Bind Model.OrderBy}" Tag="LocalName"/>
+                        <MenuFlyoutItem Text="按公司" Click="{x:Bind Model.OrderBy}" Tag="AnimeCompany"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
+        </CommandBar>
+        <Grid Grid.Row="1" Margin="8">
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="IsTextSelectionEnabled" Value="True"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+            <ListView ItemsSource="{x:Bind Model.Bangumis,Mode=OneWay}" 
+                      SelectedItem="{x:Bind Model.SelectedBangumi,Mode=TwoWay,Converter={StaticResource BangumiConverter}}"
+                      AllowDrop="True" DragOver="ListView_DragOver" Drop="ListView_Drop">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Bangumi">
+                        <Grid Margin="5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Schedule,Mode=OneWay}"/>
+                                <StackPanel Margin="10,0">
+                                    <TextBlock Text="{x:Bind OnAirString,Mode=OneWay}"/>
+                                    <StackPanel Orientation="Horizontal" Opacity="0.7">
+                                        <TextBlock Text="{x:Bind DayString,Mode=OneWay}"/>
+                                        <TextBlock Text="{x:Bind Episodes,Mode=OneWay}" Margin="10,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="{x:Bind LocalName,Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{x:Bind AnimeCompany,Mode=OneWay}" Opacity="0.7"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <ScrollViewer Grid.Column="1"
+                          HorizontalScrollMode="Disabled"
+                          VerticalScrollMode="Auto">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Image Stretch="Uniform" Width="150"
+                       Source="{x:Bind Model.SelectedBangumi.Cover,Mode=OneWay}"/>
+
+                    <StackPanel Margin="5,0" Grid.Column="1">
+                        <TextBlock FontSize="24" TextWrapping="Wrap" Text="{x:Bind Model.SelectedBangumi.Name,Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind Model.SelectedBangumi.Author,Mode=OneWay}" 
+                                   TextWrapping="Wrap" Opacity="0.7" Margin="0,5"/>
+                    </StackPanel>
+
+                    <ItemsControl Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10"
+                              ScrollViewer.HorizontalScrollMode="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              Visibility="{x:Bind Model.ShowDetail,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid>
+                            <TextBox Text="{x:Bind Model.SelectedBangumi.BangumiCode,Mode=OneWay}"
+                                 IsReadOnly="True" Header="Bangumi.tv" Margin="0,0,40,0"/>
+                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="{x:Bind Model.VisitBgm}">
+                                <SymbolIcon Symbol="Globe"/>
+                            </Button>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <TextBox Text="{x:Bind Model.SelectedBangumi.HomePage,Mode=OneWay}"
+                                 IsReadOnly="True" Header="官网" Margin="0,0,40,0"/>
+                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="{x:Bind Model.VisitHP}">
+                                <SymbolIcon Symbol="Globe"/>
+                            </Button>
+                        </Grid>
+                        <ItemsControl ScrollViewer.HorizontalScrollMode="Disabled"
+                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                  Margin="0,10,0,0"
+                                  ItemsSource="{x:Bind Model.SelectedBangumi.Trackings,Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="m:Tracking">
+                                    <Grid Margin="0,5">
+                                        <StackPanel Margin="0,0,60,0">
+                                            <TextBlock Text="{x:Bind SubGroup,Mode=OneWay}"/>
+                                            <TextBlock Text="{x:Bind Folder,Mode=OneWay}" Opacity="0.7"
+                                                   TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                            Click="Tracking_Click">
+                                            <SymbolIcon Symbol="More"/>
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="编辑" Click="EditTracking_Click"/>
+                                                    <MenuFlyoutItem Text="删除" Click="DeleteTracking_Click"/>
+                                                    <MenuFlyoutItem Text="打开" Click="OpenTracking_Click"/>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ItemsControl>
+                </Grid>
+            </ScrollViewer>
         </Grid>
+        <CommandBar Grid.Row="2">
+            <CommandBar.Content>
+                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14,14,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            </CommandBar.Content>
+            <AppBarButton Icon="Delete" Label="删除" Click="{x:Bind Model.DeleteBgm}"/>
+            <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.EditBgm}"/>
+            <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
+        </CommandBar>
     </Grid>
 </Page>

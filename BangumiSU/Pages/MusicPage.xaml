@@ -16,7 +16,7 @@
         <ListView SelectionMode="None" ItemsSource="{x:Bind Model.Bangumis,Mode=OneWay}" HorizontalContentAlignment="Stretch">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="m:Bangumi">
-                    <Grid Margin="5" Width="720">
+                    <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="250"/>
                             <ColumnDefinition Width="*"/>
@@ -43,6 +43,7 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

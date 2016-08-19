@@ -10,6 +10,9 @@ using System;
 using Windows.System;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace BangumiSU.SharedCode
 {
@@ -30,9 +33,30 @@ namespace BangumiSU.SharedCode
             return false;
         }
 
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string ordering, params object[] values)
+        {
+            var type = typeof(T);
+            var property = type.GetProperty(ordering);
+            var parameter = Expression.Parameter(type, "p");
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var orderByExp = Expression.Lambda(propertyAccess, parameter);
+            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), "OrderBy", new Type[] { type, property.PropertyType }, source.Expression, Expression.Quote(orderByExp));
+            return source.Provider.CreateQuery<T>(resultExp);
+        }
+
+        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        {
+            if (source == null)
+                return new ObservableCollection<T>();
+            else
+                return new ObservableCollection<T>(source);
+        }
+
         public static Bangumi InitTrackings(this Bangumi b)
         {
-            b.Trackings?.ForEach(t => t.Bangumi = b);
+            if (!b.Trackings.IsEmpty())
+                foreach (var item in b.Trackings)
+                    item.Bangumi = b;
             return b;
         }
 

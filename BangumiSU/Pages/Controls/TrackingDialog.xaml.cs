@@ -1,4 +1,5 @@
 ﻿using BangumiSU.Models;
+using BangumiSU.SharedCode;
 using BangumiSU.ViewModels;
 using Windows.UI.Xaml.Controls;
 
@@ -10,6 +11,7 @@ namespace BangumiSU.Pages.Controls
         {
             InitializeComponent();
             Model = new TrackingViewModel(t, edit);
+            RequestedTheme = AppCache.Theme;
         }
 
         public TrackingViewModel Model { get; set; }

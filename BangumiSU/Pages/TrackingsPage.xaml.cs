@@ -80,5 +80,10 @@ namespace BangumiSU.Pages
         {
 
         }
+
+        private async void Border_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            await Model.Open();
+        }
     }
 }
