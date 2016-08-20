@@ -14,15 +14,48 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
 
 namespace BangumiSU.SharedCode
 {
     public static class NavigationHelper
     {
-        public static void Navigate(Type type, object para)
+        public static void Navigate(Type type, object para = null)
         {
             var frame = Window.Current.Content as Frame;
             frame?.Navigate(type, para);
+        }
+
+        public static void Navigate<T>(object para = null)
+        {
+            var frame = Window.Current.Content as Frame;
+            frame?.Navigate(typeof(T), para);
+        }
+    }
+
+    public static class FolderHelper
+    {
+        public static async Task<StorageFolder> GetFolder(string token)
+        {
+            var access = StorageApplicationPermissions.FutureAccessList.ContainsItem(token);
+            if (access)
+                return await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token);
+            return null;
+        }
+
+        public static async Task<StorageFolder> PickFolder(string token)
+        {
+            var fp = new FolderPicker();
+            fp.FileTypeFilter.Add("*");
+            fp.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            var folder = await fp.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, folder);
+                return folder;
+            }
+            return null;
         }
     }
 

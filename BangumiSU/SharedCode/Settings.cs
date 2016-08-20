@@ -8,8 +8,6 @@ namespace BangumiSU.SharedCode
     {
         public string UserGUID { get; set; }
 
-        public string VideoFolder { get; set; } = @"E:\";
-
         public string FolderFormat { get; set; } = @"\d{4}.\d{2}月番";
 
         public string RssPattern { get; set; }

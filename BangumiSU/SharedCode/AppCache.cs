@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Windows.UI.Xaml;
@@ -38,16 +37,16 @@ namespace BangumiSU.SharedCode
 
         public static StorageFolder VideoFolder { get; set; }
 
+        public static StorageFolder FinishFolder { get; set; }
+
         public static ElementTheme Theme { get; set; }
 
         public static async Task Init(Settings settings)
         {
             AppSettings = settings;
 
-            var token = nameof(VideoFolder);
-            var access = StorageApplicationPermissions.FutureAccessList.ContainsItem(token);
-            if (access)
-                VideoFolder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token);
+            VideoFolder = await FolderHelper.GetFolder(nameof(VideoFolder));
+            FinishFolder = await FolderHelper.GetFolder(nameof(FinishFolder));
 
             InitJsonConvert();
 

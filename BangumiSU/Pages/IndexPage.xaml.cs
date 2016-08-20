@@ -31,8 +31,12 @@ namespace BangumiSU.Pages
         public IndexPage()
         {
             InitializeComponent();
+            InitSettings();
+        }
+        private async void InitSettings()
+        {
+            await Init(Settings.GetRoamingSetting());
             Model = new IndexViewModel();
-            DataContext = Model;
         }
 
         public IndexViewModel Model { get; set; }
@@ -48,21 +52,6 @@ namespace BangumiSU.Pages
                 Model.SelectedPage = link;
                 (Model.SelectedPage?.Page as IContentPage)?.Arrived();
             }
-        }
-
-        private void Theme_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            switch (RequestedTheme)
-            {
-                case ElementTheme.Default:
-                case ElementTheme.Dark:
-                    RequestedTheme = ElementTheme.Light;
-                    break;
-                case ElementTheme.Light:
-                    RequestedTheme = ElementTheme.Dark;
-                    break;
-            }
-            AppCache.Theme = RequestedTheme;
         }
     }
 
@@ -80,6 +69,7 @@ namespace BangumiSU.Pages
                 new PageLink("首页","\uE10F",new TrackingsPage()),
                 new PageLink("管理","\uE178",new ManagePage()),
                 new PageLink("更新","\uE118",new UpdatePage()),
+                new PageLink("设置","\uE115",new SettingPage()),
             };
             SelectedPage = PageLinks[1];
         }

@@ -18,7 +18,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <ListView x:Name="NavLinksList" Margin="0,0,0,0" SelectionMode="Single"
-                              ItemsSource="{Binding PageLinks}" ItemClick="NavLinksList_ItemClick"
+                              ItemsSource="{x:Bind Model.PageLinks,Mode=OneWay}" ItemClick="NavLinksList_ItemClick"
                               IsItemClickEnabled="True"
                               Grid.Row="0" VerticalAlignment="Stretch">
                         <ListView.ItemTemplate>
@@ -30,18 +30,12 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <ListBoxItem Grid.Row="2" Tapped="Theme_Tapped">
-                        <StackPanel Orientation="Horizontal" >
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B1;" />
-                            <TextBlock Text="主题" Margin="24,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </ListBoxItem>
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
                 <ContentControl VerticalContentAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
-                                Content="{Binding SelectedPage.Page}"/>
+                                Content="{x:Bind Model.SelectedPage.Page,Mode=OneWay}"/>
             </SplitView.Content>
         </SplitView>
     </Grid>
