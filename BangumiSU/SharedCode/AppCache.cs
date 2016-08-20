@@ -1,4 +1,4 @@
-﻿#define local
+﻿//#define local
 
 using BangumiSU.Models;
 using BangumiSU.ApiClients;

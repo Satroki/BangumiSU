@@ -15,10 +15,20 @@
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <CommandBar Grid.Row="0">
+            <CommandBar.Content>
+                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                            Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
+                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Margin="8"/>
+            </CommandBar.Content>
+            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
+        </CommandBar>
+        <Grid Grid.Row="1">
             <GridView ItemsSource="{x:Bind Model.Trackings,Mode=OneWay}"
                       SelectedItem="{x:Bind Model.SelectedTracking,Mode=TwoWay,Converter={StaticResource TrackingConverter}}"
                       ScrollViewer.HorizontalScrollMode="Disabled"
@@ -26,8 +36,9 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="m:Tracking">
                         <Border BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="4"
-                                Background="{x:Bind StateBrush,Mode=OneWay}" DoubleTapped="Border_DoubleTapped">
-                            <Grid Width="400" Height="93" Margin="5">
+                                Background="{x:Bind StateBrush,Mode=OneWay}"
+                                DoubleTapped="Border_DoubleTapped">
+                            <Grid Width="300" Height="93" Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition/>
@@ -48,11 +59,13 @@
                                     </Button>
                                     <StackPanel VerticalAlignment="Top" Margin="0,0,45,0">
                                         <TextBlock Text="{x:Bind Bangumi.LocalName,Mode=OneWay}" 
-                                                   MaxLines="2" TextWrapping="Wrap" FontSize="18"
+                                                   Height="48" MaxLines="2" TextWrapping="Wrap" FontSize="18"
+                                                   ToolTipService.ToolTip="{x:Bind Bangumi.LocalName,Mode=OneWay}"
                                                    TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{x:Bind LastUpdate.LocalDateTime,Mode=OneWay}"/>
-                                        <TextBlock Text="{x:Bind SubGroup,Mode=OneWay}" 
-                                           Margin="0,5,0,0"/>
+                                        <TextBlock Text="{x:Bind SubGroup,Mode=OneWay}"
+                                                   ToolTipService.ToolTip="{x:Bind SubGroup,Mode=OneWay}"
+                                                   TextTrimming="CharacterEllipsis" Opacity="0.7" Margin="0,5,0,0"/>
+                                        <TextBlock Text="{x:Bind LastUpdateString,Mode=OneWay}" Opacity="0.7"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                         <TextBlock Text="{x:Bind ProgressString,Mode=OneWay}"/>
@@ -66,15 +79,10 @@
                 </GridView.ItemTemplate>
             </GridView>
         </Grid>
-        <CommandBar Grid.Row="1">
+        <CommandBar Grid.Row="2">
             <CommandBar.Content>
-                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                            Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
-                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Margin="8"/>
+                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14"/>
             </CommandBar.Content>
-            <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
-            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
-            <AppBarSeparator/>
             <AppBarButton Icon="Add" Label="更新进度" Click="{x:Bind Model.AddProgress}"/>
             <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>
             <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>

@@ -193,6 +193,8 @@ namespace BangumiSU.ViewModels
 
                 await GetLocalFiles(list);
 
+                SetRssPattern(list);
+
                 var online = BangumiCache.SelectMany(b => b.Trackings).Where(a => !a.Finish && a.Online).ToList();
                 if (online.Count > 0)
                 {
@@ -382,16 +384,16 @@ namespace BangumiSU.ViewModels
             return file.Name.Substring(index);
         }
 
-        private void SetRssPattern()
+        private void SetRssPattern(IEnumerable<Tracking> list)
         {
-            if (Trackings.IsEmpty())
+            if (list.IsEmpty())
             {
                 AppSettings.RssPattern = null;
             }
             else
             {
                 var sb = new StringBuilder();
-                foreach (var a in Trackings)
+                foreach (var a in list)
                 {
                     if (!string.IsNullOrEmpty(a.KeyWords))
                     {
