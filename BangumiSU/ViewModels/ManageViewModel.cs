@@ -4,6 +4,7 @@ using BangumiSU.Pages.Controls;
 using BangumiSU.SharedCode;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -176,7 +177,23 @@ namespace BangumiSU.ViewModels
         public void OrderBy(object sender, RoutedEventArgs e)
         {
             var t = ((FrameworkElement)sender).Tag.ToString();
-            Bangumis = Bangumis.AsQueryable().OrderBy(t).ToObservableCollection();
+            IEnumerable<Bangumi> list = Bangumis;
+            switch (t)
+            {
+                case nameof(Bangumi.OnAir):
+                    list = Bangumis.OrderBy(b => b.OnAir);
+                    break;
+                case nameof(Bangumi.DayString):
+                    list = Bangumis.OrderBy(b => (int)b.OnAir.LocalDateTime.DayOfWeek);
+                    break;
+                case nameof(Bangumi.LocalName):
+                    list = Bangumis.OrderBy(b => b.LocalName);
+                    break;
+                case nameof(Bangumi.AnimeCompany):
+                    list = Bangumis.OrderBy(b => b.AnimeCompany);
+                    break;
+            }
+            Bangumis = list.ToObservableCollection();
         }
         #endregion
     }
