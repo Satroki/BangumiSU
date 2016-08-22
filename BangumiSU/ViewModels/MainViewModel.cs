@@ -143,7 +143,7 @@ namespace BangumiSU.ViewModels
             {
                 await BClient.Finish(SelectedTracking.BangumiId);
                 if (!SelectedTracking.Online)
-                    moveDirectory(SelectedTracking);
+                    await moveDirectory(SelectedTracking);
                 Trackings.Remove(SelectedTracking);
             }
         }
@@ -171,15 +171,24 @@ namespace BangumiSU.ViewModels
         #endregion
 
         #region 方法
-        private void moveDirectory(Tracking t)
+        private async Task moveDirectory(Tracking t)
         {
             try
             {
-                //var path = Path.Combine(Settings.Default.FinishFolder, t.Bangumi.Schedule);
-                //if (!Directory.Exists(path))
-                //    Directory.CreateDirectory(path);
-                //var di = new DirectoryInfo(t.Folder);
-                //di.MoveTo(Path.Combine(path, di.Name));
+                if (FinishFolder != null)
+                {
+                    var dest = await FinishFolder.CreateFolderAsync(t.Bangumi.Schedule, CreationCollisionOption.OpenIfExists);
+
+                    var name = t.Folder.Substring(t.Folder.LastIndexOf('\\') + 1);
+                    dest = await dest.CreateFolderAsync(name, CreationCollisionOption.OpenIfExists);
+
+                    var video = (await VideoFolder.TryGetItemAsync(t.Folder.Substring(VideoFolder.Path.Length))) as StorageFolder;
+                    foreach (var item in await video.GetFilesAsync())
+                    {
+                        await item.MoveAsync(dest);
+                    }
+                    await video.DeleteAsync();
+                }
             }
             catch
             { throw; }
@@ -387,26 +396,22 @@ namespace BangumiSU.ViewModels
         private void SetRssPattern(IEnumerable<Tracking> list)
         {
             if (list.IsEmpty())
+                return;
+
+            var sb = new StringBuilder();
+            foreach (var a in list)
             {
-                AppSettings.RssPattern = null;
-            }
-            else
-            {
-                var sb = new StringBuilder();
-                foreach (var a in list)
+                if (!string.IsNullOrEmpty(a.KeyWords))
                 {
-                    if (!string.IsNullOrEmpty(a.KeyWords))
-                    {
-                        var keys = a.KeyWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        sb.Append("((.*)");
-                        foreach (var s in keys)
-                            sb.Append(s).Append("(.*)");
-                        sb.Append(")|");
-                    }
+                    var keys = a.KeyWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    sb.Append("((.*)");
+                    foreach (var s in keys)
+                        sb.Append(s).Append("(.*)");
+                    sb.Append(")|");
                 }
-                var result = sb.ToString().TrimEnd('|');
-                AppSettings.RssPattern = result;
             }
+            var result = sb.ToString().TrimEnd('|');
+            AppSettings.RssPattern = result;
         }
         #endregion
     }

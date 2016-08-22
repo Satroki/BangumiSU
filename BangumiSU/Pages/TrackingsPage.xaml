@@ -21,9 +21,14 @@
         </Grid.RowDefinitions>
         <CommandBar Grid.Row="0">
             <CommandBar.Content>
-                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                            Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
-                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Margin="8"/>
+                <StackPanel Orientation="Horizontal" Margin="8">
+                    <TextBlock VerticalAlignment="Center" 
+                               Text="{x:Bind Model.Trackings.Count, Converter={StaticResource StringFormatConverter},ConverterParameter='当前共 {0} 项',Mode=OneWay}" Margin="0,0,20,0"/>
+                    <TextBlock VerticalAlignment="Center" Text="动漫花园："/>
+                    <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                                    Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
+                                    VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" />
+                 </StackPanel>
             </CommandBar.Content>
             <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
             <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
@@ -38,7 +43,7 @@
                         <Border BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="4"
                                 Background="{x:Bind StateBrush,Mode=OneWay}"
                                 DoubleTapped="Border_DoubleTapped">
-                            <Grid Width="300" Height="93" Margin="5">
+                            <Grid Width="400" Height="93" Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition/>

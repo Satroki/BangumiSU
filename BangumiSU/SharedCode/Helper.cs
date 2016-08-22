@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.UI.Notifications;
 
 namespace BangumiSU.SharedCode
 {
@@ -119,6 +120,19 @@ namespace BangumiSU.SharedCode
                 await s.WriteAsync(data, 0, data.Length);
                 await s.FlushAsync();
             }
+        }
+    }
+
+    public static class ToastHelper
+    {
+        public static void Toast(string msg)
+        {
+            var tpl = ToastTemplateType.ToastText02;
+            var xml = ToastNotificationManager.GetTemplateContent(tpl);
+            xml.GetElementById("1").NodeValue = msg;
+
+            var no = new ToastNotification(xml);
+            ToastNotificationManager.CreateToastNotifier().Show(no);
         }
     }
 }
