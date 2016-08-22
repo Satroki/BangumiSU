@@ -109,5 +109,11 @@ namespace BangumiSU.SharedCode
             if (f != null)
                 await Launcher.LaunchFolderAsync(f);
         }
+
+        public static string GetExt(this StorageFile file)
+        {
+            var index = file.Name.LastIndexOf('.');
+            return file.Name.Substring(index);
+        }
     }
 }

@@ -49,8 +49,9 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking != null)
             {
-                var t = await TClient.UpdateProgress(SelectedTracking.Id, SelectedTracking.Progress + 1);
-                Trackings.Replace(SelectedTracking, t);
+                var temp = SelectedTracking;
+                var t = await TClient.UpdateProgress(temp.Id, temp.Progress + 1);
+                Trackings.Replace(temp, t);
                 SelectedTracking = t;
             }
         }
@@ -141,10 +142,11 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking != null)
             {
-                await BClient.Finish(SelectedTracking.BangumiId);
-                if (!SelectedTracking.Online)
-                    await moveDirectory(SelectedTracking);
-                Trackings.Remove(SelectedTracking);
+                var temp = SelectedTracking;
+                await BClient.Finish(temp.BangumiId);
+                if (!temp.Online)
+                    await moveDirectory(temp);
+                Trackings.Remove(temp);
             }
         }
 
@@ -152,9 +154,10 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking != null)
             {
+                var temp = SelectedTracking;
                 Message = "正在更新信息……";
-                var bgm = await BClient.Update(SelectedTracking.Bangumi.Id);
-                Trackings.Replace(SelectedTracking, bgm.Trackings.Single(t => t.Id == SelectedTracking.Id));
+                var bgm = await BClient.Update(temp.Bangumi.Id);
+                Trackings.Replace(temp, bgm.Trackings.Single(t => t.Id == temp.Id));
                 Message = "";
             }
         }
@@ -205,19 +208,16 @@ namespace BangumiSU.ViewModels
                 SetRssPattern(list);
 
                 var online = BangumiCache.SelectMany(b => b.Trackings).Where(a => !a.Finish && a.Online).ToList();
-                if (online.Count > 0)
+                foreach (var item in online)
                 {
-                    foreach (var item in online)
-                    {
-                        var t = item;
-                        if (updateOnline(item))
-                            t = await TClient.Update(item);
-                        list.Add(t);
-                    }
+                    var t = item;
+                    if (updateOnline(item))
+                        t = await TClient.Update(item);
+                    list.Add(t);
                 }
 
                 list.AddRange(await onlineBgms());
-                return new ObservableCollection<Tracking>(list.OrderByDescending(a => a.LastUpdate));
+                return list.OrderByDescending(a => a.LastUpdate).ToObservableCollection();
             }
             catch (Exception ex)
             {
@@ -254,11 +254,11 @@ namespace BangumiSU.ViewModels
                         var result = await dlg.ShowAsync();
                         if (result != ContentDialogResult.Primary)
                             continue;
+                        t = dlg.Model.Tracking;
                     }
                     if (t.Finish)
                         continue;
-                    if (t.Folder != bgmDir.Path)
-                        t.Folder = bgmDir.Path;
+                    t.Folder = bgmDir.Path;
 
                     t.Count = -1;
                     var files = (await bgmDir.GetFilesAsync()).OrderBy(f => f.DateCreated);
@@ -266,7 +266,7 @@ namespace BangumiSU.ViewModels
                     var updateFlag = false;
                     foreach (var file in files)
                     {
-                        var ext = getExt(file).ToUpper();
+                        var ext = file.GetExt().ToUpper();
                         if (ext == ".TORRENT")
                         {
                             await file.DeleteAsync();
@@ -354,7 +354,7 @@ namespace BangumiSU.ViewModels
                     {
                         try
                         {
-                            var ext = getExt(f);
+                            var ext = f.GetExt();
                             if (ext == ".torrent")
                             {
                                 await f.DeleteAsync();
@@ -387,12 +387,6 @@ namespace BangumiSU.ViewModels
             return str.Split(chars).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
         }
 
-        private string getExt(StorageFile file)
-        {
-            var index = file.Name.LastIndexOf('.');
-            return file.Name.Substring(index);
-        }
-
         private void SetRssPattern(IEnumerable<Tracking> list)
         {
             if (list.IsEmpty())
@@ -404,9 +398,9 @@ namespace BangumiSU.ViewModels
                 if (!string.IsNullOrEmpty(a.KeyWords))
                 {
                     var keys = a.KeyWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    sb.Append("((.*)");
+                    sb.Append("(.*");
                     foreach (var s in keys)
-                        sb.Append(s).Append("(.*)");
+                        sb.Append(s).Append(".*");
                     sb.Append(")|");
                 }
             }
