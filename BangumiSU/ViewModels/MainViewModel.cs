@@ -228,6 +228,9 @@ namespace BangumiSU.ViewModels
 
         private async Task GetLocalFiles(List<Tracking> list)
         {
+            if (VideoFolder == null)
+                return;
+
             var dirs = await VideoFolder.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
             dirs = dirs.Where(d => Regex.IsMatch(d.Name, AppSettings.FolderFormat)).ToList();
             await sortFolder(dirs);
