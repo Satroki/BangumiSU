@@ -28,7 +28,7 @@
                     <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                                     Text="{x:Bind Model.SelectedTracking.KeyWords,Mode=OneWay}"
                                     VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" />
-                 </StackPanel>
+                </StackPanel>
             </CommandBar.Content>
             <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
             <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"/>
@@ -86,7 +86,10 @@
         </Grid>
         <CommandBar Grid.Row="2">
             <CommandBar.Content>
-                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14"/>
+                <StackPanel Orientation="Horizontal" Margin="14">
+                    <!--<ProgressRing IsActive="{x:Bind Model.OnLoading,Mode=OneWay}"/>-->
+                    <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="0,0,0,0"/>
+                </StackPanel>
             </CommandBar.Content>
             <AppBarButton Icon="Add" Label="更新进度" Click="{x:Bind Model.AddProgress}"/>
             <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>

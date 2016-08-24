@@ -3,6 +3,7 @@ using BangumiSU.Models;
 using BangumiSU.SharedCode;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace BangumiSU.ViewModels
         #region 属性
         public List<RssItem> RssItems { get; set; } = new List<RssItem>();
 
-        public List<RssItem> SelectedItems { get; set; } = new List<RssItem>();
+        public ObservableCollection<RssItem> SelectedItems { get; set; } = new ObservableCollection<RssItem>();
         #endregion
 
         #region 命令
@@ -35,7 +36,8 @@ namespace BangumiSU.ViewModels
         {
             Message = "正在获取RSS……";
             var date = AppSettings.LastUpdate;
-            var items = await rssClient.GetRss(date);
+            var items = await rssClient.GetRss();
+            //var items = await rssClient.GetRss(date);
             ScanItems(items);
             RssItems = items;
         }

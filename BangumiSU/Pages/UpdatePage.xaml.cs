@@ -21,7 +21,8 @@ namespace BangumiSU.Pages
 
         public async void Arrived()
         {
-            await Model.Refresh();
+            if (Model.RssItems.IsEmpty())
+                await Model.Refresh();
         }
 
         public void Leaved()

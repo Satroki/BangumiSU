@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:m="using:BangumiSU.Models"
+    xmlns:cl="using:System.Collections.Generic"
+    xmlns:sys="using:System"
     xmlns:c="using:BangumiSU.Controls"
     mc:Ignorable="d">
 
@@ -46,7 +48,7 @@
             <AppBarButton Icon="Clear" Label="清空" Click="{x:Bind Model.Clear}"
                           IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
             <AppBarButton Icon="Download" Label="下载" Click="{x:Bind Model.Download}"
-                          IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
+                          IsEnabled="{x:Bind Model.SelectedItems.Count,Converter={StaticResource IntToBoolConverter},Mode=OneWay}"/>
         </CommandBar>
     </Grid>
 </Page>

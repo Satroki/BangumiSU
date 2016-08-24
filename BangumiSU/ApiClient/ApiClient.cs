@@ -19,7 +19,7 @@ namespace BangumiSU.ApiClients
             var url = AppCache.ApiUrl;
             var user = AppCache.AppSettings.UserGUID;
 
-            hc.Timeout = TimeSpan.FromSeconds(10);
+            hc.Timeout = TimeSpan.FromSeconds(20);
             hc.BaseAddress = new Uri(new Uri(url), controller);
             hc.DefaultRequestHeaders.Add("user", user);
             hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
