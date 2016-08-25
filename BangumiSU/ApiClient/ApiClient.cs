@@ -3,6 +3,7 @@ using BangumiSU.SharedCode;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -12,17 +13,23 @@ namespace BangumiSU.ApiClients
 {
     public abstract class ApiClient
     {
-        private readonly HttpClient hc = new HttpClient();
+        private readonly HttpClient hc;
 
         public ApiClient(string controller)
         {
             var url = AppCache.ApiUrl;
             var user = AppCache.AppSettings.UserGUID;
 
+            hc = new HttpClient(new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
             hc.Timeout = TimeSpan.FromSeconds(20);
             hc.BaseAddress = new Uri(new Uri(url), controller);
             hc.DefaultRequestHeaders.Add("user", user);
             hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
         }
 
         public async Task<T> Get<T>(string route = "")
