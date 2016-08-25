@@ -39,7 +39,7 @@ namespace BangumiSU.SharedCode
 
         public static StorageFolder FinishFolder { get; set; }
 
-        public static ElementTheme Theme { get; set; }
+        public static ElementTheme Theme { get; set; } = ElementTheme.Dark;
 
         public static async Task Init(Settings settings)
         {

@@ -142,7 +142,7 @@
     <Compile Include="SharedCode\AppCache.cs" />
     <Compile Include="SharedCode\ValueConverters.cs" />
     <Compile Include="ViewModels\BangumiViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\TrackingsViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModel.cs" />
     <Compile Include="ViewModels\MusicViewModel.cs" />
     <Compile Include="ViewModels\TrackingViewModel.cs" />

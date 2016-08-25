@@ -15,10 +15,10 @@ namespace BangumiSU.Pages
         public TrackingsPage()
         {
             this.InitializeComponent();
-            Model = new MainViewModel();
+            Model = new TrackingsViewModel();
         }
 
-        public MainViewModel Model { get; set; }
+        public TrackingsViewModel Model { get; set; }
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {

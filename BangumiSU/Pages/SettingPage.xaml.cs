@@ -56,10 +56,17 @@ namespace BangumiSU.Pages
             txtFinishFolder.Text = FinishFolder?.Path ?? string.Empty;
             txtFolderFormat.Text = AppSettings.FolderFormat;
             txtExtensions.Text = AppSettings.Extensions;
+            tsTheme.IsOn = Theme == ElementTheme.Dark;
         }
 
         public void Leaved()
         {
+        }
+
+        private void tsTheme_Toggled(object sender, RoutedEventArgs e)
+        {
+            Theme = tsTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
+            (Window.Current.Content as Frame).RequestedTheme = Theme;
         }
     }
 }

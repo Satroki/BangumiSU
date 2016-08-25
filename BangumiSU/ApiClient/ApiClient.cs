@@ -76,7 +76,7 @@ namespace BangumiSU.ApiClients
             else
             {
                 var msg = "API异常";
-                if (resp.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                if (resp.StatusCode == HttpStatusCode.InternalServerError)
                     msg = (await resp.Content.ReadAsAsync<Error>()).Message;
                 else
                     msg += "：" + (int)resp.StatusCode;

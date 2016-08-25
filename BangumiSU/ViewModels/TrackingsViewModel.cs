@@ -18,9 +18,9 @@ using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class TrackingsViewModel : ViewModelBase
     {
-        public MainViewModel()
+        public TrackingsViewModel()
         {
             if (Trackings.IsEmpty())
                 Refresh();
