@@ -1,0 +1,27 @@
+﻿<Page
+    x:Class="BangumiSU.Pages.VideoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BangumiSU.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:BangumiSU.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <CommandBar>
+            <AppBarButton Icon="Download" Click="button_Click"/>
+            <AppBarButton Icon="OpenFile" Click="AppBarButton_Click"/>
+            <AppBarButton Icon="Accept" Click="AppBarButton_Click_1"/>
+        </CommandBar>
+        <MediaElement x:Name="mediaElement" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                      AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"/>
+        <Canvas x:Name="canvas" Grid.Row="1">
+            <uc:CommentBlock Text="1234567测试" TextColor="White" FontSize="20" TextShadow="Black" Canvas.Top="150" Canvas.Left="150"/>
+        </Canvas>
+    </Grid>
+</Page>

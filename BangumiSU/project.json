@@ -3,7 +3,8 @@
     "Microsoft.AspNetCore.JsonPatch": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Newtonsoft.Json": "9.0.1",
-    "PropertyChanged.Fody": "1.51.3"
+    "PropertyChanged.Fody": "1.51.3",
+    "Win2D.uwp": "1.19.0"
   },
   "frameworks": {
     "uap10.0": {}

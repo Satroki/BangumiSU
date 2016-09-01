@@ -32,6 +32,11 @@ namespace BangumiSU.ApiClients
             hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
         }
 
+        protected void SetApiUrl(string url)
+        {
+            hc.BaseAddress = new Uri(url);
+        }
+
         public async Task<T> Get<T>(string route = "")
         {
             var resp = await hc.GetAsync(route);
