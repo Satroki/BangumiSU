@@ -22,8 +22,11 @@ namespace BangumiSU.ViewModels
     {
         public TrackingsViewModel()
         {
+#if DEBUG
+#else
             if (Trackings.IsEmpty())
                 Refresh();
+#endif
         }
 
         #region 属性
@@ -74,7 +77,12 @@ namespace BangumiSU.ViewModels
                 if (SelectedTracking.Online)
                     await SelectedTracking.Folder.LaunchAsUri();
                 else
-                    await SelectedTracking.Uri.LaunchAsFile();
+                {
+                    if (AppSettings.UseInternalPlayer)
+                        NavigationHelper.Navigate<VideoPage>(SelectedTracking.Uri);
+                    else
+                        await SelectedTracking.Uri.LaunchAsFile();
+                }
             }
         }
 

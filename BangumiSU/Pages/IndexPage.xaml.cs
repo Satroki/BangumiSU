@@ -53,8 +53,8 @@ namespace BangumiSU.Pages
                 new PageLink("首页","\uE10F",new TrackingsPage()),
                 new PageLink("管理","\uE178",new ManagePage()),
                 new PageLink("更新","\uE118",new UpdatePage()),
-                new PageLink("设置","\uE115",new SettingPage()),
                 new PageLink("视频","\uE116",new VideoPage()),
+                new PageLink("设置","\uE115",new SettingPage()),
             };
             SelectedPage = PageLinks[1];
         }

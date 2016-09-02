@@ -80,6 +80,7 @@
             </ListView>
             <ScrollViewer Grid.Column="1"
                           HorizontalScrollMode="Disabled"
+                          VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>

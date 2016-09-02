@@ -94,18 +94,28 @@ namespace BangumiSU.SharedCode
             await Launcher.LaunchUriAsync(new Uri(uri));
         }
 
-        public static async Task LaunchAsFile(this string path)
+        public static async Task<StorageFile> AsFile(this string path)
         {
             var folder = AppCache.VideoFolder;
-            var file = (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFile;
+            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFile;
+        }
+
+        public static async Task<StorageFolder> AsFolder(this string path)
+        {
+            var folder = AppCache.VideoFolder;
+            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFolder;
+        }
+
+        public static async Task LaunchAsFile(this string path)
+        {
+            var file = await path.AsFile();
             if (file != null)
                 await Launcher.LaunchFileAsync(file);
         }
 
         public static async Task LaunchAsFolder(this string path)
         {
-            var folder = AppCache.VideoFolder;
-            var f = (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFolder;
+            var f = await path.AsFolder();
             if (f != null)
                 await Launcher.LaunchFolderAsync(f);
         }

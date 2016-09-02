@@ -21,6 +21,7 @@ namespace BangumiSU.ApiClients
             SetApiUrl(ApiUrl);
         }
 
+        private List<string> IdList = new List<string>();
         #region Comment
         //comment/{episodeId}?from={from}
         public async Task<List<Comment>> GetComments(int episodeId)
@@ -33,7 +34,6 @@ namespace BangumiSU.ApiClients
             list.AddRange(dd);
 
             var related = await GetRelateds(episodeId);
-            var bList = new List<string>();
             using (var hc = CreateHC())
             {
                 foreach (var r in related)
@@ -45,7 +45,7 @@ namespace BangumiSU.ApiClients
                             temp = await GetTucao(hc, r);
                             break;
                         case "BiliBili.com":
-                            temp = await GetBiliBili(hc, r, bList);
+                            temp = await GetBiliBili(hc, r);
                             break;
                         default:
                             continue;
@@ -57,40 +57,30 @@ namespace BangumiSU.ApiClients
             return list;
         }
 
-        private async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, Related r)
+        private async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, Related r )
         {
             var match = Regex.Match(r.Url, @"h(\d{1,10})");
             if (match.Success)
             {
+                if (IdExists(match.Value))
+                    return null;
+
                 var uri = $"http://www.tucao.tv/index.php?m=mukio&c=index&a=init&playerID=40-{match.Groups[1].Value}-1-0";
                 var str = await hc.GetStringAsync(uri);
-                var xml = XDocument.Parse(str);
-                return xml.Descendants("d").Select(xe =>
-                {
-                    var p = xe.Attribute("p").Value.Split(',');
-                    var m = xe.Value;
-                    return new Comment
-                    {
-                        Time = double.Parse(p[0]),
-                        Color = int.Parse(p[3]),
-                        Message = m
-                    };
-                });
+                return ParseXml(str);
             }
             return null;
         }
 
-        private async Task<IEnumerable<Comment>> GetBiliBili(HttpClient hc, Related r, List<string> bList)
+        private async Task<IEnumerable<Comment>> GetBiliBili(HttpClient hc, Related r)
         {
             var match = Regex.Match(r.Url, @"av(\d{1,10})");
             if (match.Success)
             {
-                var av = match.Groups[1].Value;
-                if (bList.Contains(av))
+                if (IdExists(match.Value))
                     return null;
 
-                bList.Add(av);
-                var uri = $"https://biliproxy.chinacloudsites.cn/av/{av}/1?list=0";
+                var uri = $"https://biliproxy.chinacloudsites.cn/av/{match.Groups[1].Value}/1?list=0";
                 var res = await hc.GetAsync(uri);
                 var str = "";
                 if (res.StatusCode == HttpStatusCode.OK)
@@ -106,20 +96,33 @@ namespace BangumiSU.ApiClients
 
                 uri = $"http://comment.bilibili.cn/{cid}.xml";
                 str = await hc.GetStringAsync(uri);
-                var xml = XDocument.Parse(str);
-                return xml.Descendants("d").Select(xe =>
-                {
-                    var p = xe.Attribute("p").Value.Split(',');
-                    var m = xe.Value;
-                    return new Comment
-                    {
-                        Time = double.Parse(p[0]),
-                        Color = int.Parse(p[3]),
-                        Message = m
-                    };
-                });
+                return ParseXml(str);
             }
             return null;
+        }
+
+        private bool IdExists(string id)
+        {
+            if (IdList.Contains(id))
+                return true;
+            IdList.Add(id);
+            return false;
+        }
+
+        private IEnumerable<Comment> ParseXml(string xmlString)
+        {
+            var xml = XDocument.Parse(xmlString);
+            foreach (var xe in xml.Descendants("d"))
+            {
+                var p = xe.Attribute("p").Value.Split(',');
+                var m = xe.Value;
+                yield return new Comment
+                {
+                    Time = double.Parse(p[0]),
+                    Color = int.Parse(p[3]),
+                    Message = m
+                };
+            }
         }
 
         private HttpClient CreateHC()

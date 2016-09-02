@@ -15,15 +15,52 @@
         </Grid.RowDefinitions>
         <CommandBar>
             <CommandBar.Content>
-                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
+                <StackPanel Margin="14" Orientation="Horizontal">
+                    <TextBlock Text="偏移："/>
+                    <TextBlock Text="{x:Bind Model.Offset,Mode=OneWay}" Margin="0,0,20,0"/>
+                    <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
+                </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Icon="Download" Click="button_Click"/>
-            <AppBarButton Icon="OpenFile" Click="AppBarButton_Click"/>
-            <AppBarButton Icon="Accept" Click="AppBarButton_Click_1"/>
+            <AppBarButton Click="Subtract5_Click">
+                <FontIcon Glyph="-5s" FontFamily="Microsoft YaHei UI"/>
+            </AppBarButton>
+            <AppBarButton Click="Subtract1_Click">
+                <FontIcon Glyph="-1s" FontFamily="Microsoft YaHei UI"/>
+            </AppBarButton>
+            <AppBarButton Click="ResetOffset_Click">
+                <FontIcon Glyph="±0" FontFamily="Microsoft YaHei UI"/>
+            </AppBarButton>
+            <AppBarButton Click="Add1_Click">
+                <FontIcon Glyph="+1s" FontFamily="Microsoft YaHei UI"/>
+            </AppBarButton>
+            <AppBarButton Click="Add5_Click">
+                <FontIcon Glyph="+5s" FontFamily="Microsoft YaHei UI"/>
+            </AppBarButton>
+            <AppBarButton Icon="OpenFile" Click="OpenFile_Click"/>
+            <AppBarButton Icon="Setting" Click="Setting_Click"/>
         </CommandBar>
         <MediaElement x:Name="mediaElement" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                       AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"/>
         <Canvas x:Name="canvas" Grid.Row="1">
         </Canvas>
+        <Popup x:Name="popup" Grid.Row="1" Width="400" HorizontalAlignment="Right">
+            <Grid x:Name="gridSetting" Width="400" Height="500" Background="{ThemeResource AppBarBackground}">
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Right"/>
+                    </TransitionCollection>
+                </Grid.Transitions>
+                <StackPanel Padding="30">
+                    <Slider Value="{x:Bind Model.FontSize,Mode=TwoWay}" Minimum="16" Maximum="48"
+                            Header="{x:Bind Model.FontSize,Mode=OneWay,Converter={StaticResource StringFormatConverter},ConverterParameter='字体大小 {0}'}"/>
+                    <Slider Value="{x:Bind Model.Duration,Mode=TwoWay}" Minimum="4" Maximum="16"
+                            Header="{x:Bind Model.Duration,Mode=OneWay,Converter={StaticResource StringFormatConverter},ConverterParameter='滚动时间 {0}秒'}"/>
+                    <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="关键词过滤（空格分隔）"/>
+                    <Grid>
+                        <Button Content="应用" HorizontalAlignment="Right" Margin="0,20" Click="ApplaySettings_Click"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Popup>
     </Grid>
 </Page>

@@ -46,6 +46,7 @@ namespace BangumiSU.Pages
             AppSettings.UserGUID = pwbPassword.Password;
             AppSettings.FolderFormat = txtFolderFormat.Text;
             AppSettings.Extensions = txtExtensions.Text;
+            AppSettings.UseInternalPlayer = tsUsePlayer.IsOn;
             await Reload();
         }
 
@@ -57,6 +58,7 @@ namespace BangumiSU.Pages
             txtFolderFormat.Text = AppSettings.FolderFormat;
             txtExtensions.Text = AppSettings.Extensions;
             tsTheme.IsOn = Theme == ElementTheme.Dark;
+            tsUsePlayer.IsOn = AppSettings.UseInternalPlayer;
         }
 
         public void Leaved()

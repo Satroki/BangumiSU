@@ -16,6 +16,10 @@ namespace BangumiSU.SharedCode
 
         public string LastSearch { get; set; }
 
+        public VideoSettings VideoSettings { get; set; } = new VideoSettings();
+
+        public bool UseInternalPlayer { get; set; } = true;
+
         [JsonIgnore]
         public string DmhySearch { get; set; } = "https://share.dmhy.org/topics/list?keyword=";
 
@@ -40,5 +44,12 @@ namespace BangumiSU.SharedCode
             else
                 roaming.Values.Add("AppSettings", json);
         }
+    }
+
+    public class VideoSettings
+    {
+        public double FontSize { get; set; } = 24;
+        public double Duration { get; set; } = 8;
+        public string Filter { get; set; }
     }
 }

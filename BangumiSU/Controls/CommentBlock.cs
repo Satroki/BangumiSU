@@ -86,7 +86,5 @@ namespace BangumiSU.Controls
             _Size = new Size(size.Width + Padding.Left + Padding.Right, size.Height + Padding.Top + Padding.Bottom);
             return _Size;
         }
-
-        public void AddSeconds(int seconds) => StartTime = StartTime + seconds;
     }
 }

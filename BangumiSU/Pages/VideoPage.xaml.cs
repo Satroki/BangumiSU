@@ -25,22 +25,22 @@ using System.Collections.Concurrent;
 using BangumiSU.ViewModels;
 using Windows.Security.Cryptography.Core;
 using Windows.Security.Cryptography;
-
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
+using Windows.Storage;
 
 namespace BangumiSU.Pages
 {
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class VideoPage : Page
+    public sealed partial class VideoPage : Page, IContentPage
     {
         public VideoPage()
         {
             this.InitializeComponent();
             timer.Tick += Timer_Tick;
             mediaElement.CurrentStateChanged += MediaElement_CurrentStateChanged;
-            mediaElement.DoubleTapped += MediaElement_DoubleTapped; ;
+            mediaElement.DoubleTapped += MediaElement_DoubleTapped;
+            canvas.SizeChanged += Canvas_SizeChanged;
         }
 
         public VideoViewModel Model { get; set; } = new VideoViewModel();
@@ -51,14 +51,22 @@ namespace BangumiSU.Pages
 
         private int commentIndex = 0;
         private uint bufferMD5 = 16 * 1024 * 1024;
-        private double fontsize = 24;
-        private double seconds = 5;
+        private double fontsize = AppCache.AppSettings.VideoSettings.FontSize;
+        private double seconds = AppCache.AppSettings.VideoSettings.Duration;
         private double lastTick = 0;
         private DanDanClient dc = new DanDanClient();
         private DispatcherTimer timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(0.1) };
         private double[] rowTimeLines = new double[0];
         private double rowHeight = 0;
         private double rowWidth = 0;
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            var uri = e.Parameter as string;
+            var file = await uri.AsFile();
+            OpenFile(file);
+        }
 
         private void MediaElement_CurrentStateChanged(object sender, RoutedEventArgs e)
         {
@@ -103,12 +111,12 @@ namespace BangumiSU.Pages
 
         private void Timer_Tick(object sender, object e)
         {
-            var p = mediaElement.Position;
-            if (p.TotalSeconds < lastTick)
+            var ts = mediaElement.Position.TotalSeconds - Model.Offset;
+            if (ts < lastTick)
             {
                 ResetAll();
             }
-            lastTick = p.TotalSeconds;
+            lastTick = ts;
             var index = Comments.FindIndex(c => c.Time >= lastTick - 0.5);
             commentIndex = Math.Max(commentIndex, index);
             for (; commentIndex < Comments.Count; commentIndex++)
@@ -126,12 +134,7 @@ namespace BangumiSU.Pages
             }
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenFile_Click(object sender, RoutedEventArgs e)
         {
             var fp = new FileOpenPicker();
             fp.FileTypeFilter.Add("*");
@@ -139,38 +142,54 @@ namespace BangumiSU.Pages
             var file = await fp.PickSingleFileAsync();
             if (file != null)
             {
-                Model.Message = "计算MD5";
-                var md5 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-                var buffer = new byte[bufferMD5].AsBuffer();
-                long fileLength = 0;
-                using (var s = await file.OpenReadAsync())
-                {
-                    fileLength = (long)s.Size;
-                    var length = (uint)Math.Min(bufferMD5, s.Size);
-                    await s.ReadAsync(buffer, length, Windows.Storage.Streams.InputStreamOptions.None);
-                }
-                var hash = md5.HashData(buffer);
-                var result = CryptographicBuffer.EncodeToHexString(hash);
-                Model.Message = "搜索匹配";
-                var matches = await dc.GetMatches(Path.GetFileNameWithoutExtension(file.Path), result, fileLength);
-                await GetComments(matches.FirstOrDefault());
-                mediaElement.SetPlaybackSource(MediaSource.CreateFromStorageFile(file));
+                OpenFile(file);
             }
         }
 
-        private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        private void OpenFile(StorageFile file)
         {
-          
+            mediaElement.SetPlaybackSource(MediaSource.CreateFromStorageFile(file));
+            SearchComments(file);
+        }
+
+        private async void SearchComments(StorageFile file)
+        {
+            Model.Message = "计算MD5";
+            var md5 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            var buffer = new byte[bufferMD5].AsBuffer();
+            long fileLength = 0;
+            using (var s = await file.OpenReadAsync())
+            {
+                fileLength = (long)s.Size;
+                var length = (uint)Math.Min(bufferMD5, s.Size);
+                await s.ReadAsync(buffer, length, Windows.Storage.Streams.InputStreamOptions.None);
+            }
+            var hash = md5.HashData(buffer);
+            var result = CryptographicBuffer.EncodeToHexString(hash);
+            Model.Message = "搜索匹配";
+            var matches = await dc.GetMatches(Path.GetFileNameWithoutExtension(file.Path), result, fileLength);
+            await GetComments(matches.FirstOrDefault());
         }
 
         private async Task GetComments(Match m)
         {
             if (m == null)
                 return;
-            Model.Message = "获取弹幕……";
-            Comments = (await dc.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
-            Model.Message = $"共 {Comments.Count} 条";
-            CalcCommentsPosition();
+            try
+            {
+                Model.Message = "获取弹幕……";
+                Comments = (await dc.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
+                CalcCommentsPosition();
+                Model.Message = $"共 {Comments.Count} 条";
+            }
+            catch
+            {
+                Model.Message = $"获取失败";
+            }
+            finally
+            {
+                mediaElement.Play();
+            }
         }
 
         private void CreateStoryboard(CommentBlock cb)
@@ -196,9 +215,9 @@ namespace BangumiSU.Pages
             var cb = new CommentBlock(c);
             cb.FontSize = fontsize;
             cb.MeasureSize();
-            cb.ShownTime = cb.Size.Width / (canvas.ActualWidth + cb.Size.Width) * seconds + cb.StartTime;
+            cb.ShownTime = (rowWidth * 0.25 + cb.Size.Width) / (canvas.ActualWidth + cb.Size.Width) * seconds + cb.StartTime;
 
-            var line = GetMinIndex(rowTimeLines);
+            var line = GetMinIndex(rowTimeLines, cb.StartTime);
             rowTimeLines[line] = cb.ShownTime;
             Canvas.SetLeft(cb, canvas.ActualWidth);
             Canvas.SetTop(cb, line * rowHeight);
@@ -230,12 +249,14 @@ namespace BangumiSU.Pages
             rowTimeLines = new double[rows];
         }
 
-        private int GetMinIndex(double[] array)
+        private int GetMinIndex(double[] array, double start)
         {
             var minIndex = 0;
             var currentMin = double.PositiveInfinity;
             for (int i = 0; i < array.Length; i++)
             {
+                if (array[i] < start)
+                    return i;
                 if (array[i] < currentMin)
                 {
                     currentMin = array[i];
@@ -253,6 +274,80 @@ namespace BangumiSU.Pages
             Storyboards.Clear();
             commentIndex = 0;
             rowTimeLines = new double[rowTimeLines.Length];
+        }
+
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            CalcCommentsPosition();
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            if (popup.IsOpen)
+            {
+                popup.IsOpen = false;
+                mediaElement.Play();
+            }
+            else
+            {
+                gridSetting.Height = canvas.ActualHeight;
+                popup.IsOpen = true;
+                mediaElement.Pause();
+            }
+        }
+
+        private void ApplaySettings_Click(object sender, RoutedEventArgs e)
+        {
+            ApplaySettings();
+        }
+
+        private void ApplaySettings()
+        {
+            fontsize = AppCache.AppSettings.VideoSettings.FontSize;
+            seconds = AppCache.AppSettings.VideoSettings.Duration;
+            var filter = AppCache.AppSettings.VideoSettings.Filter;
+            if (!filter.IsEmpty())
+            {
+                var words = filter.Split(' ');
+                Comments = Comments.Where(c => FilterComment(words, c)).ToList();
+            }
+            CalcCommentsPosition();
+        }
+
+        private bool FilterComment(string[] words, Comment c)
+        {
+            return !words.Any(w => c.Message.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        private void Add1_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset + 1;
+        }
+        private void Add5_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset + 5;
+        }
+        private void Subtract1_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset - 1;
+        }
+        private void Subtract5_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset - 5;
+        }
+        private void ResetOffset_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = 0;
+        }
+
+        public void Arrived()
+        {
+        }
+
+        public void Leaved()
+        {
+            ResetAll();
+            mediaElement.Stop();
         }
     }
 }

@@ -13,34 +13,39 @@
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid HorizontalAlignment="Stretch" Margin="20">
-            <StackPanel Width="400" HorizontalAlignment="Left">
-                <PasswordBox x:Name="pwbPassword" Header="用户GUID" HeaderTemplate="{StaticResource HeaderTemplate}"
+            <ScrollViewer Width="420" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Padding="0,0,20,0">
+                <ItemsControl>
+                    <PasswordBox x:Name="pwbPassword" Header="用户GUID" HeaderTemplate="{StaticResource HeaderTemplate}"
                              Margin="0,0,0,10"/>
-                <Grid Margin="0,0,0,10">
-                    <TextBox x:Name="txtFolder" Header="本地视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
-                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="VideoFolder_Click" Background="{x:Null}">
-                        <Button.Content>
-                            <SymbolIcon Symbol="NewFolder"/>
-                        </Button.Content>
-                    </Button>
-                </Grid>
+                    <Grid Margin="0,0,0,10">
+                        <TextBox x:Name="txtFolder" Header="本地视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
+                        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="VideoFolder_Click" Background="{x:Null}">
+                            <Button.Content>
+                                <SymbolIcon Symbol="NewFolder"/>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
 
-                <Grid Margin="0,0,0,10">
-                    <TextBox x:Name="txtFinishFolder" Header="完结视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
-                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="FinishFolder_Click" Background="{x:Null}">
-                        <Button.Content>
-                            <SymbolIcon Symbol="NewFolder"/>
-                        </Button.Content>
-                    </Button>
-                </Grid>
-                
-                <TextBox x:Name="txtFolderFormat" Header="视频路径格式" Margin="0,0,0,10"/>
-                <TextBox x:Name="txtExtensions" Header="视频格式" Margin="0,0,0,10"/>
-                <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="tsTheme_Toggled"/>
-                <Grid Margin="0,30,0,0">
-                    <Button Content="应用" Click="Apply_Click" HorizontalAlignment="Right"/>
-                </Grid>
-            </StackPanel>
+                    <Grid Margin="0,0,0,10">
+                        <TextBox x:Name="txtFinishFolder" Header="完结视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
+                        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="FinishFolder_Click" Background="{x:Null}">
+                            <Button.Content>
+                                <SymbolIcon Symbol="NewFolder"/>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+
+                    <TextBox x:Name="txtFolderFormat" Header="视频路径格式" Margin="0,0,0,10"/>
+                    <TextBox x:Name="txtExtensions" Header="视频格式" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                    <ToggleSwitch x:Name="tsUsePlayer" Header="内部播放器" OnContent="启用" OffContent="禁用"/>
+                    <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="tsTheme_Toggled"/>
+                    </StackPanel>
+                    <Grid Margin="0,30,0,0">
+                        <Button Content="应用" Click="Apply_Click" HorizontalAlignment="Right"/>
+                    </Grid>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>
