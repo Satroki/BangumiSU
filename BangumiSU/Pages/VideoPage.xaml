@@ -14,6 +14,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <CommandBar>
+            <CommandBar.Content>
+                <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
+            </CommandBar.Content>
             <AppBarButton Icon="Download" Click="button_Click"/>
             <AppBarButton Icon="OpenFile" Click="AppBarButton_Click"/>
             <AppBarButton Icon="Accept" Click="AppBarButton_Click_1"/>
@@ -21,7 +24,6 @@
         <MediaElement x:Name="mediaElement" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                       AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"/>
         <Canvas x:Name="canvas" Grid.Row="1">
-            <uc:CommentBlock Text="1234567测试" TextColor="White" FontSize="20" TextShadow="Black" Canvas.Top="150" Canvas.Left="150"/>
         </Canvas>
     </Grid>
 </Page>

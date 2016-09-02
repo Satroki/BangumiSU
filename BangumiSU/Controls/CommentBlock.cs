@@ -15,8 +15,7 @@ namespace BangumiSU.Controls
     public class CommentBlock : Control
     {
         private static readonly Size MaxSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
-        private static readonly TimeSpan OneSecond = TimeSpan.FromSeconds(1);
-        private static readonly TimeSpan FiveSeconds = TimeSpan.FromSeconds(5);
+        private static readonly TextBlock Block = new TextBlock();
 
         public string Text
         {
@@ -47,6 +46,10 @@ namespace BangumiSU.Controls
 
         public double StartTime { get; set; }
 
+        public double ShownTime { get; set; }
+
+        public int LineNum { get; set; }
+
         public CommentBlock()
         {
         }
@@ -58,7 +61,8 @@ namespace BangumiSU.Controls
             var g = (byte)(comment.Color >> 8 & 255);
             var b = (byte)(comment.Color & 255);
             TextColor = new SolidColorBrush(Color.FromArgb(255, r, g, b));
-            TextShadow = new SolidColorBrush(Color.FromArgb(255, (byte)(255 - r), (byte)(255 - g), (byte)(255 - b)));
+            //TextShadow = new SolidColorBrush(Color.FromArgb(255, (byte)(255 - r), (byte)(255 - g), (byte)(255 - b)));
+            TextShadow = new SolidColorBrush(Colors.Black);
             StartTime = comment.Time;
         }
 
@@ -73,15 +77,16 @@ namespace BangumiSU.Controls
             }
         }
 
-        public void MeasureSize()
+        public Size MeasureSize()
         {
-            Measure(MaxSize);
-            _Size = DesiredSize;
+            Block.Text = Text;
+            Block.FontSize = FontSize;
+            Block.Measure(MaxSize);
+            var size = Block.DesiredSize;
+            _Size = new Size(size.Width + Padding.Left + Padding.Right, size.Height + Padding.Top + Padding.Bottom);
+            return _Size;
         }
 
-        public void Add1s() => StartTime = StartTime + 1;
-        public void Add5s() => StartTime = StartTime + 5;
-        public void Subtract1s() => StartTime = StartTime - 1;
-        public void Subtract5s() => StartTime = StartTime - 5;
+        public void AddSeconds(int seconds) => StartTime = StartTime + seconds;
     }
 }

@@ -153,6 +153,7 @@
     <Compile Include="ViewModels\MusicViewModel.cs" />
     <Compile Include="ViewModels\TrackingViewModel.cs" />
     <Compile Include="ViewModels\UpdateViewModel.cs" />
+    <Compile Include="ViewModels\VideoViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>

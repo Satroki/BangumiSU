@@ -24,10 +24,11 @@
     </Style>
 
     <Style TargetType="uc:CommentBlock">
+        <Setter Property="Padding" Value="8,4"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="uc:CommentBlock">
-                    <Grid>
+                    <Grid Margin="{TemplateBinding Padding}">
                         <TextBlock Text="{TemplateBinding Text}" FontSize="{TemplateBinding FontSize}"
                                    Foreground="{TemplateBinding TextShadow}" Margin="1,1,0,0"/>
                         <TextBlock Text="{TemplateBinding Text}" FontSize="{TemplateBinding FontSize}"
