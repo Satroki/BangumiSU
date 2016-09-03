@@ -22,7 +22,7 @@ namespace BangumiSU.ViewModels
     {
         public TrackingsViewModel()
         {
-#if DEBUG
+#if DEBUG1
 #else
             if (Trackings.IsEmpty())
                 Refresh();
@@ -79,7 +79,7 @@ namespace BangumiSU.ViewModels
                 else
                 {
                     if (AppSettings.UseInternalPlayer)
-                        NavigationHelper.Navigate<VideoPage>(SelectedTracking.Uri);
+                        NavigationHelper.Navigate<VideoPage>(SelectedTracking);
                     else
                         await SelectedTracking.Uri.LaunchAsFile();
                 }

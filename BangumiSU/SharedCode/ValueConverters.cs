@@ -85,6 +85,20 @@ namespace BangumiSU.SharedCode
         }
     }
 
+    public class IntToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var i = (int)value;
+            return i > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return (Visibility)value == Visibility.Visible ? 1 : 0;
+        }
+    }
+
     public class StringFormatConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

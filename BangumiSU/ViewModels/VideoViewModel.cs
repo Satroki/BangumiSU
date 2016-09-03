@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BangumiSU.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,5 +30,19 @@ namespace BangumiSU.ViewModels
         }
 
         public int Offset { get; set; }
+
+        public Tracking Tracking { get; set; }
+
+        public List<Match> Matches { get; set; } = new List<Match>();
+
+        public bool? ShowNormal { get; set; } = true;
+
+        public bool? ShowTop { get; set; } = true;
+
+        public long FileSize { get; set; }
+
+        public string FileHash { get; set; }
+
+        public string FileName { get; set; }
     }
 }

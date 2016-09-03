@@ -48,15 +48,17 @@ namespace BangumiSU.Controls
 
         public double ShownTime { get; set; }
 
-        public int LineNum { get; set; }
+        public Mode Mode { get; set; }
 
         public CommentBlock()
         {
+            Padding = new Thickness(2, 0, 2, 0);
         }
 
-        public CommentBlock(Comment comment)
+        public CommentBlock(Comment comment) : this()
         {
             Text = comment.Message;
+            Mode = comment.Mode;
             var r = (byte)(comment.Color >> 16 & 255);
             var g = (byte)(comment.Color >> 8 & 255);
             var b = (byte)(comment.Color & 255);

@@ -34,6 +34,7 @@ namespace BangumiSU.ApiClients
             list.AddRange(dd);
 
             var related = await GetRelateds(episodeId);
+            IdList.Clear();
             using (var hc = CreateHC())
             {
                 foreach (var r in related)
@@ -57,7 +58,7 @@ namespace BangumiSU.ApiClients
             return list;
         }
 
-        private async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, Related r )
+        private async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, Related r)
         {
             var match = Regex.Match(r.Url, @"h(\d{1,10})");
             if (match.Success)
@@ -119,6 +120,7 @@ namespace BangumiSU.ApiClients
                 yield return new Comment
                 {
                     Time = double.Parse(p[0]),
+                    Mode = (Mode)int.Parse(p[1]),
                     Color = int.Parse(p[3]),
                     Message = m
                 };

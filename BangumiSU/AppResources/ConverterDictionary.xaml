@@ -10,4 +10,5 @@
     <sc:TrackingConverter x:Key="TrackingConverter"/>
     <sc:BangumiConverter x:Key="BangumiConverter"/>
     <sc:IntToBoolConverter x:Key="IntToBoolConverter"/>
+    <sc:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
 </ResourceDictionary>

@@ -53,18 +53,20 @@ namespace BangumiSU.Pages
         private uint bufferMD5 = 16 * 1024 * 1024;
         private double fontsize = AppCache.AppSettings.VideoSettings.FontSize;
         private double seconds = AppCache.AppSettings.VideoSettings.Duration;
+        private string filter = AppCache.AppSettings.VideoSettings.Filter;
         private double lastTick = 0;
         private DanDanClient dc = new DanDanClient();
         private DispatcherTimer timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(0.1) };
         private double[] rowTimeLines = new double[0];
+        private double[] rowTopTimeLines = new double[0];
         private double rowHeight = 0;
         private double rowWidth = 0;
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var uri = e.Parameter as string;
-            var file = await uri.AsFile();
+            Model.Tracking = e.Parameter as Tracking;
+            var file = await Model.Tracking.Uri.AsFile();
             OpenFile(file);
         }
 
@@ -124,6 +126,10 @@ namespace BangumiSU.Pages
                 var c = Comments[commentIndex];
                 if (c.Time < lastTick + 0.3)
                 {
+                    if ((c.Mode == Mode.Top && Model.ShowTop != true) || (c.Mode != Mode.Top && Model.ShowNormal != true))
+                        continue;
+                    if (!filter.IsEmpty() && System.Text.RegularExpressions.Regex.IsMatch(c.Message, filter, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                        continue;
                     var cb = CreateCommentBlock(c);
                     CreateStoryboard(cb);
                 }
@@ -166,9 +172,21 @@ namespace BangumiSU.Pages
             }
             var hash = md5.HashData(buffer);
             var result = CryptographicBuffer.EncodeToHexString(hash);
-            Model.Message = "搜索匹配";
-            var matches = await dc.GetMatches(Path.GetFileNameWithoutExtension(file.Path), result, fileLength);
-            await GetComments(matches.FirstOrDefault());
+
+            Model.FileHash = result;
+            Model.FileSize = fileLength;
+            Model.FileName = Path.GetFileNameWithoutExtension(file.Path);
+
+            await GetMatches();
+        }
+
+        private async Task GetMatches()
+        {
+            if (Model.FileHash.IsEmpty())
+                return;
+            Model.Message = "搜索匹配……";
+            Model.Matches = await dc.GetMatches(Model.FileName, Model.FileHash, Model.FileSize);
+            await GetComments(Model.Matches.FirstOrDefault());
         }
 
         private async Task GetComments(Match m)
@@ -196,8 +214,16 @@ namespace BangumiSU.Pages
         {
             var sb = new Storyboard();
             var ani = new DoubleAnimation();
-            ani.To = -cb.Size.Width;
-            ani.Duration = new Duration(TimeSpan.FromSeconds(seconds));
+            if (cb.Mode == Mode.Top)
+            {
+                ani.To = Canvas.GetLeft(cb);
+                ani.Duration = new Duration(TimeSpan.FromSeconds(seconds * 0.5));
+            }
+            else
+            {
+                ani.To = -cb.Size.Width;
+                ani.Duration = new Duration(TimeSpan.FromSeconds(seconds));
+            }
             Storyboard.SetTargetProperty(ani, "(Canvas.Left)");
             Storyboard.SetTarget(ani, cb);
             sb.Children.Add(ani);
@@ -215,12 +241,23 @@ namespace BangumiSU.Pages
             var cb = new CommentBlock(c);
             cb.FontSize = fontsize;
             cb.MeasureSize();
-            cb.ShownTime = (rowWidth * 0.25 + cb.Size.Width) / (canvas.ActualWidth + cb.Size.Width) * seconds + cb.StartTime;
-
-            var line = GetMinIndex(rowTimeLines, cb.StartTime);
-            rowTimeLines[line] = cb.ShownTime;
-            Canvas.SetLeft(cb, canvas.ActualWidth);
-            Canvas.SetTop(cb, line * rowHeight);
+            if (c.Mode == Mode.Top)
+            {
+                cb.ShownTime = seconds * 0.5 + cb.StartTime;
+                var line = GetMinIndex(rowTopTimeLines, cb.StartTime);
+                rowTopTimeLines[line] = cb.ShownTime;
+                Canvas.SetLeft(cb, canvas.ActualWidth / 2 - cb.Size.Width / 2);
+                Canvas.SetTop(cb, line * rowHeight);
+                Canvas.SetZIndex(cb, 1);
+            }
+            else
+            {
+                cb.ShownTime = (rowWidth * 0.25 + cb.Size.Width) / (canvas.ActualWidth + cb.Size.Width) * seconds + cb.StartTime;
+                var line = GetMinIndex(rowTimeLines, cb.StartTime);
+                rowTimeLines[line] = cb.ShownTime;
+                Canvas.SetLeft(cb, canvas.ActualWidth);
+                Canvas.SetTop(cb, line * rowHeight);
+            }
             return cb;
         }
 
@@ -247,6 +284,7 @@ namespace BangumiSU.Pages
             rowHeight = size.Height;
             rowWidth = canvas.ActualWidth;
             rowTimeLines = new double[rows];
+            rowTopTimeLines = new double[rows];
         }
 
         private int GetMinIndex(double[] array, double start)
@@ -274,6 +312,7 @@ namespace BangumiSU.Pages
             Storyboards.Clear();
             commentIndex = 0;
             rowTimeLines = new double[rowTimeLines.Length];
+            rowTopTimeLines = new double[rowTopTimeLines.Length];
         }
 
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -286,37 +325,26 @@ namespace BangumiSU.Pages
             if (popup.IsOpen)
             {
                 popup.IsOpen = false;
-                mediaElement.Play();
             }
             else
             {
                 gridSetting.Height = canvas.ActualHeight;
                 popup.IsOpen = true;
-                mediaElement.Pause();
             }
         }
 
         private void ApplaySettings_Click(object sender, RoutedEventArgs e)
         {
             ApplaySettings();
+            popup.IsOpen = false;
         }
 
         private void ApplaySettings()
         {
             fontsize = AppCache.AppSettings.VideoSettings.FontSize;
             seconds = AppCache.AppSettings.VideoSettings.Duration;
-            var filter = AppCache.AppSettings.VideoSettings.Filter;
-            if (!filter.IsEmpty())
-            {
-                var words = filter.Split(' ');
-                Comments = Comments.Where(c => FilterComment(words, c)).ToList();
-            }
+            filter = AppCache.AppSettings.VideoSettings.Filter;
             CalcCommentsPosition();
-        }
-
-        private bool FilterComment(string[] words, Comment c)
-        {
-            return !words.Any(w => c.Message.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
         private void Add1_Click(object sender, RoutedEventArgs e)
@@ -348,6 +376,12 @@ namespace BangumiSU.Pages
         {
             ResetAll();
             mediaElement.Stop();
+        }
+
+        private async void RefreshCommemts_Click(object sender, RoutedEventArgs e)
+        {
+            var m = (sender as Button).DataContext as Match;
+            await GetComments(m);
         }
     }
 }
