@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Newtonsoft.Json;
+using BangumiSU.SharedCode;
 using Regex = System.Text.RegularExpressions.Regex;
 
 namespace BangumiSU.ApiClients
@@ -22,6 +23,7 @@ namespace BangumiSU.ApiClients
         }
 
         private List<string> IdList = new List<string>();
+
         #region Comment
         //comment/{episodeId}?from={from}
         public async Task<List<Comment>> GetComments(int episodeId)
@@ -43,10 +45,10 @@ namespace BangumiSU.ApiClients
                     switch (r.Provider)
                     {
                         case "Tucao.cc":
-                            temp = await GetTucao(hc, r);
+                            temp = await GetTucao(hc, r.Url);
                             break;
                         case "BiliBili.com":
-                            temp = await GetBiliBili(hc, r);
+                            temp = await GetBiliBili(hc, r.Url);
                             break;
                         default:
                             continue;
@@ -58,13 +60,14 @@ namespace BangumiSU.ApiClients
             return list;
         }
 
-        private async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, Related r)
+        public async Task<IEnumerable<Comment>> GetTucao(HttpClient hc, string url)
         {
-            var match = Regex.Match(r.Url, @"h(\d{1,10})");
+            var match = Regex.Match(url, @"h(\d{1,10})");
             if (match.Success)
             {
                 if (IdExists(match.Value))
                     return null;
+                hc = hc ?? CreateHC();
 
                 var uri = $"http://www.tucao.tv/index.php?m=mukio&c=index&a=init&playerID=40-{match.Groups[1].Value}-1-0";
                 var str = await hc.GetStringAsync(uri);
@@ -73,25 +76,18 @@ namespace BangumiSU.ApiClients
             return null;
         }
 
-        private async Task<IEnumerable<Comment>> GetBiliBili(HttpClient hc, Related r)
+        public async Task<IEnumerable<Comment>> GetBiliBili(HttpClient hc, string url)
         {
-            var match = Regex.Match(r.Url, @"av(\d{1,10})");
+            var match = Regex.Match(url, @"av(\d{1,10})");
             if (match.Success)
             {
                 if (IdExists(match.Value))
                     return null;
+                hc = hc ?? CreateHC();
 
                 var uri = $"https://biliproxy.chinacloudsites.cn/av/{match.Groups[1].Value}/1?list=0";
-                var res = await hc.GetAsync(uri);
-                var str = "";
-                if (res.StatusCode == HttpStatusCode.OK)
-                    str = await res.Content.ReadAsStringAsync();
-                else if (res.StatusCode == HttpStatusCode.Redirect)
-                {
-                    var location = res.Headers.Location;
-                    res = await hc.GetAsync(location);
-                    str = await res.Content.ReadAsStringAsync();
-                }
+                var str = await hc.GetStringWithRedirect(uri);
+
                 dynamic json = JsonConvert.DeserializeObject(str);
                 string cid = json.cid;
 
@@ -99,6 +95,50 @@ namespace BangumiSU.ApiClients
                 str = await hc.GetStringAsync(uri);
                 return ParseXml(str);
             }
+            return null;
+        }
+
+        public async Task<List<SearchResult>> SearchComments(string key)
+        {
+            var hc = CreateHC();
+            var list = new List<SearchResult>();
+
+            var temp = await SearchBiliBili(key, hc);
+            if (temp != null)
+                list.AddRange(temp);
+
+            temp = await SearchTucao(key, hc);
+            if (temp != null)
+                list.AddRange(temp);
+
+            return list;
+        }
+
+        private async Task<List<SearchResult>> SearchBiliBili(string key, HttpClient hc)
+        {
+            var str = await hc.GetStringWithRedirect($"https://biliproxy.chinacloudsites.cn/search?keyword={key}");
+            var list = new List<SearchResult>();
+            dynamic json = JsonConvert.DeserializeObject(str);
+            foreach (dynamic item in json.result)
+            {
+                if (item.type.Value == "video")
+                {
+                    var r = new SearchResult()
+                    {
+                        Title = item.title.Value,
+                        Uri = item.arcurl.Value,
+                        Provider = "BiliBili.com",
+                        Count = (int)item.video_review.Value
+                    };
+                    list.Add(r);
+                }
+            }
+            return list;
+        }
+
+        private async Task<List<SearchResult>> SearchTucao(string key, HttpClient hc)
+        {
+            //http://api.bilibili.cn/search?type=json&appkey=c1b107428d337928&keyword=%E9%AD%94%E8%A3%85%E5%AD%A6%E5%9B%ADH%C3%97H%2001&sign=efbb08029f243b4f1a2a30025ef191aa
             return null;
         }
 

@@ -125,5 +125,18 @@ namespace BangumiSU.SharedCode
             var index = file.Name.LastIndexOf('.');
             return file.Name.Substring(index);
         }
+
+        public static async Task<string> GetStringWithRedirect(this HttpClient hc, string uri)
+        {
+            var res = await hc.GetAsync(uri);
+            while (res.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                if (res.StatusCode == System.Net.HttpStatusCode.Redirect)
+                    res = await hc.GetAsync(res.Headers.Location);
+                else
+                    return null;
+            }
+            return await res.Content.ReadAsStringAsync();
+        }
     }
 }

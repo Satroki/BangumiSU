@@ -322,21 +322,21 @@ namespace BangumiSU.Pages
 
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
-            if (popup.IsOpen)
+            if (popupSetting.IsOpen)
             {
-                popup.IsOpen = false;
+                popupSetting.IsOpen = false;
             }
             else
             {
                 gridSetting.Height = canvas.ActualHeight;
-                popup.IsOpen = true;
+                popupSetting.IsOpen = true;
             }
         }
 
         private void ApplaySettings_Click(object sender, RoutedEventArgs e)
         {
             ApplaySettings();
-            popup.IsOpen = false;
+            popupSetting.IsOpen = false;
         }
 
         private void ApplaySettings()
@@ -382,6 +382,52 @@ namespace BangumiSU.Pages
         {
             var m = (sender as Button).DataContext as Match;
             await GetComments(m);
+        }
+
+        private async void SearchAnime_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (!sender.Text.IsEmpty())
+                Model.SearchResult = await dc.SearchComments(sender.Text);
+        }
+
+        private void AddComments_Click(object sender, RoutedEventArgs e)
+        {
+            if (popupSearch.IsOpen)
+            {
+                popupSearch.IsOpen = false;
+            }
+            else
+            {
+                gridSearch.Height = canvas.ActualHeight;
+                if (Model.Tracking != null)
+                    searchBox.Text = $"{Model.Tracking.Bangumi.LocalName} {Model.Tracking.Count}";
+                popupSearch.IsOpen = true;
+            }
+        }
+
+        private async void AddSource_Click(object sender, RoutedEventArgs e)
+        {
+            var r = (sender as Button).DataContext as SearchResult;
+            IEnumerable<Comment> temp = null;
+            Model.Message = "添加弹幕……";
+            try
+            {
+                switch (r.Provider)
+                {
+                    case "Tucao.cc":
+                        temp = await dc.GetTucao(null, r.Uri);
+                        break;
+                    case "BiliBili.com":
+                        temp = await dc.GetBiliBili(null, r.Uri);
+                        break;
+                }
+                if (!temp.IsEmpty())
+                    Comments.AddRange(temp);
+            }
+            finally
+            {
+                Model.Message = $"共 {Comments.Count} 条";
+            }
         }
     }
 }

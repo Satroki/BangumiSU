@@ -22,6 +22,7 @@
                     <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
                 </StackPanel>
             </CommandBar.Content>
+            <AppBarButton Click="AddComments_Click" Icon="Add" Label="添加弹幕"/>
             <AppBarButton Click="{x:Bind GetMatches}" Icon="Refresh" Label="刷新弹幕"/>
             <AppBarButton Click="Subtract5_Click">
                 <FontIcon Glyph="-5s" FontFamily="Microsoft YaHei UI"/>
@@ -45,7 +46,7 @@
                       AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"/>
         <Canvas x:Name="canvas" Grid.Row="1">
         </Canvas>
-        <Popup x:Name="popup" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
+        <Popup x:Name="popupSetting" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
             <Grid x:Name="gridSetting" Width="400" Height="500" Background="#99000000">
                 <Grid.Transitions>
                     <TransitionCollection>
@@ -60,7 +61,7 @@
                         </StackPanel>
                         <Slider Value="{x:Bind Model.FontSize,Mode=TwoWay}" Minimum="16" Maximum="48" Header="字体大小"/>
                         <Slider Value="{x:Bind Model.Duration,Mode=TwoWay}" Minimum="4" Maximum="16" Header="滚动时间"/>
-                        <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="关键词过滤（空格分隔）"/>
+                        <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="正则过滤"/>
                         <Grid>
                             <Button Content="应用" HorizontalAlignment="Right" Margin="0,20" Click="ApplaySettings_Click"/>
                         </Grid>
@@ -85,6 +86,44 @@
                                 </Style>
                             </ItemsControl.ItemContainerStyle>
                         </ItemsControl>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Popup>
+
+        <Popup x:Name="popupSearch" Grid.Row="1" Width="400" HorizontalAlignment="Left" IsLightDismissEnabled="True">
+            <Grid x:Name="gridSearch" Width="400" Height="500" Background="#99000000">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Left"/>
+                    </TransitionCollection>
+                </Grid.Transitions>
+                <AutoSuggestBox x:Name="searchBox" Header="搜索" QueryIcon="Find" QuerySubmitted="SearchAnime_QuerySubmitted" Margin="30,30,30,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Margin="30" Grid.Row="1"
+                              BorderBrush="{ThemeResource TextControlBorderBrush}" BorderThickness="2">
+                    <ItemsControl ItemsSource="{x:Bind Model.SearchResult,Mode=OneWay}">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="m:SearchResult">
+                                <Grid Margin="4">
+                                    <StackPanel Margin="0,0,50,0">
+                                        <TextBlock Text="{x:Bind Title}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Bind InfoString}" Opacity="0.7"/>
+                                    </StackPanel>
+                                    <Button VerticalAlignment="Center" HorizontalAlignment="Right" Click="AddSource_Click">
+                                        <SymbolIcon Symbol="Accept"/>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
             </Grid>

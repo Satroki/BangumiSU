@@ -35,6 +35,8 @@ namespace BangumiSU.ViewModels
 
         public List<Match> Matches { get; set; } = new List<Match>();
 
+        public List<SearchResult> SearchResult { get; set; }
+
         public bool? ShowNormal { get; set; } = true;
 
         public bool? ShowTop { get; set; } = true;

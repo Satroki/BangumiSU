@@ -48,4 +48,13 @@ namespace BangumiSU.Models
         public int Id { get; set; }
         public string Title { get; set; }
     }
+
+    public class SearchResult : ModelBase
+    {
+        public string Title { get; set; }
+        public string Uri { get; set; }
+        public int Count { get; set; }
+        public string Provider { get; set; }
+        public string InfoString => $"{Provider} -- {Count}";
+    }
 }
