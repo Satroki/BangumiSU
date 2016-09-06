@@ -35,6 +35,12 @@ namespace BangumiSU.ViewModels
 
         public List<Match> Matches { get; set; } = new List<Match>();
 
+        public List<Anime> Animes { get; set; } = new List<Anime>();
+
+        public Episode SelectedEpisode { get; set; }
+
+        public bool IsApplyEnabled => SelectedEpisode != null;
+
         public List<SearchResult> SearchResult { get; set; }
 
         public bool? ShowNormal { get; set; } = true;

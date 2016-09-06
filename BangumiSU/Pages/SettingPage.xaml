@@ -15,7 +15,7 @@
         <Grid HorizontalAlignment="Stretch" Margin="20">
             <ScrollViewer Width="420" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Padding="0,0,20,0">
                 <ItemsControl>
-                    <PasswordBox x:Name="pwbPassword" Header="用户GUID" HeaderTemplate="{StaticResource HeaderTemplate}"
+                    <PasswordBox x:Name="pwbPassword" Header="用户KEY" HeaderTemplate="{StaticResource HeaderTemplate}"
                              Margin="0,0,0,10"/>
                     <Grid Margin="0,0,0,10">
                         <TextBox x:Name="txtFolder" Header="本地视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>

@@ -22,8 +22,9 @@
                     <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
                 </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Click="AddComments_Click" Icon="Add" Label="添加弹幕"/>
-            <AppBarButton Click="{x:Bind GetMatches}" Icon="Refresh" Label="刷新弹幕"/>
+            <AppBarButton Click="AddComments_Click" Icon="Add" Label="添加源"/>
+            <AppBarButton Click="SelectAnime_Click" Icon="Find" Label="搜索库"/>
+            <AppBarButton Click="{x:Bind GetMatches}" Icon="Refresh" Label="刷新"/>
             <AppBarButton Click="Subtract5_Click">
                 <FontIcon Glyph="-5s" FontFamily="Microsoft YaHei UI"/>
             </AppBarButton>
@@ -43,8 +44,9 @@
             <AppBarButton Icon="Setting" Label="弹幕设置" Click="Setting_Click"/>
         </CommandBar>
         <MediaElement x:Name="mediaElement" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                      AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"/>
-        <Canvas x:Name="canvas" Grid.Row="1">
+                      AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"
+                      DoubleTapped="MediaElement_DoubleTapped" CurrentStateChanged="MediaElement_CurrentStateChanged"/>
+        <Canvas x:Name="canvas" Grid.Row="1" SizeChanged="Canvas_SizeChanged">
         </Canvas>
         <Popup x:Name="popupSetting" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
             <Grid x:Name="gridSetting" Width="400" Height="500" Background="#99000000">
@@ -63,7 +65,7 @@
                         <Slider Value="{x:Bind Model.Duration,Mode=TwoWay}" Minimum="4" Maximum="16" Header="滚动时间"/>
                         <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="正则过滤"/>
                         <Grid>
-                            <Button Content="应用" HorizontalAlignment="Right" Margin="0,20" Click="ApplaySettings_Click"/>
+                            <Button Content="应用" HorizontalAlignment="Right" Margin="0,20" Click="ApplySettings_Click"/>
                         </Grid>
                         <Line X2="1" Stroke="{ThemeResource TextControlForeground}" Stretch="Fill"/>
                         <ItemsControl x:Name="icMatches" ItemsSource="{x:Bind Model.Matches,Mode=OneWay}">
@@ -90,8 +92,7 @@
                 </ScrollViewer>
             </Grid>
         </Popup>
-
-        <Popup x:Name="popupSearch" Grid.Row="1" Width="400" HorizontalAlignment="Left" IsLightDismissEnabled="True">
+        <Popup x:Name="popupSearch" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
             <Grid x:Name="gridSearch" Width="400" Height="500" Background="#99000000">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -99,11 +100,11 @@
                 </Grid.RowDefinitions>
                 <Grid.Transitions>
                     <TransitionCollection>
-                        <EdgeUIThemeTransition Edge="Left"/>
+                        <EdgeUIThemeTransition Edge="Right"/>
                     </TransitionCollection>
                 </Grid.Transitions>
-                <AutoSuggestBox x:Name="searchBox" Header="搜索" QueryIcon="Find" QuerySubmitted="SearchAnime_QuerySubmitted" Margin="30,30,30,0"/>
-                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Margin="30" Grid.Row="1"
+                <AutoSuggestBox x:Name="searchBox" Header="搜索（B站，C站）" QueryIcon="Find" QuerySubmitted="SearchAnime_QuerySubmitted" Margin="30,20,30,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Margin="30,10,30,30" Grid.Row="1"
                               BorderBrush="{ThemeResource TextControlBorderBrush}" BorderThickness="2">
                     <ItemsControl ItemsSource="{x:Bind Model.SearchResult,Mode=OneWay}">
                         <ItemsControl.ItemContainerStyle>
@@ -113,7 +114,7 @@
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="m:SearchResult">
-                                <Grid Margin="4">
+                                <Grid Margin="4,4,24,4">
                                     <StackPanel Margin="0,0,50,0">
                                         <TextBlock Text="{x:Bind Title}" TextWrapping="Wrap"/>
                                         <TextBlock Text="{x:Bind InfoString}" Opacity="0.7"/>
@@ -124,6 +125,66 @@
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Popup>
+        <Popup x:Name="popupSearchAnime" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
+            <Grid x:Name="gridSearchAnime" Width="400" Height="500" Background="#99000000">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Right"/>
+                    </TransitionCollection>
+                </Grid.Transitions>
+                <Grid Margin="30,20,30,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="txtTitle" Header="搜索弹幕库" PlaceholderText="标题" KeyDown="txtTitle_KeyDown"/>
+                    <TextBox x:Name="txtEp" PlaceholderText="话数" Grid.Column="1" KeyDown="txtTitle_KeyDown" Margin="4,0" VerticalAlignment="Bottom"/>
+                    <Button Grid.Column="2" VerticalAlignment="Bottom" Margin="4,0" Click="SearchAnime_Click">
+                        <SymbolIcon Symbol="Find"/>
+                    </Button>
+                    <Button Grid.Column="3" VerticalAlignment="Bottom" Click="ApplyAnime_Click" IsEnabled="{x:Bind Model.IsApplyEnabled,Mode=OneWay}">
+                        <SymbolIcon Symbol="Accept"/>
+                    </Button>
+                </Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Margin="30,10,30,30" Grid.Row="1"
+                              BorderBrush="{ThemeResource TextControlBorderBrush}" BorderThickness="2">
+                    <ItemsControl ItemsSource="{x:Bind Model.Animes,Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="m:Anime">
+                                <StackPanel>
+                                    <ToggleButton x:Name="openGroup" Style="{StaticResource ExpanderHeaderToggleButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{x:Bind Title}" />
+                                    <ItemsControl ItemsSource="{x:Bind Episodes}" Visibility="{Binding ElementName=openGroup, Path=IsChecked, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                  Margin="12,0,0,0">
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style TargetType="ContentPresenter">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="MinHeight" Value="32"/>
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="m:Episode">
+                                                <RadioButton GroupName="ep" Content="{x:Bind Title}" Checked="RadioButton_Checked"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
                     </ItemsControl>
                 </ScrollViewer>
             </Grid>

@@ -7,7 +7,27 @@ using Windows.UI;
 
 namespace BangumiSU.Models
 {
-    public enum Mode { Normal = 1, Bottom = 4, Top = 5 }
+    public enum Mode
+    {
+        Normal = 1,
+        Bottom = 4,
+        Top = 5
+    }
+
+    public enum AnimeType
+    {
+        TV动画 = 1,
+        TV动画特别放送 = 2,
+        OVA = 3,
+        剧场版 = 4,
+        音乐视频 = 5,
+        网络放送 = 6,
+        其他分类 = 7,
+        三次元电影 = 10,
+        三次元电视剧或国产动画 = 20,
+        未知 = 99
+    }
+
     public class Comment : ModelBase
     {
         public double Time { get; set; }
@@ -39,7 +59,7 @@ namespace BangumiSU.Models
     public class Anime : ModelBase
     {
         public string Title { get; set; }
-        public int Type { get; set; }
+        public AnimeType Type { get; set; }
         public List<Episode> Episodes { get; set; }
     }
 
