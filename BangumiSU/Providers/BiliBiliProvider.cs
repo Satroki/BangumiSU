@@ -27,10 +27,8 @@ namespace BangumiSU.Providers
                 var uri = $"https://biliproxy.chinacloudsites.cn/av/{match.Groups[1].Value}/1?list=0";
                 var str = await HttpClient.GetStringWithRedirect(uri);
 
-                dynamic json = JsonConvert.DeserializeObject(str);
-                string cid = json.cid;
-
-                uri = $"http://comment.bilibili.cn/{cid}.xml";
+                var m = JsonConvert.DeserializeObject<JsonModel>(str);
+                uri = $"http://comment.bilibili.cn/{m.Cid}.xml";
                 str = await HttpClient.GetStringAsync(uri);
                 return ParseXml(str).ToList();
             }
@@ -41,22 +39,36 @@ namespace BangumiSU.Providers
         {
             var str = await HttpClient.GetStringWithRedirect($"https://biliproxy.chinacloudsites.cn/search?keyword={key}");
             var list = new List<SearchResult>();
-            dynamic json = JsonConvert.DeserializeObject(str);
-            foreach (dynamic item in json.result)
+            var m = JsonConvert.DeserializeObject<JsonModel>(str);
+            foreach (var item in m.Result)
             {
-                if (item.type.Value == "video")
+                if (item.Type == "video")
                 {
                     var r = new SearchResult()
                     {
-                        Title = item.title.Value,
-                        Uri = item.arcurl.Value,
+                        Title = item.Title,
+                        Uri = item.Arcurl,
                         Provider = Name,
-                        Count = (int)item.video_review.Value
+                        Count = item.Video_Review
                     };
                     list.Add(r);
                 }
             }
             return list;
+        }
+
+        private class JsonModel
+        {
+            public string Cid { get; set; }
+            public List<ResultModel> Result { get; set; }
+        }
+
+        private class ResultModel
+        {
+            public string Type { get; set; }
+            public string Title { get; set; }
+            public string Arcurl { get; set; }
+            public int Video_Review { get; set; }
         }
     }
 }
