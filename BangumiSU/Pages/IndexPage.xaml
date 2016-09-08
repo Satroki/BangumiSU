@@ -19,7 +19,7 @@
                     </Grid.RowDefinitions>
                     <ListView x:Name="NavLinksList" Margin="0,0,0,0" SelectionMode="Single"
                               ItemsSource="{x:Bind Model.PageLinks,Mode=OneWay}" ItemClick="NavLinksList_ItemClick"
-                              IsItemClickEnabled="True"
+                              IsItemClickEnabled="True" ManipulationMode="None"
                               Grid.Row="0" VerticalAlignment="Stretch">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:PageLink">
