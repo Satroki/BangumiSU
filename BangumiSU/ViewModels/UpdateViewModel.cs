@@ -22,8 +22,11 @@ namespace BangumiSU.ViewModels
 
         #region 属性
         public List<RssItem> RssItems { get; set; } = new List<RssItem>();
+        public List<RssItem> RssItemsBak { get; set; } = new List<RssItem>();
 
         public ObservableCollection<RssItem> SelectedItems { get; set; } = new ObservableCollection<RssItem>();
+
+        public string KeyWords { get; set; }
         #endregion
 
         #region 命令
@@ -39,7 +42,7 @@ namespace BangumiSU.ViewModels
             var items = await rssClient.GetRss();
             //var items = await rssClient.GetRss(date);
             ScanItems(items);
-            RssItems = items;
+            RssItemsBak = RssItems = items;
         }
 
         public async Task Download()
@@ -68,9 +71,18 @@ namespace BangumiSU.ViewModels
             foreach (var item in RssItems)
                 item.IsSelected = false;
         }
-        #endregion
 
-        #region 方法
+        public void FilterItems()
+        {
+            RssItems = RssItemsBak.Where(r => r.Title.IndexOf(KeyWords, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+        }
+
+        public async void Search()
+        {
+            string url = AppSettings.DmhySearch + KeyWords?.Replace(' ', '+');
+            await url.LaunchAsUri();
+        }
+
         private void ScanItems(IEnumerable<RssItem> list)
         {
             var last = AppSettings.LastUpdate;

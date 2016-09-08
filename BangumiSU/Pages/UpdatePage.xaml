@@ -13,10 +13,23 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <c:GridViewEx x:Name="RssView" SelectionMode="Multiple" Margin="10"
+        <CommandBar Grid.Row="0">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Margin="8">
+                    <AutoSuggestBox QueryIcon="Find" QuerySubmitted="{x:Bind Model.Search}"
+                                    Text="{x:Bind Model.KeyWords,Mode=TwoWay}"
+                                    PlaceholderText="过滤 | 搜索"
+                                    TextChanged="{x:Bind Model.FilterItems}"
+                                    VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" />
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+
+        <c:GridViewEx x:Name="RssView" SelectionMode="Multiple" Margin="10" Grid.Row="1"
                       IsMultiSelectCheckBoxEnabled="True" ItemsSource="{x:Bind Model.RssItems,Mode=OneWay}"
                       SelectionChanged="GridView_SelectionChanged" 
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -39,7 +52,7 @@
                 </DataTemplate>
             </c:GridViewEx.ItemTemplate>
         </c:GridViewEx>
-        <CommandBar Grid.Row="1" VerticalAlignment="Bottom" VerticalContentAlignment="Top">
+        <CommandBar Grid.Row="2" VerticalAlignment="Bottom" VerticalContentAlignment="Top">
             <CommandBar.Content>
                 <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14,14,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </CommandBar.Content>
