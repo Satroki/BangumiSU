@@ -2,12 +2,17 @@
 using BangumiSU.Pages;
 using BangumiSU.Pages.Controls;
 using BangumiSU.SharedCode;
+using Newtonsoft.Json;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static BangumiSU.SharedCode.AppCache;
@@ -194,6 +199,32 @@ namespace BangumiSU.ViewModels
                     break;
             }
             Bangumis = list.ToObservableCollection();
+        }
+
+        public async void Export()
+        {
+            if (Bangumis.IsEmpty())
+                return;
+
+            var fsp = new FileSavePicker()
+            {
+                CommitButtonText = "保存",
+                DefaultFileExtension = ".json",
+                SuggestedFileName = "bangumis",
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            fsp.FileTypeChoices.Add("数据", new string[] { ".json" });
+            var f = await fsp.PickSaveFileAsync();
+            if (f != null)
+            {
+                using (var s = await f.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
+                {
+                    var json = JsonConvert.SerializeObject(Bangumis);
+                    var buffer = Encoding.UTF8.GetBytes(json).AsBuffer();
+                    await s.WriteAsync(buffer);
+                    await new MessageDialog("导出完成").ShowAsync();
+                }
+            }
         }
         #endregion
     }
