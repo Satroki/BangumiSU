@@ -14,6 +14,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System.Display;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -46,6 +47,8 @@ namespace BangumiSU.Pages
         private double[] rowTopTimeLines = new double[0];
         private double rowHeight = 0;
         private double rowWidth = 0;
+
+        private DisplayRequest dr = new DisplayRequest();
 
         public VideoPage()
         {
@@ -124,6 +127,7 @@ namespace BangumiSU.Pages
             switch (mediaElement.CurrentState)
             {
                 case MediaElementState.Closed:
+                    dr.RequestRelease();
                     break;
                 case MediaElementState.Opening:
                     break;
@@ -132,13 +136,16 @@ namespace BangumiSU.Pages
                 case MediaElementState.Playing:
                     timer.Start();
                     Storyboards.ForEach(sb => sb.Resume());
+                    dr.RequestActive();
                     break;
                 case MediaElementState.Paused:
                     timer.Stop();
                     Storyboards.ForEach(sb => sb.Pause());
+                    dr.RequestRelease();
                     break;
                 case MediaElementState.Stopped:
                     ResetAll();
+                    dr.RequestRelease();
                     break;
                 default:
                     break;
