@@ -38,6 +38,7 @@
             </AppBarButton>
             <AppBarButton Icon="MusicInfo" Label="音乐" Click="{x:Bind Model.MusicInfo}"/>
             <AppBarButton Icon="SaveLocal" Label="导出数据" Click="{x:Bind Model.Export}"/>
+            <AppBarButton Icon="Add" Label="添加" Click="{x:Bind Model.Add}"/>
         </CommandBar>
         <Grid Grid.Row="1" Margin="8">
             <Grid.Resources>

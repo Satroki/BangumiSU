@@ -8,7 +8,7 @@ namespace BangumiSU.ApiClients
 {
     public class TrackingClient : ApiClient
     {
-        public TrackingClient() : base("Tracking/") { }
+        public TrackingClient() : base(AppCache.ApiUrl + "Tracking") { }
 
         public async Task<Tracking> Create(Tracking t)
             => await Post(t);

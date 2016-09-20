@@ -8,7 +8,7 @@ namespace BangumiSU.ApiClients
 {
     public class BangumiClient : ApiClient
     {
-        public BangumiClient() : base("Bangumi/") { }
+        public BangumiClient() : base(AppCache.ApiUrl + "Bangumi") { }
 
         public async Task<Bangumi> CreateByCode(string bangumiCode)
             => await Post<Bangumi>(null, bangumiCode);

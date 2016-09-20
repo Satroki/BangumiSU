@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="ApiClients\ApiClient.cs" />
     <Compile Include="ApiClients\BangumiClient.cs" />
+    <Compile Include="ApiClients\BangumiInfoClient.cs" />
     <Compile Include="ApiClients\DanDanClient.cs" />
     <Compile Include="ApiClients\ImageClient.cs" />
     <Compile Include="ApiClients\RssClient.cs" />
@@ -111,12 +112,16 @@
     <Compile Include="Controls\CommentBlock.cs" />
     <Compile Include="Controls\GridViewEx.cs" />
     <Compile Include="Models\Bangumi.cs" />
+    <Compile Include="Models\BangumiInfo.cs" />
     <Compile Include="Models\DanDanModels.cs" />
     <Compile Include="Models\Error.cs" />
     <Compile Include="Models\Image.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\RssItem.cs" />
     <Compile Include="Models\Tracking.cs" />
+    <Compile Include="Pages\BangumiInfoPage.xaml.cs">
+      <DependentUpon>BangumiInfoPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Controls\BangumiDialog.xaml.cs">
       <DependentUpon>BangumiDialog.xaml</DependentUpon>
     </Compile>
@@ -155,6 +160,7 @@
     <Compile Include="SharedCode\Settings.cs" />
     <Compile Include="SharedCode\AppCache.cs" />
     <Compile Include="SharedCode\ValueConverters.cs" />
+    <Compile Include="ViewModels\BangumiInfoViewModel.cs" />
     <Compile Include="ViewModels\BangumiViewModel.cs" />
     <Compile Include="ViewModels\TrackingsViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModel.cs" />
@@ -196,6 +202,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Pages\BangumiInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Controls\BangumiDialog.xaml">
       <SubType>Designer</SubType>

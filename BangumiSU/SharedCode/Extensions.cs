@@ -20,6 +20,8 @@ namespace BangumiSU.SharedCode
     {
         public static bool IsEmpty(this string str) => string.IsNullOrEmpty(str);
 
+        public static bool ContainsIgnoreCase(this string str, string value) => str?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+
         public static bool IsEmpty<T>(this IEnumerable<T> list) => list?.Any() != true;
 
         public static bool Replace<T>(this IList<T> list, T oldItem, T newItem)

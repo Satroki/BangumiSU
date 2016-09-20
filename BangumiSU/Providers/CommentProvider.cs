@@ -14,17 +14,20 @@ namespace BangumiSU.Providers
 
         public CommentProvider()
         {
-            HttpClient = new HttpClient(new HttpClientHandler()
+            if (hc == null)
             {
-                AllowAutoRedirect = false,
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            });
-            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            HttpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+                hc = new HttpClient(new HttpClientHandler()
+                {
+                    AllowAutoRedirect = false,
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                });
+                hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            }
         }
 
-        public HttpClient HttpClient { get; }
+        protected static HttpClient hc { get; private set; }
 
         public string Name { get; protected set; }
 

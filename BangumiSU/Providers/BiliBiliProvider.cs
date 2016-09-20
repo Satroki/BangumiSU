@@ -25,11 +25,11 @@ namespace BangumiSU.Providers
                     return null;
 
                 var uri = $"https://biliproxy.chinacloudsites.cn/av/{match.Groups[1].Value}/1?list=0";
-                var str = await HttpClient.GetStringWithRedirect(uri);
+                var str = await hc.GetStringWithRedirect(uri);
 
                 var m = JsonConvert.DeserializeObject<JsonModel>(str);
                 uri = $"http://comment.bilibili.cn/{m.Cid}.xml";
-                str = await HttpClient.GetStringAsync(uri);
+                str = await hc.GetStringAsync(uri);
                 return ParseXml(str).ToList();
             }
             return null;
@@ -37,7 +37,7 @@ namespace BangumiSU.Providers
 
         public override async Task<List<SearchResult>> Search(string key)
         {
-            var str = await HttpClient.GetStringWithRedirect($"https://biliproxy.chinacloudsites.cn/search?keyword={key}");
+            var str = await hc.GetStringWithRedirect($"https://biliproxy.chinacloudsites.cn/search?keyword={key}");
             var list = new List<SearchResult>();
             var m = JsonConvert.DeserializeObject<JsonModel>(str);
             foreach (var item in m.Result)

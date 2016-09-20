@@ -226,6 +226,11 @@ namespace BangumiSU.ViewModels
                 }
             }
         }
+
+        public void Add()
+        {
+            NavigationHelper.Navigate<BangumiInfoPage>();
+        }
         #endregion
     }
 }

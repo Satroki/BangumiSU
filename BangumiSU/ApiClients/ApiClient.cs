@@ -3,6 +3,7 @@ using BangumiSU.SharedCode;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,58 +14,62 @@ namespace BangumiSU.ApiClients
 {
     public abstract class ApiClient
     {
-        private readonly HttpClient hc;
+        private static HttpClient hc;
+        protected virtual Uri BaseAddress { get; set; }
 
-        public ApiClient(string controller)
+        public ApiClient(string baseAddress)
         {
-            var url = AppCache.ApiUrl;
-            var user = AppCache.AppSettings.UserGUID;
-
-            hc = new HttpClient(new HttpClientHandler()
+            if (hc == null)
             {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            });
-            hc.Timeout = TimeSpan.FromSeconds(20);
-            hc.BaseAddress = new Uri(new Uri(url), controller);
-            hc.DefaultRequestHeaders.Add("user", user);
-            hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
-        }
-
-        protected void SetApiUrl(string url)
-        {
-            hc.BaseAddress = new Uri(url);
+                var user = AppCache.AppSettings.UserGUID;
+                hc = new HttpClient(new HttpClientHandler()
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                });
+                hc.Timeout = TimeSpan.FromSeconds(20);
+                hc.DefaultRequestHeaders.Add("user", user);
+                hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            }
+            if (baseAddress.Last() != '/')
+                baseAddress = baseAddress + "/";
+            BaseAddress = new Uri(baseAddress);
         }
 
         public async Task<T> Get<T>(string route = "")
         {
-            var resp = await hc.GetAsync(route);
+            var uri = new Uri(BaseAddress, route);
+            var resp = await hc.GetAsync(uri);
             return await ReadResponse<T>(resp);
         }
 
         public async Task<T> Post<T>(T value, string route = "")
         {
-            var resp = await hc.PostAsync(route, GetJsonContent(value));
+            var uri = new Uri(BaseAddress, route);
+            var resp = await hc.PostAsync(uri, GetJsonContent(value));
             return await ReadResponse<T>(resp);
         }
 
         public async Task<T> Put<T>(T value, string route = "")
         {
-            var resp = await hc.PutAsync(route, GetJsonContent(value));
+            var uri = new Uri(BaseAddress, route);
+            var resp = await hc.PutAsync(uri, GetJsonContent(value));
             return await ReadResponse<T>(resp);
         }
 
         public async Task<int> Delete(long id)
         {
-            var resp = await hc.DeleteAsync(id.ToString());
+            var uri = new Uri(BaseAddress, id.ToString());
+            var resp = await hc.DeleteAsync(uri);
             return await ReadResponse<int>(resp);
         }
 
         public async Task<T> Patch<T>(long id, JsonPatchDocument<T> model) where T : class
         {
+            var uri = new Uri(BaseAddress, id.ToString());
             var method = new HttpMethod("PATCH");
-            var request = new HttpRequestMessage(method, id.ToString());
+            var request = new HttpRequestMessage(method, uri);
             request.Content = GetJsonContent(model);
 
             var resp = await hc.SendAsync(request);

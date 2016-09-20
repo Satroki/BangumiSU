@@ -24,7 +24,7 @@ namespace BangumiSU.Providers
 
                 var hid = match.Groups[1].Value;
                 var uri = $"http://www.tucao.tv/index.php?m=mukio&c=index&a=init&playerID={hid.Substring(0, 2)}-{hid}-1-0";
-                var str = await HttpClient.GetStringAsync(uri);
+                var str = await hc.GetStringAsync(uri);
                 return ParseXml(str).ToList();
             }
             return null;
@@ -33,7 +33,7 @@ namespace BangumiSU.Providers
         public override async Task<List<SearchResult>> Search(string key)
         {
             var uri = $"http://www.tucao.tv/api_v2/search.php?type=xml&apikey=25tids8f1ew1821ed&page=1&pagesize=10&order=views&q={key}";
-            var str = await HttpClient.GetStringAsync(uri);
+            var str = await hc.GetStringAsync(uri);
             var xml = XDocument.Parse(str);
 
             var list = new List<SearchResult>();
