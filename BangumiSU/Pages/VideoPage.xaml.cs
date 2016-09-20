@@ -122,12 +122,21 @@ namespace BangumiSU.Pages
             SearchComments(file);
         }
 
+        private void RequestRelease()
+        {
+            try
+            {
+                dr.RequestRelease();
+            }
+            catch { }
+        }
+
         private void MediaElement_CurrentStateChanged(object sender, RoutedEventArgs e)
         {
             switch (mediaElement.CurrentState)
             {
                 case MediaElementState.Closed:
-                    dr.RequestRelease();
+                    RequestRelease();
                     break;
                 case MediaElementState.Opening:
                     break;
@@ -141,11 +150,11 @@ namespace BangumiSU.Pages
                 case MediaElementState.Paused:
                     timer.Stop();
                     Storyboards.ForEach(sb => sb.Pause());
-                    dr.RequestRelease();
+                    RequestRelease();
                     break;
                 case MediaElementState.Stopped:
                     ResetAll();
-                    dr.RequestRelease();
+                    RequestRelease();
                     break;
                 default:
                     break;
