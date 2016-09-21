@@ -62,11 +62,18 @@ namespace BangumiSU.Pages
         {
             base.OnNavigatedTo(e);
             Model.Tracking = e.Parameter as Tracking;
-            var folder = await Model.Tracking.Folder.AsFolder();
-            Model.Files = new List<StorageFile>(await folder.GetFilesAsync(CommonFileQuery.OrderByName));
-
             var file = await Model.Tracking.Uri.AsFile();
+            await GetFiles(file);
             OpenFile(file);
+        }
+
+        private async Task GetFiles(StorageFile file)
+        {
+            var folder = await file.GetParentAsync();
+            IEnumerable<StorageFile> files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
+            var exts = AppCache.AppSettings.Extensions;
+            files = files.Where(f => exts.ContainsIgnoreCase(f.GetExt()));
+            Model.Files = new List<StorageFile>(files);
         }
 
         private void Setting_Click(object sender, RoutedEventArgs e)
@@ -108,16 +115,16 @@ namespace BangumiSU.Pages
         #endregion
 
         #region 播放控制
-        private async void OpenFiles_Click(object sender, RoutedEventArgs e)
+        private async void PickFile_Click(object sender, RoutedEventArgs e)
         {
             var fp = new FileOpenPicker();
             fp.FileTypeFilter.Add("*");
             fp.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            var files = await fp.PickMultipleFilesAsync();
-            if (!files.IsEmpty())
+            var file = await fp.PickSingleFileAsync();
+            if (file != null)
             {
-                Model.Files = new List<StorageFile>(files);
-                OpenFile(Model.Files.First());
+                await GetFiles(file);
+                OpenFile(file);
             }
         }
 
@@ -201,7 +208,7 @@ namespace BangumiSU.Pages
             }
         }
 
-        private void OpenFile_Click(object sender, RoutedEventArgs e)
+        private void OpenListFile_Click(object sender, RoutedEventArgs e)
         {
             var file = ((Button)sender).DataContext as StorageFile;
             if (file != null)

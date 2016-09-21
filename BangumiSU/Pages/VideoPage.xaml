@@ -44,7 +44,7 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
 
-            <AppBarButton Icon="OpenFile" Label="打开文件" Click="OpenFiles_Click"/>
+            <AppBarButton Icon="OpenFile" Label="打开文件" Click="PickFile_Click"/>
             <AppBarButton Icon="List" Label="播放列表" Click="List_Click"/>
             <AppBarButton Icon="Setting" Label="弹幕设置" Click="Setting_Click"/>
         </CommandBar>
@@ -233,7 +233,7 @@
                                             <ToolTip Content="{x:Bind Name}"/>
                                         </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <Button Grid.Column="1" Click="OpenFile_Click" Margin="5,0,0,0">
+                                <Button Grid.Column="1" Click="OpenListFile_Click" Margin="5,0">
                                     <SymbolIcon Symbol="Play"/>
                                 </Button>
                             </Grid>
