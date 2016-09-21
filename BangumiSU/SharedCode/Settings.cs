@@ -51,5 +51,6 @@ namespace BangumiSU.SharedCode
         public double FontSize { get; set; } = 24;
         public double Duration { get; set; } = 8;
         public string Filter { get; set; } = "";
+        public bool ContinuousPlayback { get; set; } = true;
     }
 }

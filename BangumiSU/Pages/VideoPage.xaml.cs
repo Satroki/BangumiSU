@@ -14,6 +14,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Search;
 using Windows.System.Display;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -61,6 +62,9 @@ namespace BangumiSU.Pages
         {
             base.OnNavigatedTo(e);
             Model.Tracking = e.Parameter as Tracking;
+            var folder = await Model.Tracking.Folder.AsFolder();
+            Model.Files = new List<StorageFile>(await folder.GetFilesAsync(CommonFileQuery.OrderByName));
+
             var file = await Model.Tracking.Uri.AsFile();
             OpenFile(file);
         }
@@ -104,20 +108,23 @@ namespace BangumiSU.Pages
         #endregion
 
         #region 播放控制
-        private async void OpenFile_Click(object sender, RoutedEventArgs e)
+        private async void OpenFiles_Click(object sender, RoutedEventArgs e)
         {
             var fp = new FileOpenPicker();
             fp.FileTypeFilter.Add("*");
             fp.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            var file = await fp.PickSingleFileAsync();
-            if (file != null)
+            var files = await fp.PickMultipleFilesAsync();
+            if (!files.IsEmpty())
             {
-                OpenFile(file);
+                Model.Files = new List<StorageFile>(files);
+                OpenFile(Model.Files.First());
             }
         }
 
         private void OpenFile(StorageFile file)
         {
+            Model.CurrentFileName = file.Name;
+            playList.SelectedIndex = Model.Files.IndexOf(s => s.Name == Model.CurrentFileName);
             mediaElement.SetPlaybackSource(MediaSource.CreateFromStorageFile(file));
             SearchComments(file);
         }
@@ -180,6 +187,38 @@ namespace BangumiSU.Pages
         {
             CalcCommentsPosition();
         }
+
+        private void List_Click(object sender, RoutedEventArgs e)
+        {
+            if (popupList.IsOpen)
+            {
+                popupList.IsOpen = false;
+            }
+            else
+            {
+                gridList.Height = canvas.ActualHeight;
+                popupList.IsOpen = true;
+            }
+        }
+
+        private void OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            var file = ((Button)sender).DataContext as StorageFile;
+            if (file != null)
+            {
+                OpenFile(file);
+            }
+        }
+
+        private void PlayNext()
+        {
+            if (AppCache.AppSettings.VideoSettings.ContinuousPlayback)
+            {
+                var index = Model.Files.IndexOf(s => s.Name == Model.CurrentFileName);
+                if (index >= 0 && index < Model.Files.Count - 1)
+                    OpenFile(Model.Files[index + 1]);
+            }
+        }
         #endregion
 
         #region 弹幕载入
@@ -220,6 +259,7 @@ namespace BangumiSU.Pages
                 return;
             try
             {
+                ShowNotify(m);
                 Model.Message = "获取弹幕……";
                 Comments = (await DClient.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
                 CalcCommentsPosition();
@@ -233,6 +273,15 @@ namespace BangumiSU.Pages
             {
                 mediaElement.Play();
             }
+        }
+
+        private async void ShowNotify(Match m)
+        {
+            txtNotify1.Text = m.AnimeTitle;
+            txtNotify2.Text = m.EpisodeTitle;
+            popupNotify.IsOpen = true;
+            await Task.Delay(5000);
+            popupNotify.IsOpen = false;
         }
 
         private async void RefreshCommemts_Click(object sender, RoutedEventArgs e)
@@ -282,6 +331,14 @@ namespace BangumiSU.Pages
         {
             if (!txtTitle.Text.IsEmpty())
                 Model.Animes = await DClient.Search(txtTitle.Text, txtEp.Text);
+        }
+
+        private void TxtTitle_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                SearchAnime_Click(null, null);
+            }
         }
 
         private async void ApplyAnime_Click(object sender, RoutedEventArgs e)
@@ -485,13 +542,5 @@ namespace BangumiSU.Pages
             Model.Offset = 0;
         }
         #endregion
-
-        private void txtTitle_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                SearchAnime_Click(null, null);
-            }
-        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.ViewModels
@@ -42,6 +43,10 @@ namespace BangumiSU.ViewModels
         public bool IsApplyEnabled => SelectedEpisode != null;
 
         public List<SearchResult> SearchResult { get; set; }
+
+        public List<StorageFile> Files { get; set; } = new List<StorageFile>();
+
+        public string CurrentFileName { get; set; }
 
         public bool? ShowNormal { get; set; } = true;
 

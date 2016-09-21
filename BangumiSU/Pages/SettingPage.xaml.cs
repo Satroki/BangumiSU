@@ -47,6 +47,7 @@ namespace BangumiSU.Pages
             AppSettings.FolderFormat = txtFolderFormat.Text;
             AppSettings.Extensions = txtExtensions.Text;
             AppSettings.UseInternalPlayer = tsUsePlayer.IsOn;
+            AppSettings.VideoSettings.ContinuousPlayback = tsContinuousPlayback.IsOn;
             await Reload();
         }
 
@@ -59,6 +60,7 @@ namespace BangumiSU.Pages
             txtExtensions.Text = AppSettings.Extensions;
             tsTheme.IsOn = Theme == ElementTheme.Dark;
             tsUsePlayer.IsOn = AppSettings.UseInternalPlayer;
+            tsContinuousPlayback.IsOn = AppSettings.VideoSettings.ContinuousPlayback;
         }
 
         public void Leaved()

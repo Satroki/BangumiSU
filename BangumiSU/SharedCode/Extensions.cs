@@ -1,18 +1,15 @@
 ﻿using BangumiSU.Models;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
-using System;
-using Windows.System;
-using Windows.Storage;
-using Windows.UI.Xaml.Controls;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Linq.Expressions;
 
 namespace BangumiSU.SharedCode
 {
@@ -33,6 +30,21 @@ namespace BangumiSU.SharedCode
                 return true;
             }
             return false;
+        }
+
+        public static int IndexOf<T>(this IEnumerable<T> source, Predicate<T> pre)
+        {
+            var index = 0;
+            if (source == null)
+                return -1;
+            foreach (var item in source)
+            {
+                if (pre(item))
+                    return index;
+                else
+                    index++;
+            }
+            return -1;
         }
 
         public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)

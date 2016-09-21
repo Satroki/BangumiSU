@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:BangumiSU.Controls"
     xmlns:m="using:BangumiSU.Models"
+    xmlns:st="using:Windows.Storage"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -22,32 +23,54 @@
                     <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
                 </StackPanel>
             </CommandBar.Content>
+            <ToolTipService.ToolTip>
+                <ToolTip Content="{x:Bind Model.CurrentFileName,Mode=OneWay}"/>
+            </ToolTipService.ToolTip>
             <AppBarButton Click="AddComments_Click" Icon="Add" Label="添加源"/>
             <AppBarButton Click="SelectAnime_Click" Icon="Find" Label="搜索库"/>
             <AppBarButton Click="{x:Bind GetMatches}" Icon="Refresh" Label="刷新"/>
-            <AppBarButton Click="Subtract5_Click">
-                <FontIcon Glyph="-5s" FontFamily="Microsoft YaHei UI"/>
+            <AppBarButton Label="偏移调整">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE94D;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="减 5 秒" Click="Subtract5_Click"/>
+                        <MenuFlyoutItem Text="减 1 秒" Click="Subtract1_Click"/>
+                        <MenuFlyoutItem Text="重置" Click="ResetOffset_Click"/>
+                        <MenuFlyoutItem Text="加 1 秒" Click="Add1_Click"/>
+                        <MenuFlyoutItem Text="加 5 秒" Click="Add5_Click"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton Click="Subtract1_Click">
-                <FontIcon Glyph="-1s" FontFamily="Microsoft YaHei UI"/>
-            </AppBarButton>
-            <AppBarButton Label="重置偏移" Click="ResetOffset_Click">
-                <FontIcon Glyph="±0" FontFamily="Microsoft YaHei UI"/>
-            </AppBarButton>
-            <AppBarButton Click="Add1_Click">
-                <FontIcon Glyph="+1s" FontFamily="Microsoft YaHei UI"/>
-            </AppBarButton>
-            <AppBarButton Click="Add5_Click">
-                <FontIcon Glyph="+5s" FontFamily="Microsoft YaHei UI"/>
-            </AppBarButton>
-            <AppBarButton Icon="OpenFile" Label="打开文件" Click="OpenFile_Click"/>
+
+            <AppBarButton Icon="OpenFile" Label="打开文件" Click="OpenFiles_Click"/>
+            <AppBarButton Icon="List" Label="播放列表" Click="List_Click"/>
             <AppBarButton Icon="Setting" Label="弹幕设置" Click="Setting_Click"/>
         </CommandBar>
         <MediaElement x:Name="mediaElement" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                       AreTransportControlsEnabled="True" Grid.Row="1" AutoPlay="False"
-                      DoubleTapped="MediaElement_DoubleTapped" CurrentStateChanged="MediaElement_CurrentStateChanged"/>
+                      DoubleTapped="MediaElement_DoubleTapped"
+                      CurrentStateChanged="MediaElement_CurrentStateChanged"
+                      MediaEnded="{x:Bind PlayNext}"/>
         <Canvas x:Name="canvas" Grid.Row="1" SizeChanged="Canvas_SizeChanged">
         </Canvas>
+
+        <Popup x:Name="popupNotify" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Left"/>
+                    </TransitionCollection>
+                </Grid.Transitions>
+                <StackPanel Margin="5">
+                    <TextBlock x:Name="txtNotify0" Text="准备播放"/>
+                    <TextBlock x:Name="txtNotify1" Text=""/>
+                    <TextBlock x:Name="txtNotify2" Text="" Opacity="0.7"/>
+                </StackPanel>
+            </Grid>
+        </Popup>
+
         <Popup x:Name="popupSetting" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
             <Grid x:Name="gridSetting" Width="400" Height="500" Background="#99000000">
                 <Grid.Transitions>
@@ -147,8 +170,8 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="txtTitle" Header="搜索弹幕库" PlaceholderText="标题" KeyDown="txtTitle_KeyDown"/>
-                    <TextBox x:Name="txtEp" PlaceholderText="话数" Grid.Column="1" KeyDown="txtTitle_KeyDown" Margin="4,0" VerticalAlignment="Bottom"/>
+                    <TextBox x:Name="txtTitle" Header="搜索弹幕库" PlaceholderText="标题" KeyDown="TxtTitle_KeyDown"/>
+                    <TextBox x:Name="txtEp" PlaceholderText="话数" Grid.Column="1" KeyDown="TxtTitle_KeyDown" Margin="4,0" VerticalAlignment="Bottom"/>
                     <Button Grid.Column="2" VerticalAlignment="Bottom" Margin="4,0" Click="SearchAnime_Click">
                         <SymbolIcon Symbol="Find"/>
                     </Button>
@@ -187,6 +210,41 @@
                         </ItemsControl.ItemContainerStyle>
                     </ItemsControl>
                 </ScrollViewer>
+            </Grid>
+        </Popup>
+        <Popup x:Name="popupList" Grid.Row="1" Width="400" HorizontalAlignment="Right" IsLightDismissEnabled="True">
+            <Grid x:Name="gridList" Width="400" Height="500" Background="#99000000">
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Right"/>
+                    </TransitionCollection>
+                </Grid.Transitions>
+                <ListView x:Name="playList" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" Margin="20,10"
+                          ItemsSource="{x:Bind Model.Files,Mode=OneWay}" IsItemClickEnabled="False" SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="st:StorageFile">
+                            <Grid Height="48">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Bind Name}" MaxLines="2" Height="40" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{x:Bind Name}"/>
+                                        </ToolTipService.ToolTip>
+                                </TextBlock>
+                                <Button Grid.Column="1" Click="OpenFile_Click" Margin="5,0,0,0">
+                                    <SymbolIcon Symbol="Play"/>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </Grid>
         </Popup>
     </Grid>
