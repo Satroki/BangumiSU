@@ -108,6 +108,14 @@ namespace BangumiSU.SharedCode
             await Launcher.LaunchUriAsync(new Uri(uri));
         }
 
+        public static async Task LaunchToWeb(this string uri)
+        {
+            if (AppCache.AppSettings.UseInternalBrowser)
+                NavigationHelper.NavigateToWeb(uri);
+            else
+                await uri.LaunchAsUri();
+        }
+
         public static async Task<StorageFile> AsFile(this string path)
         {
             var folder = AppCache.VideoFolder;

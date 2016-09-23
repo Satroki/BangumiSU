@@ -37,6 +37,7 @@
 
                     <TextBox x:Name="txtFolderFormat" Header="视频路径格式" Margin="0,0,0,10"/>
                     <TextBox x:Name="txtExtensions" Header="视频格式" Margin="0,0,0,10"/>
+                    <ToggleSwitch x:Name="tsUseInternalBrowser" Header="内部浏览器" OnContent="启用" OffContent="禁用"/>
                     <StackPanel Orientation="Horizontal">
                         <ToggleSwitch x:Name="tsUsePlayer" Header="内部播放器" OnContent="启用" OffContent="禁用"/>
                         <ToggleSwitch x:Name="tsContinuousPlayback" Header="连续播放" OnContent="启用" OffContent="禁用"/>

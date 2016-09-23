@@ -75,13 +75,13 @@ namespace BangumiSU.ViewModels
         public async void VisitHP()
         {
             if (SelectedBangumi?.HomePage?.IsEmpty() == false)
-                await SelectedBangumi.HomePage.LaunchAsUri();
+                await SelectedBangumi.HomePage.LaunchToWeb();
         }
 
         public async void VisitBgm()
         {
             if (SelectedBangumi != null)
-                await ("http://bangumi.tv/subject/" + SelectedBangumi.BangumiCode).LaunchAsUri();
+                await ("http://bangumi.tv/subject/" + SelectedBangumi.BangumiCode).LaunchToWeb();
         }
 
         public async void EditBgm()
@@ -120,7 +120,7 @@ namespace BangumiSU.ViewModels
             if (SelectedTracking?.Folder?.IsEmpty() == false)
             {
                 if (SelectedTracking.Online)
-                    await SelectedTracking.Folder.LaunchAsUri();
+                    await SelectedTracking.Folder.LaunchToWeb();
                 else
                     await SelectedTracking.Folder.LaunchAsFolder();
             }

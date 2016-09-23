@@ -20,6 +20,8 @@ namespace BangumiSU.SharedCode
 
         public bool UseInternalPlayer { get; set; } = true;
 
+        public bool UseInternalBrowser { get; set; } = true;
+
         [JsonIgnore]
         public string DmhySearch { get; set; } = "https://share.dmhy.org/topics/list?keyword=";
 

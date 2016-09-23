@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Notifications;
+using BangumiSU.Pages;
 
 namespace BangumiSU.SharedCode
 {
@@ -32,6 +33,11 @@ namespace BangumiSU.SharedCode
         {
             var frame = Window.Current.Content as Frame;
             frame?.Navigate(typeof(T), para);
+        }
+
+        public static void NavigateToWeb(string uri)
+        {
+            Navigate<WebPage>(uri);
         }
     }
 

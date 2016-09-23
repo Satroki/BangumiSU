@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="BangumiSU.Pages.WebPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BangumiSU.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <CommandBar>
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal">
+                    <AutoSuggestBox x:Name="txtUri" QueryIcon="Forward" Width="450" Margin="8" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
+                    <ProgressRing x:Name="pr" IsActive="False" Width="32" Height="32" Foreground="{ThemeResource TextControlForeground}"/>
+                </StackPanel>
+            </CommandBar.Content>
+            <AppBarButton Icon="Back" IsEnabled="{x:Bind web.CanGoBack,Mode=OneWay}" Click="{x:Bind web.GoBack}"/>
+            <AppBarButton Icon="Forward" IsEnabled="{x:Bind web.CanGoForward,Mode=OneWay}" Click="{x:Bind web.GoForward}"/>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind web.Refresh}"/>
+            <AppBarButton Icon="Cancel" Label="停止" Click="{x:Bind web.Stop}"/>
+        </CommandBar>
+
+        <WebView x:Name="web" Grid.Row="1" DefaultBackgroundColor="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                 NewWindowRequested="web_NewWindowRequested"
+                 LoadCompleted="web_LoadCompleted"
+                 ContentLoading="web_ContentLoading"/>
+    </Grid>
+</Page>

@@ -75,7 +75,7 @@ namespace BangumiSU.ViewModels
             if (SelectedTracking != null)
             {
                 if (SelectedTracking.Online)
-                    await SelectedTracking.Folder.LaunchAsUri();
+                    await SelectedTracking.Folder.LaunchToWeb();
                 else
                 {
                     if (AppSettings.UseInternalPlayer)
@@ -91,7 +91,7 @@ namespace BangumiSU.ViewModels
             if (SelectedTracking != null)
             {
                 if (SelectedTracking.Online)
-                    await SelectedTracking.Folder.LaunchAsUri();
+                    await SelectedTracking.Folder.LaunchToWeb();
                 else
                     await SelectedTracking.Folder.LaunchAsFolder();
             }
@@ -125,7 +125,7 @@ namespace BangumiSU.ViewModels
         public async void Search(string key)
         {
             string url = AppSettings.DmhySearch + key?.Replace(' ', '+');
-            await url.LaunchAsUri();
+            await url.LaunchToWeb();
         }
 
         public async void VisitBgm()
@@ -133,14 +133,14 @@ namespace BangumiSU.ViewModels
             if (SelectedTracking?.Bangumi?.BangumiCode?.IsEmpty() == false)
             {
                 var uri = "http://bangumi.tv/subject/" + SelectedTracking.Bangumi.BangumiCode;
-                await uri.LaunchAsUri();
+                await uri.LaunchToWeb();
             }
         }
 
         public async void VisitHP()
         {
             if (SelectedTracking?.Bangumi?.HomePage?.IsEmpty() == false)
-                await SelectedTracking.Bangumi.HomePage.LaunchAsUri();
+                await SelectedTracking.Bangumi.HomePage.LaunchToWeb();
         }
 
         public async Task Finish()

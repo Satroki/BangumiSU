@@ -63,7 +63,7 @@ namespace BangumiSU.ViewModels
 
         public async void OpenLink(RssItem item)
         {
-            await item.Link.LaunchAsUri();
+            await item.Link.LaunchToWeb();
         }
 
         public void Clear()
@@ -80,7 +80,7 @@ namespace BangumiSU.ViewModels
         public async void Search()
         {
             string url = AppSettings.DmhySearch + KeyWords?.Replace(' ', '+');
-            await url.LaunchAsUri();
+            await url.LaunchToWeb();
         }
 
         private void ScanItems(IEnumerable<RssItem> list)
