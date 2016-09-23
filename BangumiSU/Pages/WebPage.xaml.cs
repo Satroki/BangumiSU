@@ -1,19 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 namespace BangumiSU.Pages
 {
@@ -27,12 +14,49 @@ namespace BangumiSU.Pages
             this.InitializeComponent();
         }
 
+        private static WebView web;
+        private long gbt;
+        private long gft;
+
+        private void AddWebView()
+        {
+            if (web == null)
+            {
+                web = new WebView(WebViewExecutionMode.SameThread);
+            }
+            web.NewWindowRequested += Web_NewWindowRequested;
+            web.LoadCompleted += Web_LoadCompleted;
+            web.ContentLoading += Web_ContentLoading;
+            gbt = web.RegisterPropertyChangedCallback(WebView.CanGoBackProperty,
+                (s, e) => btnGoBack.IsEnabled = web.CanGoBack);
+            gft = web.RegisterPropertyChangedCallback(WebView.CanGoForwardProperty,
+                (s, e) => btnGoForward.IsEnabled = web.CanGoForward);
+            webContent.Content = web;
+        }
+
+        private void RemoveWebView()
+        {
+            web.NewWindowRequested -= Web_NewWindowRequested;
+            web.LoadCompleted -= Web_LoadCompleted;
+            web.ContentLoading -= Web_ContentLoading;
+            web.UnregisterPropertyChangedCallback(WebView.CanGoBackProperty, gbt);
+            web.UnregisterPropertyChangedCallback(WebView.CanGoForwardProperty, gft);
+            webContent.Content = null;
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            AddWebView();
             var uri = e.Parameter.ToString();
             txtUri.Text = uri;
             WebNavigate(uri);
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            RemoveWebView();
+            base.OnNavigatedFrom(e);
         }
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -40,8 +64,9 @@ namespace BangumiSU.Pages
             WebNavigate(args.QueryText);
         }
 
-        private void web_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
+        private void Web_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
         {
+            txtUri.Text = args.Uri.AbsoluteUri;
             web.Navigate(args.Uri);
             args.Handled = true;
         }
@@ -54,14 +79,19 @@ namespace BangumiSU.Pages
             web.Navigate(new Uri(uri));
         }
 
-        private void web_LoadCompleted(object sender, NavigationEventArgs e)
+        private void Web_LoadCompleted(object sender, NavigationEventArgs e)
         {
             pr.IsActive = false;
         }
 
-        private void web_ContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
+        private void Web_ContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
         {
             pr.IsActive = true;
         }
+
+        public void Stop() => web.Stop();
+        public void Refresh() => web.Refresh();
+        public void GoBack() => web.GoBack();
+        public void GoForward() => web.GoForward();
     }
 }

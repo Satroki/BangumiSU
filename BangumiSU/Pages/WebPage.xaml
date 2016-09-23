@@ -19,15 +19,14 @@
                     <ProgressRing x:Name="pr" IsActive="False" Width="32" Height="32" Foreground="{ThemeResource TextControlForeground}"/>
                 </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Icon="Back" IsEnabled="{x:Bind web.CanGoBack,Mode=OneWay}" Click="{x:Bind web.GoBack}"/>
-            <AppBarButton Icon="Forward" IsEnabled="{x:Bind web.CanGoForward,Mode=OneWay}" Click="{x:Bind web.GoForward}"/>
-            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind web.Refresh}"/>
-            <AppBarButton Icon="Cancel" Label="停止" Click="{x:Bind web.Stop}"/>
+            <AppBarButton Icon="Back" Label="后退" IsEnabled="False" x:Name="btnGoBack" Click="{x:Bind GoBack}"/>
+            <AppBarButton Icon="Forward" Label="前进" IsEnabled="False" x:Name="btnGoForward" Click="{x:Bind GoForward}"/>
+            <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Refresh}"/>
+            <AppBarButton Icon="Cancel" Label="停止" Click="{x:Bind Stop}"/>
         </CommandBar>
 
-        <WebView x:Name="web" Grid.Row="1" DefaultBackgroundColor="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                 NewWindowRequested="web_NewWindowRequested"
-                 LoadCompleted="web_LoadCompleted"
-                 ContentLoading="web_ContentLoading"/>
+        <ContentPresenter Grid.Row="1" x:Name="webContent">
+            
+        </ContentPresenter>
     </Grid>
 </Page>
