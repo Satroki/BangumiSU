@@ -57,5 +57,7 @@ namespace BangumiSU.ViewModels
         public string FileHash { get; set; }
 
         public string FileName { get; set; }
+
+        public string Progress { get; set; }
     }
 }

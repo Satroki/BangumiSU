@@ -408,6 +408,7 @@ namespace BangumiSU.Pages
 
         private void Timer_Tick(object sender, object e)
         {
+            Model.Progress = (mediaElement.Position.TotalSeconds / mediaElement.NaturalDuration.TimeSpan.TotalSeconds).ToString("0%");
             var ts = mediaElement.Position.TotalSeconds - Model.Offset;
             if (ts < lastTick)
             {

@@ -18,7 +18,8 @@
         <CommandBar>
             <CommandBar.Content>
                 <StackPanel Margin="14" Orientation="Horizontal">
-                    <TextBlock Text="偏移："/>
+                    <TextBlock Text="{x:Bind Model.Progress,Mode=OneWay}"/>
+                    <TextBlock Text="偏移：" Margin="10,0,0,0"/>
                     <TextBlock Text="{x:Bind Model.Offset,Mode=OneWay}" Margin="0,0,20,0"/>
                     <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}"/>
                 </StackPanel>
