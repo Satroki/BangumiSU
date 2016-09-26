@@ -142,10 +142,20 @@ namespace BangumiSU.SharedCode
         {
             var tpl = ToastTemplateType.ToastText02;
             var xml = ToastNotificationManager.GetTemplateContent(tpl);
-            xml.GetElementById("1").NodeValue = msg;
+            var txt = xml.GetElementsByTagName("text");
+            txt[0].AppendChild(xml.CreateTextNode(msg));
 
             var no = new ToastNotification(xml);
             ToastNotificationManager.CreateToastNotifier().Show(no);
         }
+        /*
+         <toast>
+    <visual>
+        <binding template="ToastText02">
+            <text id="1">headlineText</text>
+            <text id="2">bodyText</text>
+        </binding>  
+    </visual>
+</toast>*/
     }
 }
