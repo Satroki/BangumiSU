@@ -23,7 +23,7 @@
             <TextBox Header="原名" Text="{x:Bind Model.Bangumi.Name,Mode=OneWay}"
                      ToolTipService.ToolTip="{x:Bind Model.Bangumi.Name,Mode=OneWay}" IsReadOnly="True"/>
             <TextBox Header="译名" Text="{x:Bind Model.Bangumi.LocalName,Mode=TwoWay}"/>
-            <TextBox Header="版权" Text="{x:Bind Model.Bangumi.OnlineLink,Mode=TwoWay}" Height="80" TextWrapping="Wrap" />
+            <TextBox Header="链接" Text="{x:Bind Model.Bangumi.OnlineLink,Mode=TwoWay}" Height="80" TextWrapping="Wrap" />
             <Grid Margin="0,2">
                 <CheckBox Content="完结" HorizontalAlignment="Left" IsChecked="{x:Bind Model.Bangumi.Finish,Converter={StaticResource NullableBoolConverter}, Mode=TwoWay}"/>
                 <ProgressRing HorizontalAlignment="Center" IsActive="{x:Bind Model.OnLoading,Mode=OneWay}"/>

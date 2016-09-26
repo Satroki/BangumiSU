@@ -212,7 +212,7 @@ namespace BangumiSU.ViewModels
 
                 SetRssPattern(list);
 
-                var online = BangumiCache.SelectMany(b => b.Trackings).Where(a => !a.Finish && a.Online).ToList();
+                var online = BangumiCache.SelectMany(b => b.Trackings).Where(t => !t.Finish && t.Online).ToList();
                 foreach (var item in online)
                 {
                     var t = item;
@@ -312,7 +312,12 @@ namespace BangumiSU.ViewModels
 
         private Task<Tracking[]> onlineBgms()
         {
-            var bgms = BangumiCache.Where(b => !b.Finish && b.Trackings.Count == 0 && !string.IsNullOrEmpty(b.OnlineLink));
+            var bgms = BangumiCache.Where(b =>
+            b.Trackings.Count == 0 &&
+            !b.Finish &&
+            b.OnAir <= DateTimeOffset.Now &&
+            !b.OnlineLink.IsEmpty());
+
             return Task.WhenAll(bgms.Select(b =>
             {
                 var t = new Tracking()

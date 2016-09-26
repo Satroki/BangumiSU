@@ -80,10 +80,5 @@ namespace BangumiSU.Pages
             await ImageHelper.DeleteImages();
             await this.Message("已清空");
         }
-
-        private void Msg_Click(object sender, RoutedEventArgs e)
-        {
-            ToastHelper.Toast("hello");
-        }
     }
 }
