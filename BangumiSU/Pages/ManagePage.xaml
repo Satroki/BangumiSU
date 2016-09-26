@@ -55,7 +55,7 @@
                       AllowDrop="True" DragOver="ListView_DragOver" Drop="ListView_Drop">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="m:Bangumi">
-                        <Grid Margin="5">
+                        <Grid Margin="5" DoubleTapped="Bangumi_DoubleTapped" Background="#01FFFFFF">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{x:Bind Schedule,Mode=OneWay}"/>
                                 <StackPanel Margin="10,0">

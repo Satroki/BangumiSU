@@ -68,5 +68,10 @@ namespace BangumiSU.Pages
         {
             Model.OpenTracking();
         }
+
+        private void Bangumi_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            Model.EditBgm();
+        }
     }
 }

@@ -127,6 +127,13 @@ namespace BangumiSU.SharedCode
                 await s.FlushAsync();
             }
         }
+
+        public static async Task DeleteImages()
+        {
+            var folder = await ApplicationData.Current.LocalCacheFolder.TryGetItemAsync("Covers") as StorageFolder;
+            if (folder != null)
+                await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+        }
     }
 
     public static class ToastHelper

@@ -20,7 +20,7 @@ using static BangumiSU.SharedCode.AppCache;
 
 namespace BangumiSU.Pages
 {
-    public sealed partial class SettingPage : Page,IContentPage
+    public sealed partial class SettingPage : Page, IContentPage
     {
         public SettingPage()
         {
@@ -73,6 +73,12 @@ namespace BangumiSU.Pages
         {
             Theme = tsTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
             (Window.Current.Content as Frame).RequestedTheme = Theme;
+        }
+
+        private async void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            await ImageHelper.DeleteImages();
+            await this.Message("已清空");
         }
     }
 }
