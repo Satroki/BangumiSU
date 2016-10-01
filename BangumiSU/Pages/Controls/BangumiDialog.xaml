@@ -9,7 +9,7 @@
     Title="{x:Bind Model.Bangumi.BangumiCode,Converter={StaticResource StringFormatConverter},ConverterParameter='编辑 - {0}'}"
     PrimaryButtonText="保存" SecondaryButtonText="取消"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick" HorizontalAlignment="Right">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick" HorizontalAlignment="Right" AllowDrop="True" DragOver="ContentDialog_DragOver" Drop="ContentDialog_Drop">
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBox">
