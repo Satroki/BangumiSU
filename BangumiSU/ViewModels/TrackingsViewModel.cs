@@ -250,6 +250,8 @@ namespace BangumiSU.ViewModels
                     var idName = $"{dir.Name}-{name[1]}";
                     var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
                         ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
+
+                    var createFlag = false;
                     if (t == null)
                     {
                         t = new Tracking()
@@ -263,6 +265,7 @@ namespace BangumiSU.ViewModels
                         if (result != ContentDialogResult.Primary)
                             continue;
                         t = dlg.Model.Tracking;
+                        createFlag = true;
                     }
                     if (t.Finish)
                         continue;
@@ -303,7 +306,9 @@ namespace BangumiSU.ViewModels
                             }
                         }
                     }
-                    if (updateFlag)
+                    if (createFlag)
+                        t = await TClient.Create(t);
+                    else if (updateFlag)
                         t = await TClient.Update(t);
                     list.Add(t);
                 }
