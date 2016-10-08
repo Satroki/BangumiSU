@@ -131,6 +131,9 @@ namespace BangumiSU.Models
                     SubGroup = "爱奇艺";
                 else if (url.Contains("letv"))
                     SubGroup = "乐视";
+                else if (url.Contains("pptv"))
+                    SubGroup = "PPTV";
+
             }
         }
     }
