@@ -36,7 +36,10 @@ namespace BangumiSU.ApiClients
             CommentProvider.IdList.Clear();
             foreach (var r in related)
             {
-                IEnumerable<Comment> temp = await Providers.FirstOrDefault(p => p.Name == r.Provider)?.GetComments(r.Url);
+                var pr = Providers.FirstOrDefault(p => p.Name == r.Provider);
+                if (pr == null)
+                    continue;
+                IEnumerable<Comment> temp = await pr.GetComments(r.Url);
                 if (!temp.IsEmpty())
                     list.AddRange(temp);
             }
