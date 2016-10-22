@@ -272,7 +272,7 @@ namespace BangumiSU.ViewModels
                     t.Folder = bgmDir.Path;
 
                     t.Count = -1;
-                    var files = (await bgmDir.GetFilesAsync()).OrderBy(f => f.DateCreated);
+                    var files = (await bgmDir.GetFilesAsync()).OrderByDescending(f => f.DateCreated);
                     double temp = 0;
                     var updateFlag = false;
                     foreach (var file in files)

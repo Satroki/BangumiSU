@@ -11,7 +11,7 @@ namespace BangumiSU.Pages.Controls
         {
             InitializeComponent();
             Model = new TrackingViewModel(t, edit);
-            Title = $"{Model.Title}:{t.FileIdName.Substring(t.FileIdName.IndexOf('-') + 1)}";
+            Title = $"{Model.Title}:{t.FileIdName?.Substring(t.FileIdName.IndexOf('-') + 1)}";
             RequestedTheme = AppCache.Theme;
         }
 
