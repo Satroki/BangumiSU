@@ -40,8 +40,9 @@ namespace BangumiSU.ApiClients
 
         protected override object AfterDeserialize(object o)
         {
-            return (object)(o as Bangumi)?.InitTrackings()
-                ?? (o as List<Bangumi>)?.InitTrackings();
+            return (o as Bangumi)?.InitTrackings()
+                ?? (o as List<Bangumi>)?.InitTrackings()
+                ?? o;
         }
 
         protected override object BeforeSerialize(object o)

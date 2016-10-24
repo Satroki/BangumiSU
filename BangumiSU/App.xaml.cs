@@ -1,23 +1,12 @@
 ﻿using BangumiSU.SharedCode;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace BangumiSU
@@ -41,13 +30,13 @@ namespace BangumiSU
 
         private async void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            await new MessageDialog(e.Exception.Message, "错误").ShowAsync();
+            await new MessageDialog(e.Exception.ToString(), "错误").ShowAsync();
             e.SetObserved();
         }
 
         private async void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            await new MessageDialog(e.Message, "错误").ShowAsync();
+            await new MessageDialog(e.ToString(), "错误").ShowAsync();
             e.Handled = true;
         }
 
@@ -61,7 +50,7 @@ namespace BangumiSU
         private async void SynchronizationContext_UnhandledException(object sender, SharedCode.UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            await new MessageDialog(e.Exception.Message, "错误").ShowAsync();
+            await new MessageDialog(e.Exception.ToString(), "错误").ShowAsync();
         }
 
         /// <summary>
