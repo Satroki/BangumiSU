@@ -70,6 +70,8 @@ namespace BangumiSU.Pages
         private async Task GetFiles(StorageFile file)
         {
             var folder = await file.GetParentAsync();
+            if (folder == null)
+                return;
             IEnumerable<StorageFile> files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
             var exts = AppCache.AppSettings.Extensions;
             files = files.Where(f => exts.ContainsIgnoreCase(f.GetExt()));
