@@ -25,7 +25,7 @@ namespace BangumiSU.Providers
                 var hid = match.Groups[1].Value;
                 var uri = $"http://www.tucao.tv/index.php?m=mukio&c=index&a=init&playerID={hid.Substring(0, 2)}-{hid}-1-0";
                 var str = await hc.GetStringAsync(uri);
-                return ParseXml(str).ToList();
+                return ParseXml(str).OrderBy(c => c.Time).ToList();
             }
             return null;
         }

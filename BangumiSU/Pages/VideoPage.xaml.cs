@@ -272,7 +272,7 @@ namespace BangumiSU.Pages
                 {
                     ShowNotify(m);
                     Model.Message = "获取弹幕……";
-                    Comments = (await DClient.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
+                    Comments = await DClient.GetAllComments(m.EpisodeId);
                     CalcCommentsPosition();
                     Model.Message = $"共 {Comments.Count} 条";
                 }

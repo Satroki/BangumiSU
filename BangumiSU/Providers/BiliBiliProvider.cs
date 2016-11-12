@@ -3,7 +3,6 @@ using BangumiSU.SharedCode;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace BangumiSU.Providers
                 var m = JsonConvert.DeserializeObject<JsonModel>(str);
                 uri = $"http://comment.bilibili.cn/{m.Cid}.xml";
                 str = await hc.GetStringAsync(uri);
-                return ParseXml(str).ToList();
+                return ParseXml(str).OrderBy(c => c.Time).ToList();
             }
             return null;
         }

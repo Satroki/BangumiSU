@@ -43,7 +43,7 @@ namespace BangumiSU.ApiClients
                 if (!temp.IsEmpty())
                     list.AddRange(temp);
             }
-            return list;
+            return list.OrderBy(c => c.Time).ToList();
         }
 
         public async Task<List<SearchResult>> SearchAnime(string key)
