@@ -257,7 +257,7 @@ namespace BangumiSU.Pages
                 return;
             Model.Message = "搜索匹配……";
             Model.Matches = await DClient.GetMatches(Model.FileName, Model.FileHash, Model.FileSize);
-            await GetComments(Model.Matches.FirstOrDefault());
+            await GetComments(Model.Matches?.FirstOrDefault());
         }
 
         private async Task GetComments(Match m)
