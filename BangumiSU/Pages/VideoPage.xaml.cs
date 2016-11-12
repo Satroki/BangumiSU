@@ -262,15 +262,20 @@ namespace BangumiSU.Pages
 
         private async Task GetComments(Match m)
         {
-            if (m == null)
-                return;
             try
             {
-                ShowNotify(m);
-                Model.Message = "获取弹幕……";
-                Comments = (await DClient.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
-                CalcCommentsPosition();
-                Model.Message = $"共 {Comments.Count} 条";
+                if (m == null)
+                {
+                    Model.Message = "没有匹配";
+                }
+                else
+                {
+                    ShowNotify(m);
+                    Model.Message = "获取弹幕……";
+                    Comments = (await DClient.GetAllComments(m.EpisodeId)).OrderBy(c => c.Time).ToList();
+                    CalcCommentsPosition();
+                    Model.Message = $"共 {Comments.Count} 条";
+                }
             }
             catch
             {
