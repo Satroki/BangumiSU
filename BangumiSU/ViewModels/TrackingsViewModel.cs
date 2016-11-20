@@ -353,12 +353,14 @@ namespace BangumiSU.ViewModels
             return true;
         }
 
-        private void adjustTime(Tracking a)
+        private async void adjustTime(Tracking a)
         {
             var count = (int)((DateTimeOffset.Now - a.Bangumi.OnAir).TotalDays / 7);
             if (a.Count > count + 1)
                 a.Count = count + 1;
             a.LastUpdate = a.Bangumi.OnAir.AddDays(7 * count);
+            var na = await TClient.Update(a);
+            Trackings.Replace(a, na);
         }
 
         private async Task sortFolder(IEnumerable<StorageFolder> dirs)
