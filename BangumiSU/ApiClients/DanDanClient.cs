@@ -4,6 +4,7 @@ using BangumiSU.SharedCode;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace BangumiSU.ApiClients
 {
@@ -43,7 +44,7 @@ namespace BangumiSU.ApiClients
                 if (!temp.IsEmpty())
                     list.AddRange(temp);
             }
-            return list.OrderBy(c => c.Time).ToList();
+            return list.Distinct(new CommentEqualityComparer()).OrderBy(c => c.Time).ToList();
         }
 
         public async Task<List<SearchResult>> SearchAnime(string key)
@@ -93,6 +94,19 @@ namespace BangumiSU.ApiClients
             public List<Anime> Animes { get; set; }
 
             public bool HasMore { get; set; }
+        }
+
+        private class CommentEqualityComparer : IEqualityComparer<Comment>
+        {
+            public bool Equals(Comment x, Comment y)
+            {
+                return string.Equals(x.Message, y.Message) && Math.Abs(x.Time - y.Time) < 0.01;
+            }
+
+            public int GetHashCode(Comment obj)
+            {
+                return $"{obj.Time:0.00}{obj.Message}".GetHashCode();
+            }
         }
     }
 }
