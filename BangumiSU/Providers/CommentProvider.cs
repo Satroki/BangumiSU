@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -37,6 +38,7 @@ namespace BangumiSU.Providers
 
         public IEnumerable<Comment> ParseXml(string xmlString)
         {
+            xmlString = Regex.Replace(xmlString, @"[\u0000-\u001F]", string.Empty);
             var xml = XDocument.Parse(xmlString);
             foreach (var xe in xml.Descendants("d"))
             {
