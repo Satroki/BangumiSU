@@ -52,9 +52,13 @@ namespace BangumiSU.ApiClients
             var list = new List<SearchResult>();
             foreach (var p in Providers)
             {
-                var temp = await p.Search(key);
-                if (temp != null)
-                    list.AddRange(temp);
+                try
+                {
+                    var temp = await p.Search(key);
+                    if (temp != null)
+                        list.AddRange(temp);
+                }
+                catch { }
             }
             return list;
         }
