@@ -32,7 +32,7 @@ namespace BangumiSU.Models
     {
         public double Time { get; set; }
         public Mode Mode { get; set; }
-        public int Color { get; set; }
+        public long Color { get; set; }
         public int Timestamp { get; set; }
         public int Pool { get; set; }
         public int UId { get; set; }

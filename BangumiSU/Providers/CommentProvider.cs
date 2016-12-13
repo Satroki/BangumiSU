@@ -49,7 +49,7 @@ namespace BangumiSU.Providers
                 {
                     Time = double.Parse(p[0]),
                     Mode = (Mode)int.Parse(p[1]),
-                    Color = int.Parse(p[3]),
+                    Color = long.Parse(p[3]),
                     Message = m
                 };
             }
