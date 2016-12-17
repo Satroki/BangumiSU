@@ -227,6 +227,7 @@ namespace BangumiSU.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                Message = ex.Message;
                 return null;
             }
         }
