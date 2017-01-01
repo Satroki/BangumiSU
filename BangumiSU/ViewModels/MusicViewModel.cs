@@ -28,6 +28,7 @@ namespace BangumiSU.ViewModels
         {
             foreach (var b in changedList)
                 await AppCache.BClient.Update(b);
+            changedList.Clear();
         }
 
         public void Clear()
