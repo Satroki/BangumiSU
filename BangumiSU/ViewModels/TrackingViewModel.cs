@@ -36,7 +36,7 @@ namespace BangumiSU.ViewModels
             {
                 if (Tracking.BangumiId == 0)
                     return;
-                Tracking = await LoadingTask(TClient.Create(Tracking)) ?? Tracking;
+                Tracking = Tracking;
             }
             else
             {
