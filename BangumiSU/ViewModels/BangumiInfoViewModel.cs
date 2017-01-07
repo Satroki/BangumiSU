@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 
 namespace BangumiSU.ViewModels
 {
@@ -19,6 +20,7 @@ namespace BangumiSU.ViewModels
         public DateTimeOffset Date { get; set; } = DateTimeOffset.Now;
 
         public string FilterKey { get; set; }
+        public long Code { get; set; }
 
         public async void GetItems()
         {
@@ -36,12 +38,21 @@ namespace BangumiSU.ViewModels
             try
             {
                 bi.State = BangumiInfoState.Loading;
-                var bgm = await SharedCode.AppCache.BClient.CreateByCode(code);
+                var bgm = await AppCache.BClient.CreateByCode(code);
                 bi.State = BangumiInfoState.Added;
             }
             catch (Exception ex)
             {
                 bi.State = ex.Message.Contains("存在") ? BangumiInfoState.Extist : BangumiInfoState.Error;
+            }
+        }
+
+        public async void AddByCode()
+        {
+            if (Code > 0)
+            {
+                var bgm = await AppCache.BClient.CreateByCode(Code.ToString());
+                await new MessageDialog("成功").ShowAsync();
             }
         }
 
