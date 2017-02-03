@@ -104,6 +104,7 @@
     <Compile Include="ApiClients\BangumiInfoClient.cs" />
     <Compile Include="ApiClients\DanDanClient.cs" />
     <Compile Include="ApiClients\ImageClient.cs" />
+    <Compile Include="ApiClients\ManageClient.cs" />
     <Compile Include="ApiClients\RssClient.cs" />
     <Compile Include="ApiClients\TrackingClient.cs" />
     <Compile Include="App.xaml.cs">

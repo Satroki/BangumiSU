@@ -14,7 +14,7 @@ namespace BangumiSU.ApiClients
 {
     public abstract class ApiClient
     {
-        private static HttpClient hc;
+        protected static HttpClient hc;
         protected virtual Uri BaseAddress { get; set; }
 
         public ApiClient(string baseAddress)
@@ -82,6 +82,25 @@ namespace BangumiSU.ApiClients
             {
                 var item = await resp.Content.ReadAsAsync<T>();
                 return (T)AfterDeserialize(item);
+            }
+            else
+            {
+                var msg = "API异常";
+                if (resp.StatusCode == HttpStatusCode.InternalServerError)
+                    msg = (await resp.Content.ReadAsAsync<Error>()).Message;
+                else
+                    msg += "：" + (int)resp.StatusCode;
+
+                throw new Exception(msg);
+            }
+        }
+
+        protected async Task<string> ReadResponse(HttpResponseMessage resp)
+        {
+            if (resp.IsSuccessStatusCode)
+            {
+                var item = await resp.Content.ReadAsStringAsync();
+                return item;
             }
             else
             {

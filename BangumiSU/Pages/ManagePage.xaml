@@ -26,6 +26,9 @@
                                Margin="10,0,0,0"/>
                 </StackPanel>
             </CommandBar.Content>
+            <AppBarButton Icon="Download" Label="备份" Click="{x:Bind Model.Download}"/>
+            <AppBarButton Icon="Upload" Label="还原" Click="{x:Bind Model.Upload}"/>
+            <AppBarSeparator/>
             <AppBarButton Icon="Sort" Label="排序">
                 <AppBarButton.Flyout>
                     <MenuFlyout>

@@ -18,7 +18,7 @@ namespace BangumiSU.SharedCode
 #if local
         public const string ApiUrl = "http://localhost:5123/Api/";
 #else
-        public const string ApiUrl = "http://ayaneru.moe:5123/Api/";
+        public const string ApiUrl = "http://tx.ayaneru.moe:5123/Api/";
 #endif
 
         public static Settings AppSettings { get; set; }

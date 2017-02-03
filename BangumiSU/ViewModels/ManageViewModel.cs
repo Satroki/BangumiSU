@@ -1,4 +1,5 @@
-﻿using BangumiSU.Models;
+﻿using BangumiSU.ApiClients;
+using BangumiSU.Models;
 using BangumiSU.Pages;
 using BangumiSU.Pages.Controls;
 using BangumiSU.SharedCode;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -217,13 +219,47 @@ namespace BangumiSU.ViewModels
             var f = await fsp.PickSaveFileAsync();
             if (f != null)
             {
-                using (var s = await f.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
-                {
-                    var json = JsonConvert.SerializeObject(Bangumis);
-                    var buffer = Encoding.UTF8.GetBytes(json).AsBuffer();
-                    await s.WriteAsync(buffer);
-                    await new MessageDialog("导出完成").ShowAsync();
-                }
+                var json = JsonConvert.SerializeObject(Bangumis);
+                await FileIO.WriteTextAsync(f, json);
+                await new MessageDialog("导出完成").ShowAsync();
+            }
+        }
+
+        public async void Download()
+        {
+            var fsp = new FileSavePicker()
+            {
+                CommitButtonText = "保存",
+                DefaultFileExtension = ".json",
+                SuggestedFileName = "bangumis",
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            fsp.FileTypeChoices.Add("数据", new string[] { ".json" });
+            var f = await fsp.PickSaveFileAsync();
+            if (f != null)
+            {
+                var mc = new ManageClient();
+                var data = await mc.Download();
+                await FileIO.WriteTextAsync(f, data);
+                await new MessageDialog("备份完成").ShowAsync();
+            }
+        }
+
+        public async void Upload()
+        {
+            var fop = new FileOpenPicker()
+            {
+                CommitButtonText = "确定",
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            fop.FileTypeFilter.Add(".json");
+            var f = await fop.PickSingleFileAsync();
+            if (f != null)
+            {
+                var data = await FileIO.ReadTextAsync(f, Windows.Storage.Streams.UnicodeEncoding.Utf8);
+                var mc = new ManageClient();
+                var count = await mc.Upload(data);
+                await new MessageDialog($"完成，共{count}条").ShowAsync();
             }
         }
 
