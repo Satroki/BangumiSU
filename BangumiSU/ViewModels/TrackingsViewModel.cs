@@ -213,15 +213,9 @@ namespace BangumiSU.ViewModels
                 SetRssPattern(list);
 
                 var online = BangumiCache.SelectMany(b => b.Trackings).Where(t => !t.Finish && t.Online).ToList();
-                foreach (var item in online)
-                {
-                    var t = item;
-                    if (updateOnline(item))
-                        t = await TClient.Update(item);
-                    list.Add(t);
-                }
 
-                list.AddRange(await onlineBgms());
+                list.AddRange(online);
+
                 return list.OrderByDescending(a => a.LastUpdate).ToObservableCollection();
             }
             catch (Exception ex)
@@ -314,44 +308,6 @@ namespace BangumiSU.ViewModels
                     list.Add(t);
                 }
             }
-        }
-
-        private Task<Tracking[]> onlineBgms()
-        {
-            var bgms = BangumiCache.Where(b =>
-            b.Trackings.Count == 0 &&
-            !b.Finish &&
-            b.OnAir <= DateTimeOffset.Now &&
-            !b.OnlineLink.IsEmpty());
-
-            return Task.WhenAll(bgms.Select(b =>
-            {
-                var t = new Tracking()
-                {
-                    BangumiId = b.Id,
-                    Online = true,
-                    LastUpdate = b.OnAir,
-                    Folder = b.OnlineLink,
-                    Count = 1,
-                    Progress = 0,
-                };
-                t.GetSubGroup(b.OnlineLink);
-                updateOnline(t, b);
-                return TClient.Create(t);
-            }));
-        }
-
-        private bool updateOnline(Tracking t, Bangumi b = null)
-        {
-            b = b ?? t.Bangumi;
-            var week = (int)((DateTime.Now - t.LastUpdate).TotalDays / 7);
-            if (week < 1)
-                return false;
-            t.Count += week;
-            if (b.Episodes > 0 && t.Count > b.Episodes)
-                t.Count = b.Episodes;
-            t.LastUpdate = t.LastUpdate.AddDays(7 * week);
-            return true;
         }
 
         private async void adjustTime(Tracking a)
