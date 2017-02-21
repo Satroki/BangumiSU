@@ -1,5 +1,6 @@
 ﻿using BangumiSU.SharedCode;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BangumiSU.ApiClients
@@ -10,7 +11,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<string> Upload(string json)
         {
-            var c = new StringContent(json);
+            var c = new StringContent(json, Encoding.UTF8, "application/json");
             var resp = await hc.PostAsync(BaseAddress, c);
             return await ReadResponse(resp);
         }
