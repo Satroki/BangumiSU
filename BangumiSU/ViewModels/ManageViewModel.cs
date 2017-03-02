@@ -107,12 +107,7 @@ namespace BangumiSU.ViewModels
             if (b != null)
             {
                 var d = new ScoreDialog(b);
-                var r = await d.ShowAsync();
-                if (r == ContentDialogResult.Primary)
-                {
-                    var s = d.Model.Bangumi.Scores;
-                    b.Scores = s;
-                }
+                await d.ShowAsync();
             }
         }
 

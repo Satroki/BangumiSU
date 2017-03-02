@@ -12,7 +12,6 @@ namespace BangumiSU.ViewModels
             Score = new BangumiScore(bgm.ScoreDict);
         }
 
-
         #region 属性
         public Bangumi Bangumi { get; set; }
         public BangumiScore Score { get; set; }
@@ -21,7 +20,9 @@ namespace BangumiSU.ViewModels
         #region 方法
         public async Task Update()
         {
-            Bangumi = await LoadingTask(BClient.UpdateScores(Bangumi.Id, Score.ToString())) ?? Bangumi;
+            var str = Score.ToString();
+            var b = await LoadingTask(BClient.UpdateScores(Bangumi.Id, str));
+            Bangumi.Scores = str;
         }
         #endregion
     }

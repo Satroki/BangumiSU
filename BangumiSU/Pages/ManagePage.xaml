@@ -62,7 +62,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel>
                                     <TextBlock Text="{x:Bind Schedule,Mode=OneWay}"/>
-                                    <TextBlock Text="{x:Bind Average,Mode=OneWay}" Opacity="0.7"/>
+                                    <TextBlock Text="{x:Bind Average,Mode=OneWay}" Foreground="Gold"/>
                                 </StackPanel>
                                 <StackPanel Margin="10,0">
                                     <TextBlock Text="{x:Bind OnAirString,Mode=OneWay}"/>

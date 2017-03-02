@@ -149,8 +149,12 @@ namespace BangumiSU.Models
         private string _Scores;
         public string Scores
         {
-            get => _Tag;
-            set => SetProperty(ref _Tag, value);
+            get => _Scores;
+            set
+            {
+                SetProperty(ref _Scores, value);
+                OnPropertyChanged(nameof(Average));
+            }
         }
 
         [JsonIgnore]

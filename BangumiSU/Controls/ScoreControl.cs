@@ -84,17 +84,20 @@ namespace BangumiSU.Controls
 
         private void SetStars(int value)
         {
-            for (int i = 0; i < 5; i++)
+            if (Icons?.Any() == true)
             {
-                if (i < value)
+                for (int i = 0; i < 5; i++)
                 {
-                    Icons[i].Foreground = Gold;
-                    Icons[i].Symbol = Symbol.SolidStar;
-                }
-                else
-                {
-                    Icons[i].Foreground = LightGray;
-                    Icons[i].Symbol = Symbol.OutlineStar;
+                    if (i < value)
+                    {
+                        Icons[i].Foreground = Gold;
+                        Icons[i].Symbol = Symbol.SolidStar;
+                    }
+                    else
+                    {
+                        Icons[i].Foreground = LightGray;
+                        Icons[i].Symbol = Symbol.OutlineStar;
+                    }
                 }
             }
         }
