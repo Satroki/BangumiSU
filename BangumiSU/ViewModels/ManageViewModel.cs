@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -43,7 +42,8 @@ namespace BangumiSU.ViewModels
             nameof(Bangumi.Author),
             nameof(Bangumi.AnimeCompany),
             nameof(Bangumi.HomePage),
-            nameof(Bangumi.BangumiCode)
+            nameof(Bangumi.BangumiCode),
+           "Any",
         };
 
         public string SearchProp
@@ -97,6 +97,21 @@ namespace BangumiSU.ViewModels
                 {
                     Bangumis.Replace(temp, dlg.Model.Bangumi);
                     SelectedBangumi = dlg.Model.Bangumi;
+                }
+            }
+        }
+
+        public async Task Score()
+        {
+            var b = SelectedBangumi;
+            if (b != null)
+            {
+                var d = new ScoreDialog(b);
+                var r = await d.ShowAsync();
+                if (r == ContentDialogResult.Primary)
+                {
+                    var s = d.Model.Bangumi.Scores;
+                    b.Scores = s;
                 }
             }
         }

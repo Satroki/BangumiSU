@@ -1,0 +1,26 @@
+﻿<ContentDialog
+    x:Class="BangumiSU.Pages.Controls.ScoreDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BangumiSU.Pages.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:c="using:BangumiSU.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="{x:Bind Model.Bangumi.LocalName,Converter={StaticResource StringFormatConverter},ConverterParameter='评分 - {0}'}"
+    PrimaryButtonText="确定" SecondaryButtonText="取消"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    <Grid Margin="0,5,0,0" >
+        <StackPanel Padding="0,10" HorizontalAlignment="Stretch" MinWidth="240">
+            <c:ScoreControl Header="人设" Score="{x:Bind Model.Score.人设,Mode=TwoWay}"/>
+            <c:ScoreControl Header="人物塑造" Score="{x:Bind Model.Score.人物塑造,Mode=TwoWay}"/>
+            <c:ScoreControl Header="配音" Score="{x:Bind Model.Score.配音,Mode=TwoWay}"/>
+            <c:ScoreControl Header="音乐" Score="{x:Bind Model.Score.音乐,Mode=TwoWay}"/>
+            <c:ScoreControl Header="作画" Score="{x:Bind Model.Score.作画,Mode=TwoWay}"/>
+            <c:ScoreControl Header="演出" Score="{x:Bind Model.Score.演出,Mode=TwoWay}"/>
+            <c:ScoreControl Header="剧情" Score="{x:Bind Model.Score.剧情,Mode=TwoWay}"/>
+            <c:ScoreControl Header="信仰分" Score="{x:Bind Model.Score.信仰分,Mode=TwoWay}"/>
+        </StackPanel>
+    </Grid>
+</ContentDialog>

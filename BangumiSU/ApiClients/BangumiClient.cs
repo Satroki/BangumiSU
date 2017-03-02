@@ -26,6 +26,13 @@ namespace BangumiSU.ApiClients
             return await Patch(id, patch);
         }
 
+        public async Task<Bangumi> UpdateScores(long id, string scores)
+        {
+            var patch = new JsonPatchDocument<Bangumi>();
+            patch.Replace(b => b.Scores, scores);
+            return await Patch(id, patch);
+        }
+
         public async Task<Bangumi> GetBangumi(int id)
             => await Get<Bangumi>(id.ToString());
 

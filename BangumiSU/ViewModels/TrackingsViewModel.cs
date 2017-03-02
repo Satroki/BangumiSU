@@ -112,6 +112,21 @@ namespace BangumiSU.ViewModels
             }
         }
 
+        public async Task Score()
+        {
+            var t = SelectedTracking;
+            if (t != null)
+            {
+                var d = new ScoreDialog(t.Bangumi);
+                var r = await d.ShowAsync();
+                if (r == ContentDialogResult.Primary)
+                {
+                    var s = d.Model.Bangumi.Scores;
+                    t.Bangumi.Scores = s;
+                }
+            }
+        }
+
         public void CopyName()
         {
             if (SelectedTracking != null)

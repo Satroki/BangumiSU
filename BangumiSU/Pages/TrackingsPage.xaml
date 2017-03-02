@@ -95,6 +95,7 @@
             <AppBarButton Icon="OpenLocal" Label="打开目录" Click="{x:Bind Model.OpenFolder}"/>
             <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
             <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.Edit}"/>
+            <AppBarButton Icon="OutlineStar" Label="评分" Click="{x:Bind Model.Score}"/>
             <AppBarButton Icon="Copy" Label="复制名称" Click="{x:Bind Model.CopyName}"/>
             <AppBarButton Label="完结" Click="{x:Bind Model.Finish}">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE0A2;"/>

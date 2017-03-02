@@ -60,7 +60,10 @@
                     <DataTemplate x:DataType="m:Bangumi">
                         <Grid Margin="5" DoubleTapped="Bangumi_DoubleTapped" Background="#01FFFFFF">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{x:Bind Schedule,Mode=OneWay}"/>
+                                <StackPanel>
+                                    <TextBlock Text="{x:Bind Schedule,Mode=OneWay}"/>
+                                    <TextBlock Text="{x:Bind Average,Mode=OneWay}" Opacity="0.7"/>
+                                </StackPanel>
                                 <StackPanel Margin="10,0">
                                     <TextBlock Text="{x:Bind OnAirString,Mode=OneWay}"/>
                                     <StackPanel Orientation="Horizontal" Opacity="0.7">
@@ -165,6 +168,7 @@
             </CommandBar.Content>
             <AppBarButton Icon="Delete" Label="删除" Click="{x:Bind Model.DeleteBgm}"/>
             <AppBarButton Icon="Edit" Label="编辑" Click="{x:Bind Model.EditBgm}"/>
+            <AppBarButton Icon="OutlineStar" Label="评分" Click="{x:Bind Model.Score}"/>
             <AppBarButton Icon="Sync" Label="同步" Click="{x:Bind Model.UpdateInfo}"/>
         </CommandBar>
     </Grid>

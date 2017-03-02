@@ -112,8 +112,10 @@
     </Compile>
     <Compile Include="Controls\CommentBlock.cs" />
     <Compile Include="Controls\GridViewEx.cs" />
+    <Compile Include="Controls\ScoreControl.cs" />
     <Compile Include="Models\Bangumi.cs" />
     <Compile Include="Models\BangumiInfo.cs" />
+    <Compile Include="Models\BangumiScore.cs" />
     <Compile Include="Models\DanDanModels.cs" />
     <Compile Include="Models\Error.cs" />
     <Compile Include="Models\Image.cs" />
@@ -125,6 +127,9 @@
     </Compile>
     <Compile Include="Pages\Controls\BangumiDialog.xaml.cs">
       <DependentUpon>BangumiDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Controls\ScoreDialog.xaml.cs">
+      <DependentUpon>ScoreDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Controls\TrackingDialog.xaml.cs">
       <DependentUpon>TrackingDialog.xaml</DependentUpon>
@@ -166,6 +171,7 @@
     <Compile Include="SharedCode\ValueConverters.cs" />
     <Compile Include="ViewModels\BangumiInfoViewModel.cs" />
     <Compile Include="ViewModels\BangumiViewModel.cs" />
+    <Compile Include="ViewModels\ScoreViewModel.cs" />
     <Compile Include="ViewModels\TrackingsViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModel.cs" />
     <Compile Include="ViewModels\MusicViewModel.cs" />
@@ -215,6 +221,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Controls\ScoreDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Controls\TrackingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -250,6 +260,10 @@
     <Page Include="Pages\WebPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup />

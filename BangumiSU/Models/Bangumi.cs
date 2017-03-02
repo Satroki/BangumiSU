@@ -4,10 +4,12 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Windows.UI.Xaml.Media;
 
 namespace BangumiSU.Models
 {
+    using Dict = Dictionary<string, int>;
     public partial class Bangumi : ModelBase
     {
         public int Id { get; set; }
@@ -137,6 +139,20 @@ namespace BangumiSU.Models
             set { SetProperty(ref _Cover, value); }
         }
 
+        private string _Tag;
+        public string Tag
+        {
+            get => _Tag;
+            set => SetProperty(ref _Tag, value);
+        }
+
+        private string _Scores;
+        public string Scores
+        {
+            get => _Tag;
+            set => SetProperty(ref _Tag, value);
+        }
+
         [JsonIgnore]
         [DependsOn(nameof(OnAir))]
         public string OnAirString => OnAir.LocalDateTime.ToString("yyyy/MM/dd HH:mm");
@@ -144,5 +160,13 @@ namespace BangumiSU.Models
         [JsonIgnore]
         [DependsOn(nameof(OnAir))]
         public string DayString => OnAir.LocalDateTime.ToString("dddd");
+
+        [JsonIgnore]
+        [DependsOn(nameof(Scores))]
+        public double Average => ScoreDict.Any() ? ScoreDict.Values.Average() : 0;
+
+        [JsonIgnore]
+        [DependsOn(nameof(Scores))]
+        public Dict ScoreDict => JsonConvert.DeserializeObject<Dict>(Scores ?? "{}");
     }
 }

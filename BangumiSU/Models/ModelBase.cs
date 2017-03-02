@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace BangumiSU.Models
@@ -22,6 +23,7 @@ namespace BangumiSU.Models
         }
 
         private bool _IsSelected;
+        [JsonIgnore]
         public bool IsSelected
         {
             get { return _IsSelected; }
