@@ -13,9 +13,9 @@ namespace BangumiSU.ViewModels
     {
         private BangumiInfoClient biClient = new BangumiInfoClient();
 
-        public ObservableCollection<BangumiInfo> BangumiInfoListBak { get; set; }
+        public ObservableCollection<BangumiInfo> BangumiInfoListBak { get; set; } = new ObservableCollection<BangumiInfo>();
 
-        public ObservableCollection<BangumiInfo> BangumiInfoList { get; set; }
+        public ObservableCollection<BangumiInfo> BangumiInfoList { get; set; } = new ObservableCollection<BangumiInfo>();
 
         public DateTimeOffset Date { get; set; } = DateTimeOffset.Now;
 
