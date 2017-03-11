@@ -35,6 +35,15 @@ namespace BangumiSU.ViewModels
             await LoadingTask(GetRss());
         }
 
+        public void MatchItem()
+        {
+            if (!AppSettings.RssPattern.IsEmpty())
+            {
+                foreach (var item in RssItems)
+                    item.IsSelected = Regex.IsMatch(item.Title, AppSettings.RssPattern, RegexOptions.IgnoreCase);
+            }
+        }
+
         private async Task GetRss()
         {
             Message = "正在获取RSS……";

@@ -64,7 +64,8 @@ namespace BangumiSU.Pages
             Model.Tracking = e.Parameter as Tracking;
             var file = await Model.Tracking.Uri.AsFile();
             await GetFiles(file);
-            OpenFile(file);
+            var index = Math.Min(Model.Tracking.Progress, Model.Files.Count - 1);
+            OpenFile(Model.Files[index]);
         }
 
         private async Task GetFiles(StorageFile file)
@@ -72,7 +73,7 @@ namespace BangumiSU.Pages
             var folder = await file.GetParentAsync();
             if (folder == null)
                 return;
-            IEnumerable<StorageFile> files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
+            IEnumerable<StorageFile> files = (await folder.GetFilesAsync(CommonFileQuery.DefaultQuery)).OrderBy(f => f.Name);
             var exts = AppCache.AppSettings.Extensions;
             files = files.Where(f => exts.ContainsIgnoreCase(f.GetExt()));
             Model.Files = new List<StorageFile>(files);

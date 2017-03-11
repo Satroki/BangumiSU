@@ -56,6 +56,7 @@
             <CommandBar.Content>
                 <TextBlock Text="{x:Bind Model.Message,Mode=OneWay}" Margin="14,14,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </CommandBar.Content>
+            <AppBarButton Icon="Redo" Label="重匹配" Click="{x:Bind Model.MatchItem}"/>
             <AppBarButton Icon="Refresh" Label="刷新" Click="{x:Bind Model.Refresh}"
                           IsEnabled="{x:Bind Model.IsLoaded,Mode=OneWay}"/>
             <AppBarButton Icon="Clear" Label="清空" Click="{x:Bind Model.Clear}"
