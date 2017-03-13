@@ -58,7 +58,7 @@ namespace BangumiSU.ApiClients
             if (b != null)
             {
                 b = b.Copy();
-                b.Trackings.Clear();
+                b.Trackings?.Clear();
                 return b;
             }
             return o;
