@@ -64,8 +64,7 @@ namespace BangumiSU.Pages
             Model.Tracking = e.Parameter as Tracking;
             var file = await Model.Tracking.Uri.AsFile();
             await GetFiles(file);
-            var index = Math.Min(Model.Tracking.Progress, Model.Files.Count - 1);
-            OpenFile(Model.Files[index]);
+            OpenFile(GetPlayFile() ?? file);
         }
 
         private async Task GetFiles(StorageFile file)
@@ -77,6 +76,25 @@ namespace BangumiSU.Pages
             var exts = AppCache.AppSettings.Extensions;
             files = files.Where(f => exts.ContainsIgnoreCase(f.GetExt()));
             Model.Files = new List<StorageFile>(files);
+        }
+
+        private StorageFile GetPlayFile()
+        {
+            var t = Model.Tracking;
+            var files = Model.Files;
+            var items = files.Select(f =>
+             {
+                 var m = System.Text.RegularExpressions.Regex.Match(f.Name, @"^\[.*?\]\[.*?\]\[(\d{1,3}(\.5)?)\]");
+                 if (m.Success)
+                 {
+                     double.TryParse(m.Groups[1].Value, out var index);
+                     return (index: index, file: f);
+                 }
+                 return (0, f);
+             }).OrderBy(i => i.index);
+
+            Model.Files = items.Select(i => i.file).ToList();
+            return items.FirstOrDefault(i => i.index > t.Progress).file;
         }
 
         private void Setting_Click(object sender, RoutedEventArgs e)
@@ -136,6 +154,7 @@ namespace BangumiSU.Pages
             Model.CurrentFileName = file.Name;
             playList.SelectedIndex = Model.Files.IndexOf(s => s.Name == Model.CurrentFileName);
             mediaElement.SetPlaybackSource(MediaSource.CreateFromStorageFile(file));
+            Comments.Clear();
             SearchComments(file);
         }
 
@@ -213,8 +232,7 @@ namespace BangumiSU.Pages
 
         private void OpenListFile_Click(object sender, RoutedEventArgs e)
         {
-            var file = ((Button)sender).DataContext as StorageFile;
-            if (file != null)
+            if (((Button)sender).DataContext is StorageFile file)
             {
                 OpenFile(file);
             }
