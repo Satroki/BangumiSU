@@ -10,7 +10,7 @@ namespace BangumiSU.ApiClients
 {
     class DanDanClient : ApiClient
     {
-        private const string ApiUrl = @"http://acplay.net/api/v1/";
+        private const string ApiUrl = @"https://api.acplay.net/api/v1/";
         public DanDanClient() : base(ApiUrl)
         {
             Providers = new List<CommentProvider>
