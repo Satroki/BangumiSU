@@ -13,14 +13,14 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
     <Grid Margin="0,5,0,0" >
         <StackPanel Padding="0,10" HorizontalAlignment="Stretch" MinWidth="240">
-            <c:ScoreControl Header="人设" Score="{x:Bind Model.Score.人设,Mode=TwoWay}"/>
-            <c:ScoreControl Header="人物塑造" Score="{x:Bind Model.Score.人物塑造,Mode=TwoWay}"/>
-            <c:ScoreControl Header="配音" Score="{x:Bind Model.Score.配音,Mode=TwoWay}"/>
-            <c:ScoreControl Header="音乐" Score="{x:Bind Model.Score.音乐,Mode=TwoWay}"/>
-            <c:ScoreControl Header="作画" Score="{x:Bind Model.Score.作画,Mode=TwoWay}"/>
-            <c:ScoreControl Header="演出" Score="{x:Bind Model.Score.演出,Mode=TwoWay}"/>
-            <c:ScoreControl Header="剧情" Score="{x:Bind Model.Score.剧情,Mode=TwoWay}"/>
-            <c:ScoreControl Header="信仰分" Score="{x:Bind Model.Score.信仰分,Mode=TwoWay}"/>
+            <c:ScoreControl Header="人设" Score="{x:Bind Model.Score.RS,Mode=TwoWay}"/>
+            <c:ScoreControl Header="人物塑造" Score="{x:Bind Model.Score.RWSZ,Mode=TwoWay}"/>
+            <c:ScoreControl Header="配音" Score="{x:Bind Model.Score.PY,Mode=TwoWay}"/>
+            <c:ScoreControl Header="音乐" Score="{x:Bind Model.Score.YY,Mode=TwoWay}"/>
+            <c:ScoreControl Header="作画" Score="{x:Bind Model.Score.ZH,Mode=TwoWay}"/>
+            <c:ScoreControl Header="演出" Score="{x:Bind Model.Score.YC,Mode=TwoWay}"/>
+            <c:ScoreControl Header="剧情" Score="{x:Bind Model.Score.JQ,Mode=TwoWay}"/>
+            <c:ScoreControl Header="信仰分" Score="{x:Bind Model.Score.XYF,Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
 </ContentDialog>

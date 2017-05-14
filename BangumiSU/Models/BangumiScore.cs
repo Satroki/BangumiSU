@@ -33,13 +33,21 @@ namespace BangumiSU.Models
             return JsonConvert.SerializeObject(this);
         }
 
-        public int 人设 { get; set; }
-        public int 人物塑造 { get; set; }
-        public int 配音 { get; set; }
-        public int 音乐 { get; set; }
-        public int 作画 { get; set; }
-        public int 演出 { get; set; }
-        public int 剧情 { get; set; }
-        public int 信仰分 { get; set; }
+        [JsonProperty("人设")]
+        public int RS { get; set; }
+        [JsonProperty("人物塑造")]
+        public int RWSZ { get; set; }
+        [JsonProperty("配音")]
+        public int PY { get; set; }
+        [JsonProperty("音乐")]
+        public int YY { get; set; }
+        [JsonProperty("作画")]
+        public int ZH { get; set; }
+        [JsonProperty("演出")]
+        public int YC { get; set; }
+        [JsonProperty("剧情")]
+        public int JQ { get; set; }
+        [JsonProperty("信仰分")]
+        public int XYF { get; set; }
     }
 }
