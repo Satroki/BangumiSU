@@ -1,6 +1,7 @@
 ﻿using BangumiSU.ApiClients;
 using BangumiSU.Controls;
 using BangumiSU.Models;
+using BangumiSU.Providers;
 using BangumiSU.SharedCode;
 using BangumiSU.ViewModels;
 using System;
@@ -588,5 +589,11 @@ namespace BangumiSU.Pages
             Model.Offset = 0;
         }
         #endregion
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            Comments.Clear();
+            CommentProvider.IdList.Clear();
+        }
     }
 }

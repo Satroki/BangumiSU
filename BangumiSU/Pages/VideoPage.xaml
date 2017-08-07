@@ -89,7 +89,10 @@
                         <Slider Value="{x:Bind Model.Duration,Mode=TwoWay}" Minimum="4" Maximum="16" Header="滚动时间"/>
                         <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="正则过滤"/>
                         <Grid>
-                            <Button Content="应用" HorizontalAlignment="Right" Margin="0,20" Click="ApplySettings_Click"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,20" HorizontalAlignment="Right">
+                                <Button Content="清空" Click="Clear_Click" Margin="0,0,10,0"/>
+                                <Button Content="应用" Click="ApplySettings_Click"/>
+                            </StackPanel>
                         </Grid>
                         <Line X2="1" Stroke="{ThemeResource TextControlForeground}" Stretch="Fill"/>
                         <ItemsControl x:Name="icMatches" ItemsSource="{x:Bind Model.Matches,Mode=OneWay}">
