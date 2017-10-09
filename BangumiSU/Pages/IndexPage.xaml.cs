@@ -1,9 +1,8 @@
 ﻿using BangumiSU.SharedCode;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using static BangumiSU.SharedCode.AppCache;
-
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 namespace BangumiSU.Pages
 {
@@ -15,6 +14,7 @@ namespace BangumiSU.Pages
         public IndexPage()
         {
             InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             InitSettings();
         }
         private async void InitSettings()
