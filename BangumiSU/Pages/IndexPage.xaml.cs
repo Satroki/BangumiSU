@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using static BangumiSU.SharedCode.AppCache;
+using System;
+using Windows.UI.Xaml;
 
 namespace BangumiSU.Pages
 {
@@ -21,42 +23,39 @@ namespace BangumiSU.Pages
         {
             await Init(Settings.GetRoamingSetting());
             Model = new IndexViewModel();
+            nv.SelectedItem = nv.MenuItems[0];
         }
 
         public IndexViewModel Model { get; set; }
 
-        private void NavLinksList_ItemClick(object sender, ItemClickEventArgs e)
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            var link = (PageLink)e.ClickedItem;
-            if (link.Page == null)
-                splitView.IsPaneOpen = !splitView.IsPaneOpen;
-            else
-            {
-                (Model.SelectedPage?.Page as IContentPage)?.Leaved();
-                Model.SelectedPage = link;
-                (Model.SelectedPage?.Page as IContentPage)?.Arrived();
-            }
+            var key = (args.SelectedItem as FrameworkElement)?.Tag as string;
+            if (args.IsSettingsSelected)
+                key = "SettingPage";
+            (Model.SelectedPage as IContentPage)?.Leaved();
+            Model.SelectedPage = Model.PageDict[key];
+            (Model.SelectedPage as IContentPage)?.Arrived();
         }
     }
 
     public class IndexViewModel : ViewModels.ViewModelBase
     {
-        public List<PageLink> PageLinks { get; set; }
+        public Dictionary<string, Page> PageDict { get; set; }
 
-        public PageLink SelectedPage { get; set; }
+        public Page SelectedPage { get; set; }
 
         public IndexViewModel()
         {
-            PageLinks = new List<PageLink>
+            PageDict = new Dictionary<string, Page>
             {
-                new PageLink("菜单","\uE700",null),
-                new PageLink("首页","\uE10F",new TrackingsPage()),
-                new PageLink("管理","\uE178",new ManagePage()),
-                new PageLink("更新","\uE118",new UpdatePage()),
-                new PageLink("视频","\uE116",new VideoPage()),
-                new PageLink("设置","\uE115",new SettingPage()),
+                ["TrackingsPage"] = new TrackingsPage(),
+                ["ManagePage"] = new ManagePage(),
+                ["UpdatePage"] = new UpdatePage(),
+                ["VideoPage"] = new VideoPage(),
+                ["SettingPage"] = new SettingPage()
             };
-            SelectedPage = PageLinks[1];
+            SelectedPage = PageDict["TrackingsPage"];
         }
     }
 

@@ -8,35 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SplitView x:Name="splitView"
-                   IsPaneOpen="False"
-                   OpenPaneLength="200" CompactPaneLength="48" DisplayMode="CompactOverlay">
-            <SplitView.Pane>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <ListView x:Name="NavLinksList" Margin="0,0,0,0" SelectionMode="Single"
-                              ItemsSource="{x:Bind Model.PageLinks,Mode=OneWay}" ItemClick="NavLinksList_ItemClick"
-                              IsItemClickEnabled="True" ManipulationMode="None"
-                              Grid.Row="0" VerticalAlignment="Stretch">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="local:PageLink">
-                                <StackPanel Orientation="Horizontal">
-                                    <FontIcon Glyph="{x:Bind Glyph}"/>
-                                    <TextBlock Text="{x:Bind Name}" Margin="24,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </SplitView.Pane>
-            <SplitView.Content>
-                <ContentControl VerticalContentAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                Content="{x:Bind Model.SelectedPage.Page,Mode=OneWay}"/>
-            </SplitView.Content>
-        </SplitView>
+        <NavigationView x:Name="nv" IsSettingsVisible="True" AlwaysShowHeader="False"
+                        Content="{x:Bind Model.SelectedPage,Mode=OneWay}" CompactModeThresholdWidth="100" ExpandedModeThresholdWidth="3000"
+                        OpenPaneLength="200" SelectionChanged="NavigationView_SelectionChanged" >
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="首页" Icon="Home" Tag="TrackingsPage"/>
+                <NavigationViewItem Content="管理" Tag="ManagePage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE178;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="更新" Icon="Download" Tag="UpdatePage"/>
+                <NavigationViewItem Content="视频" Tag="VideoPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE116;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+        </NavigationView>
     </Grid>
 </Page>
