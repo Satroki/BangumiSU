@@ -22,8 +22,13 @@ namespace BangumiSU.SharedCode
 
         public bool UseInternalBrowser { get; set; } = true;
 
+        public bool UseLocalRss { get; set; } = true;
+
         [JsonIgnore]
         public string DmhySearch { get; set; } = "https://share.dmhy.org/topics/list?keyword=";
+
+        [JsonIgnore]
+        public string DmhyRss { get; set; } = "https://share.dmhy.org/topics/rss/rss.xml";
 
         [JsonIgnore]
         public string Extensions { get; set; } = ".MP4|.MKV";

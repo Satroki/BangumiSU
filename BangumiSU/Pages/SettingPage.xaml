@@ -43,6 +43,7 @@
                         <ToggleSwitch x:Name="tsContinuousPlayback" Header="连续播放" OnContent="启用" OffContent="禁用"/>
                     </StackPanel>
                     <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="tsTheme_Toggled"/>
+                    <ToggleSwitch x:Name="tsRss" Header="本机访问RSS" OnContent="是" OffContent="否"/>
                     <!--<Button Content="消息" Click="Msg_Click" HorizontalAlignment="Left"/>-->
                     <Grid Margin="0,30,0,0">
                         <Button Content="清空图片缓存" Click="Clear_Click" HorizontalAlignment="Left"/>

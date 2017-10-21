@@ -49,6 +49,7 @@ namespace BangumiSU.Pages
             AppSettings.UseInternalPlayer = tsUsePlayer.IsOn;
             AppSettings.UseInternalBrowser = tsUseInternalBrowser.IsOn;
             AppSettings.VideoSettings.ContinuousPlayback = tsContinuousPlayback.IsOn;
+            AppSettings.UseLocalRss = tsRss.IsOn;
             await Reload();
         }
 
@@ -63,6 +64,7 @@ namespace BangumiSU.Pages
             tsUsePlayer.IsOn = AppSettings.UseInternalPlayer;
             tsUseInternalBrowser.IsOn = AppSettings.UseInternalBrowser;
             tsContinuousPlayback.IsOn = AppSettings.VideoSettings.ContinuousPlayback;
+            tsRss.IsOn = AppSettings.UseLocalRss;
         }
 
         public void Leaved()

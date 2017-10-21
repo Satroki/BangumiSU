@@ -47,9 +47,10 @@ namespace BangumiSU.ViewModels
         private async Task GetRss()
         {
             Message = "正在获取RSS……";
-            var date = AppSettings.LastUpdate;
-            var items = await rssClient.GetRss();
-            //var items = await rssClient.GetRss(date);
+            //var date = AppSettings.LastUpdate;
+            //var items = await rssClient.GetRss();
+            var date = DateTime.Today.AddDays(-1);
+            var items = await rssClient.GetRss(date);
             ScanItems(items);
             RssItemsBak = RssItems = items;
         }
