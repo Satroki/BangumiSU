@@ -45,10 +45,14 @@ namespace BangumiSU.SharedCode
     {
         public static async Task<StorageFolder> GetFolder(string token)
         {
-            var access = StorageApplicationPermissions.FutureAccessList.ContainsItem(token);
-            if (access)
-                return await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token);
-            return null;
+            try
+            {
+                var access = StorageApplicationPermissions.FutureAccessList.ContainsItem(token);
+                if (access)
+                    return await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token);
+                return null;
+            }
+            catch { return null; }
         }
 
         public static async Task<StorageFolder> PickFolder(string token)
