@@ -50,6 +50,7 @@ namespace BangumiSU.Pages
             AppSettings.UseInternalBrowser = tsUseInternalBrowser.IsOn;
             AppSettings.VideoSettings.ContinuousPlayback = tsContinuousPlayback.IsOn;
             AppSettings.UseLocalRss = tsRss.IsOn;
+            AppSettings.LocalFilePattern = txtPattern.Text.Split("\n", StringSplitOptions.RemoveEmptyEntries);
             await Reload();
         }
 
@@ -65,13 +66,14 @@ namespace BangumiSU.Pages
             tsUseInternalBrowser.IsOn = AppSettings.UseInternalBrowser;
             tsContinuousPlayback.IsOn = AppSettings.VideoSettings.ContinuousPlayback;
             tsRss.IsOn = AppSettings.UseLocalRss;
+            txtPattern.Text = string.Join('\n', AppSettings.LocalFilePattern);
         }
 
         public void Leaved()
         {
         }
 
-        private void tsTheme_Toggled(object sender, RoutedEventArgs e)
+        private void TsTheme_Toggled(object sender, RoutedEventArgs e)
         {
             Theme = tsTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
             (Window.Current.Content as Frame).RequestedTheme = Theme;

@@ -13,7 +13,11 @@
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid HorizontalAlignment="Stretch" Margin="20">
-            <ScrollViewer Width="420" HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Padding="0,0,20,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Padding="0,0,20,0">
                 <ItemsControl>
                     <PasswordBox x:Name="pwbPassword" Header="用户KEY" HeaderTemplate="{StaticResource HeaderTemplate}"
                              Margin="0,0,0,10"/>
@@ -42,7 +46,7 @@
                         <ToggleSwitch x:Name="tsUsePlayer" Header="内部播放器" OnContent="启用" OffContent="禁用"/>
                         <ToggleSwitch x:Name="tsContinuousPlayback" Header="连续播放" OnContent="启用" OffContent="禁用"/>
                     </StackPanel>
-                    <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="tsTheme_Toggled"/>
+                    <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="TsTheme_Toggled"/>
                     <ToggleSwitch x:Name="tsRss" Header="本机访问RSS" OnContent="是" OffContent="否"/>
                     <!--<Button Content="消息" Click="Msg_Click" HorizontalAlignment="Left"/>-->
                     <Grid Margin="0,30,0,0">
@@ -51,6 +55,10 @@
                     </Grid>
                 </ItemsControl>
             </ScrollViewer>
+            <TextBox x:Name="txtPattern" AcceptsReturn="True" Grid.Column="1" Header="文件匹配表达式" Width="420" HorizontalAlignment="Left"
+                     Height="340" VerticalAlignment="Top">
+                
+            </TextBox>
         </Grid>
     </Grid>
 </Page>

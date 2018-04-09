@@ -23,6 +23,7 @@ namespace BangumiSU.SharedCode
         public bool UseInternalBrowser { get; set; } = true;
 
         public bool UseLocalRss { get; set; } = true;
+        public string[] LocalFilePattern { get; set; } = new[] { @"^\[(.*?)\]\[(.*?)\]\[(\d{1,3}\.?5?)\]" };
 
         [JsonIgnore]
         public string DmhySearch { get; set; } = "https://share.dmhy.org/topics/list?keyword=";

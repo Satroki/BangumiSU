@@ -70,5 +70,11 @@ namespace BangumiSU.Pages
         {
             await Model.Open();
         }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Model.Trackings.IsEmpty())
+                await Model.Refresh();
+        }
     }
 }

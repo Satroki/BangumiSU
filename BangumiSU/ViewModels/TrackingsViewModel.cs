@@ -22,11 +22,6 @@ namespace BangumiSU.ViewModels
     {
         public TrackingsViewModel()
         {
-#if DEBUG1
-#else
-            if (Trackings.IsEmpty())
-                Refresh();
-#endif
         }
 
         #region 属性
@@ -56,7 +51,7 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        public async void Refresh()
+        public async Task Refresh()
         {
             try
             {
@@ -160,7 +155,7 @@ namespace BangumiSU.ViewModels
                 var temp = SelectedTracking;
                 await BClient.Finish(temp.BangumiId);
                 if (!temp.Online)
-                    await moveDirectory(temp);
+                    await MoveDirectory(temp);
                 Trackings.Remove(temp);
             }
         }
@@ -184,12 +179,12 @@ namespace BangumiSU.ViewModels
 
         public void AdjustTime()
         {
-            adjustTime(SelectedTracking);
+            AdjustTime(SelectedTracking);
         }
         #endregion
 
         #region 方法
-        private async Task moveDirectory(Tracking t)
+        private async Task MoveDirectory(Tracking t)
         {
             try
             {
@@ -243,7 +238,7 @@ namespace BangumiSU.ViewModels
 
             var dirs = await VideoFolder.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
             dirs = dirs.Where(d => Regex.IsMatch(d.Name, AppSettings.FolderFormat)).ToList();
-            await sortFolder(dirs);
+            await SortFolder(dirs);
             string exts = AppSettings.Extensions;
 
             foreach (var dir in dirs)
@@ -251,7 +246,7 @@ namespace BangumiSU.ViewModels
                 var bgmDirs = await dir.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
                 foreach (var bgmDir in bgmDirs)
                 {
-                    var name = stringSplit(bgmDir.Name);
+                    var name = StringSplit(bgmDir.Name);
                     var idName = $"{dir.Name}-{name[1]}";
                     var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
                         ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
@@ -290,15 +285,12 @@ namespace BangumiSU.ViewModels
                         }
                         if (!exts.Contains(ext))
                             continue;
-                        var info = stringSplit(file.Name);
-                        if (info.Length < 3)
+                        var info = StringMatchSplit(file.Name);
+                        if (info.IsEmpty())
                             continue;
-                        var macth = Regex.Match(info[2], @"\d{1,3}(\.5)?");
-                        if (!macth.Success && info.Length > 3)
-                            macth = Regex.Match(info[3], @"\d{1,3}(\.5)?");
-                        if (macth.Success)
+                        if (!info[2].IsEmpty())
                         {
-                            temp = double.Parse(macth.Value);
+                            temp = double.Parse(info[2]);
                             if (temp > t.Count)
                             {
                                 t.Count = temp;
@@ -320,7 +312,7 @@ namespace BangumiSU.ViewModels
             }
         }
 
-        private async void adjustTime(Tracking a)
+        private async void AdjustTime(Tracking a)
         {
             var count = (int)((DateTimeOffset.Now - a.Bangumi.OnAir).TotalDays / 7);
             if (a.Count > count + 1)
@@ -330,7 +322,7 @@ namespace BangumiSU.ViewModels
             Trackings.Replace(a, na);
         }
 
-        private async Task sortFolder(IEnumerable<StorageFolder> dirs)
+        private async Task SortFolder(IEnumerable<StorageFolder> dirs)
         {
             try
             {
@@ -349,8 +341,7 @@ namespace BangumiSU.ViewModels
                             }
                             if (ext == ".td")
                                 continue;
-                            string[] temp = stringSplit(f.Name);
-                            StringBuilder sb = new StringBuilder();
+                            string[] temp = StringMatchSplit(f.Name);
                             string dirName = $"[{temp[0]}][{temp[1]}]";
                             var folder = (await dir.TryGetItemAsync(dirName)) as StorageFolder;
                             if (folder == null)
@@ -366,12 +357,32 @@ namespace BangumiSU.ViewModels
             { throw; }
         }
 
-        private string[] stringSplit(string str)
+        private string[] StringSplit(string str)
         {
             var chars = new[] { '[', ']' };
-            if (Regex.IsMatch(str, @"\[Mabors Sub\].* - \d*\["))
-                chars = new[] { '[', ']', '-' };
-            return str.Split(chars).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            return str.Split(chars, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        private string[] StringMatchSplit(string str)
+        {
+            var ps = AppSettings.LocalFilePattern;
+            foreach (var p in ps)
+            {
+                var m = Regex.Match(str, p);
+                if (m.Success && m.Groups.Count > 3)
+                {
+                    var result = new[]
+                    {
+                        m.Groups[1].Value,
+                        m.Groups[2].Value,
+                        m.Groups[3].Value,
+                    };
+                    if (string.IsNullOrEmpty(result[0]))
+                        result[0] = "Other";
+                    return result;
+                }
+            }
+            return null;
         }
 
         private void SetRssPattern(IEnumerable<Tracking> list)
