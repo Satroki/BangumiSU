@@ -50,7 +50,7 @@ namespace BangumiSU.Pages
             AppSettings.UseInternalBrowser = tsUseInternalBrowser.IsOn;
             AppSettings.VideoSettings.ContinuousPlayback = tsContinuousPlayback.IsOn;
             AppSettings.UseLocalRss = tsRss.IsOn;
-            AppSettings.LocalFilePattern = txtPattern.Text.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+            AppSettings.LocalFilePattern = txtPattern.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             await Reload();
         }
 
@@ -66,7 +66,7 @@ namespace BangumiSU.Pages
             tsUseInternalBrowser.IsOn = AppSettings.UseInternalBrowser;
             tsContinuousPlayback.IsOn = AppSettings.VideoSettings.ContinuousPlayback;
             tsRss.IsOn = AppSettings.UseLocalRss;
-            txtPattern.Text = string.Join('\n', AppSettings.LocalFilePattern);
+            txtPattern.Text = string.Join(Environment.NewLine, AppSettings.LocalFilePattern);
         }
 
         public void Leaved()
