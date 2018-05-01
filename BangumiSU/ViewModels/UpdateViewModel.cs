@@ -73,7 +73,8 @@ namespace BangumiSU.ViewModels
 
         public async void OpenLink(RssItem item)
         {
-            await item.Link.LaunchToWeb();
+            var link = item.Link.Replace("http://", "https://");
+            await link.LaunchToWeb();
         }
 
         public void Clear()

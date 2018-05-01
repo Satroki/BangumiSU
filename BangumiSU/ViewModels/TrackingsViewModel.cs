@@ -339,7 +339,7 @@ namespace BangumiSU.ViewModels
                                 await f.DeleteAsync();
                                 continue;
                             }
-                            if (ext == ".td")
+                            if (ext == ".td" || ext == ".xltd")
                                 continue;
                             string[] temp = StringMatchSplit(f.Name);
                             string dirName = $"[{temp[0]}][{temp[1]}]";
