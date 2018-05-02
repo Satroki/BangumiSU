@@ -58,18 +58,4 @@ namespace BangumiSU.Pages
             SelectedPage = PageDict["TrackingsPage"];
         }
     }
-
-    public class PageLink
-    {
-        public string Name { get; set; }
-        public string Glyph { get; set; }
-        public Page Page { get; set; }
-
-        public PageLink(string name, string glyph, Page page)
-        {
-            Name = name;
-            Glyph = glyph;
-            Page = page;
-        }
-    }
 }

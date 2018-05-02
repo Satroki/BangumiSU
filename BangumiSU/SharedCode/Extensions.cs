@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
@@ -159,6 +160,34 @@ namespace BangumiSU.SharedCode
                     return null;
             }
             return await res.Content.ReadAsStringAsync();
+        }
+
+        public static string[] StringSplit(this string str)
+        {
+            var chars = new[] { '[', ']' };
+            return str.Split(chars, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public static string[] StringMatchSplit(this string str)
+        {
+            var ps = AppCache.AppSettings.LocalFilePattern;
+            foreach (var p in ps)
+            {
+                var m = Regex.Match(str, p);
+                if (m.Success && m.Groups.Count > 3)
+                {
+                    var result = new[]
+                    {
+                        m.Groups[1].Value,
+                        m.Groups[2].Value,
+                        m.Groups[3].Value,
+                    };
+                    if (string.IsNullOrEmpty(result[0]))
+                        result[0] = "Other";
+                    return result;
+                }
+            }
+            return null;
         }
     }
 }

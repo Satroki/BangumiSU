@@ -246,7 +246,7 @@ namespace BangumiSU.ViewModels
                 var bgmDirs = await dir.GetFoldersAsync(CommonFolderQuery.DefaultQuery);
                 foreach (var bgmDir in bgmDirs)
                 {
-                    var name = StringSplit(bgmDir.Name);
+                    var name = bgmDir.Name.StringSplit();
                     var idName = $"{dir.Name}-{name[1]}";
                     var t = BangumiCache.SelectMany(b => b.Trackings).FirstOrDefault(tck => tck.FileIdName == idName)
                         ?? (await TClient.GetByIdName(idName)).FirstOrDefault();
@@ -285,7 +285,7 @@ namespace BangumiSU.ViewModels
                         }
                         if (!exts.Contains(ext))
                             continue;
-                        var info = StringMatchSplit(file.Name);
+                        var info = file.Name.StringMatchSplit();
                         if (info.IsEmpty())
                             continue;
                         if (!info[2].IsEmpty())
@@ -341,7 +341,7 @@ namespace BangumiSU.ViewModels
                             }
                             if (ext == ".td" || ext == ".xltd")
                                 continue;
-                            string[] temp = StringMatchSplit(f.Name);
+                            string[] temp = f.Name.StringMatchSplit();
                             string dirName = $"[{temp[0]}][{temp[1]}]";
                             var folder = (await dir.TryGetItemAsync(dirName)) as StorageFolder;
                             if (folder == null)
@@ -355,34 +355,6 @@ namespace BangumiSU.ViewModels
             }
             catch (Exception)
             { throw; }
-        }
-
-        private string[] StringSplit(string str)
-        {
-            var chars = new[] { '[', ']' };
-            return str.Split(chars, StringSplitOptions.RemoveEmptyEntries);
-        }
-
-        private string[] StringMatchSplit(string str)
-        {
-            var ps = AppSettings.LocalFilePattern;
-            foreach (var p in ps)
-            {
-                var m = Regex.Match(str, p);
-                if (m.Success && m.Groups.Count > 3)
-                {
-                    var result = new[]
-                    {
-                        m.Groups[1].Value,
-                        m.Groups[2].Value,
-                        m.Groups[3].Value,
-                    };
-                    if (string.IsNullOrEmpty(result[0]))
-                        result[0] = "Other";
-                    return result;
-                }
-            }
-            return null;
         }
 
         private void SetRssPattern(IEnumerable<Tracking> list)

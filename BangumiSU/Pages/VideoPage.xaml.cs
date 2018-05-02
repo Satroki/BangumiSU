@@ -85,10 +85,10 @@ namespace BangumiSU.Pages
             var files = Model.Files;
             var items = files.Select(f =>
              {
-                 var m = System.Text.RegularExpressions.Regex.Match(f.Name, @"^\[.*?\]\[.*?\]\[(\d{1,3}(\.5)?)\]");
-                 if (m.Success)
+                 var m = f.Name.StringMatchSplit();
+                 if (m?.Length > 2)
                  {
-                     double.TryParse(m.Groups[1].Value, out var index);
+                     double.TryParse(m[2], out var index);
                      return (index: index, file: f);
                  }
                  return (0, f);
