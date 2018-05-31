@@ -19,8 +19,6 @@
             </Grid.ColumnDefinitions>
             <ScrollViewer HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Padding="0,0,20,0">
                 <ItemsControl>
-                    <PasswordBox x:Name="pwbPassword" Header="用户KEY" HeaderTemplate="{StaticResource HeaderTemplate}"
-                             Margin="0,0,0,10"/>
                     <Grid Margin="0,0,0,10">
                         <TextBox x:Name="txtFolder" Header="本地视频路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
                         <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="VideoFolder_Click" Background="{x:Null}">
@@ -49,7 +47,9 @@
                     <ToggleSwitch x:Name="tsTheme" Header="主题" OnContent="暗" OffContent="亮" Toggled="TsTheme_Toggled"/>
                     <ToggleSwitch x:Name="tsRss" Header="本机访问RSS" OnContent="是" OffContent="否"/>
                     <!--<Button Content="消息" Click="Msg_Click" HorizontalAlignment="Left"/>-->
-                    <Grid Margin="0,30,0,0">
+                    <Button Content="检查登录" Click="Check_Click" HorizontalAlignment="Left"
+                            Margin="0,20,0,0"></Button>
+                    <Grid Margin="0,10,0,0">
                         <Button Content="清空图片缓存" Click="Clear_Click" HorizontalAlignment="Left"/>
                         <Button Content="应用" Click="Apply_Click" HorizontalAlignment="Right"/>
                     </Grid>

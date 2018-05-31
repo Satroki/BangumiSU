@@ -1,4 +1,5 @@
-﻿using BangumiSU.Models;
+﻿using BangumiSU.ApiClients;
+using BangumiSU.Models;
 using BangumiSU.SharedCode;
 using BangumiSU.ViewModels;
 using Windows.UI.Xaml;
@@ -12,6 +13,7 @@ namespace BangumiSU.Pages
     /// </summary>
     public sealed partial class TrackingsPage : Page, IContentPage
     {
+        bool first = true;
         public TrackingsPage()
         {
             this.InitializeComponent();
@@ -73,6 +75,11 @@ namespace BangumiSU.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (first)
+            {
+                await new AccountClient().Check();
+                first = false;
+            }
             if (Model.Trackings.IsEmpty())
                 await Model.Refresh();
         }

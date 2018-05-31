@@ -1,0 +1,27 @@
+﻿<ContentDialog
+    x:Class="BangumiSU.Pages.Controls.LoginDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BangumiSU.Pages.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="登录"
+    PrimaryButtonText="登录"
+    SecondaryButtonText="取消"
+    SecondaryButtonClick="Cancel_Click"
+    PrimaryButtonClick="Login_Click">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0,0,0,2"/>
+            </Style>
+        </Grid.Resources>
+        <StackPanel Margin="0,5,0,0">
+            <TextBox Header="用户名" x:Name="TbUser"/>
+            <PasswordBox Header="密码" x:Name="PbPwd"/>
+            <TextBlock x:Name="TbInfo" Text=""/>
+        </StackPanel>
+    </Grid>
+</ContentDialog>

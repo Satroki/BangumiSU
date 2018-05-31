@@ -1,4 +1,5 @@
-﻿using BangumiSU.SharedCode;
+﻿using BangumiSU.ApiClients;
+using BangumiSU.SharedCode;
 using BangumiSU.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace BangumiSU.Pages
 
         private async void Apply_Click(object sender, RoutedEventArgs e)
         {
-            AppSettings.UserGUID = pwbPassword.Password;
+            //AppSettings.UserPassword = pwbPassword.Password;
             AppSettings.FolderFormat = txtFolderFormat.Text;
             AppSettings.Extensions = txtExtensions.Text;
             AppSettings.UseInternalPlayer = tsUsePlayer.IsOn;
@@ -56,7 +57,7 @@ namespace BangumiSU.Pages
 
         public void Arrived()
         {
-            pwbPassword.Password = AppSettings.UserGUID ?? string.Empty;
+            //pwbPassword.Password = AppSettings.UserPassword ?? string.Empty;
             txtFolder.Text = VideoFolder?.Path ?? string.Empty;
             txtFinishFolder.Text = FinishFolder?.Path ?? string.Empty;
             txtFolderFormat.Text = AppSettings.FolderFormat;
@@ -83,6 +84,11 @@ namespace BangumiSU.Pages
         {
             await ImageHelper.DeleteImages();
             await this.Message("已清空");
+        }
+
+        private async void Check_Click(object sender, RoutedEventArgs e)
+        {
+            await new AccountClient().Check();
         }
     }
 }

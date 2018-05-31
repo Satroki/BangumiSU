@@ -9,6 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <NavigationView x:Name="nv" IsSettingsVisible="True" AlwaysShowHeader="False"
+                        IsBackButtonVisible="Collapsed"
                         Content="{x:Bind Model.SelectedPage,Mode=OneWay}" CompactModeThresholdWidth="100" ExpandedModeThresholdWidth="3000"
                         OpenPaneLength="200" SelectionChanged="NavigationView_SelectionChanged" >
             <NavigationView.MenuItems>

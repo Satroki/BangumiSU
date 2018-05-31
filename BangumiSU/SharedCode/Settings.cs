@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BangumiSU.Models;
+using Newtonsoft.Json;
 using System;
 using Windows.Storage;
 
@@ -6,8 +7,7 @@ namespace BangumiSU.SharedCode
 {
     public class Settings
     {
-        public string UserGUID { get; set; }
-
+        public JWToken UserToken { get; set; }
         public string FolderFormat { get; set; } = @"\d{4}.\d{2}月番";
 
         public string RssPattern { get; set; }

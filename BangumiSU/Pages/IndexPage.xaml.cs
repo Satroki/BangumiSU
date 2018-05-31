@@ -19,9 +19,9 @@ namespace BangumiSU.Pages
             NavigationCacheMode = NavigationCacheMode.Enabled;
             InitSettings();
         }
-        private async void InitSettings()
+        private void InitSettings()
         {
-            await Init(Settings.GetRoamingSetting());
+            Init(Settings.GetRoamingSetting()).ConfigureAwait(false).GetAwaiter().GetResult();
             Model = new IndexViewModel();
             nv.SelectedItem = nv.MenuItems[0];
         }

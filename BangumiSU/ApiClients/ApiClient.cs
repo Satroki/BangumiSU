@@ -21,13 +21,13 @@ namespace BangumiSU.ApiClients
         {
             if (hc == null)
             {
-                var user = AppCache.AppSettings.UserGUID;
                 hc = new HttpClient(new HttpClientHandler()
                 {
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                });
-                hc.Timeout = TimeSpan.FromSeconds(20);
-                hc.DefaultRequestHeaders.Add("user", user);
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(20)
+                };
                 hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
                 hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
@@ -37,8 +37,17 @@ namespace BangumiSU.ApiClients
             BaseAddress = new Uri(baseAddress);
         }
 
+        private void PrepareHeader()
+        {
+            var token = AppCache.AppSettings.UserToken?.AccessToken;
+            if (!token.IsEmpty())
+                if (hc.DefaultRequestHeaders.Authorization?.Parameter != token)
+                    hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
         public async Task<T> Get<T>(string route = "")
         {
+            PrepareHeader();
             var uri = new Uri(BaseAddress, route);
             var resp = await hc.GetAsync(uri);
             return await ReadResponse<T>(resp);
@@ -46,6 +55,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<T> Post<T>(T value, string route = "")
         {
+            PrepareHeader();
             var uri = new Uri(BaseAddress, route);
             var resp = await hc.PostAsync(uri, GetJsonContent(value));
             return await ReadResponse<T>(resp);
@@ -53,6 +63,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<T> Put<T>(T value, string route = "")
         {
+            PrepareHeader();
             var uri = new Uri(BaseAddress, route);
             var resp = await hc.PutAsync(uri, GetJsonContent(value));
             return await ReadResponse<T>(resp);
@@ -60,6 +71,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<int> Delete(long id)
         {
+            PrepareHeader();
             var uri = new Uri(BaseAddress, id.ToString());
             var resp = await hc.DeleteAsync(uri);
             return await ReadResponse<int>(resp);
@@ -67,6 +79,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<T> Patch<T>(long id, JsonPatchDocument<T> model) where T : class
         {
+            PrepareHeader();
             var uri = new Uri(BaseAddress, id.ToString());
             var method = new HttpMethod("PATCH");
             var request = new HttpRequestMessage(method, uri);
