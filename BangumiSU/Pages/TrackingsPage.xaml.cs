@@ -78,6 +78,7 @@ namespace BangumiSU.Pages
             if (first)
             {
                 await new AccountClient().Check();
+                await AppCache.InitFolderAsync();
                 first = false;
             }
             if (Model.Trackings.IsEmpty())

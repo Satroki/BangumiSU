@@ -21,7 +21,7 @@ namespace BangumiSU.Pages
         }
         private void InitSettings()
         {
-            Init(Settings.GetRoamingSetting()).ConfigureAwait(false).GetAwaiter().GetResult();
+            Init(Settings.GetRoamingSetting());
             Model = new IndexViewModel();
             nv.SelectedItem = nv.MenuItems[0];
         }

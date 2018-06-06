@@ -41,13 +41,9 @@ namespace BangumiSU.SharedCode
 
         public static ElementTheme Theme { get; set; } = ElementTheme.Dark;
 
-        public static async Task Init(Settings settings)
+        public static void Init(Settings settings)
         {
             AppSettings = settings;
-
-            VideoFolder = await FolderHelper.GetFolder(nameof(VideoFolder));
-            FinishFolder = await FolderHelper.GetFolder(nameof(FinishFolder));
-
             InitJsonConvert();
 
             BClient = new BangumiClient();
@@ -55,9 +51,16 @@ namespace BangumiSU.SharedCode
             IClient = new ImageClient();
         }
 
+        public static async Task InitFolderAsync()
+        {
+            VideoFolder = await FolderHelper.GetFolder(nameof(VideoFolder));
+            FinishFolder = await FolderHelper.GetFolder(nameof(FinishFolder));
+        }
+
         public static async Task Reload()
         {
-            await Init(AppSettings);
+            Init(AppSettings);
+            await InitFolderAsync();
         }
 
         private static void InitJsonConvert()
