@@ -29,13 +29,16 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
-                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBox PlaceholderText="OP" Text="{x:Bind Opening,Mode=TwoWay}"/>
                             <TextBox PlaceholderText="ED" Text="{x:Bind Ending,Mode=TwoWay}"
                                      Grid.Column="1"/>
                             <TextBox PlaceholderText="…" Text="{x:Bind MusicInfo,Mode=TwoWay}" 
                                      Grid.Column="2"/>
+                            <AutoSuggestBox PlaceholderText="…" Text="{x:Bind MusicFolderName,Mode=TwoWay}" Opacity="0.7"
+                                     Grid.Column="3" QueryIcon="OpenFile" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>

@@ -38,6 +38,7 @@ namespace BangumiSU.SharedCode
         public static StorageFolder VideoFolder { get; set; }
 
         public static StorageFolder FinishFolder { get; set; }
+        public static StorageFolder MusicFolder { get; set; }
 
         public static ElementTheme Theme { get; set; } = ElementTheme.Dark;
 
@@ -55,6 +56,7 @@ namespace BangumiSU.SharedCode
         {
             VideoFolder = await FolderHelper.GetFolder(nameof(VideoFolder));
             FinishFolder = await FolderHelper.GetFolder(nameof(FinishFolder));
+            MusicFolder = await FolderHelper.GetFolder(nameof(MusicFolder));
         }
 
         public static async Task Reload()

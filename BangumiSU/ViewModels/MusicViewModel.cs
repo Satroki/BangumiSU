@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System;
+using Windows.Storage;
+using Windows.System;
 
 namespace BangumiSU.ViewModels
 {
@@ -44,6 +46,17 @@ namespace BangumiSU.ViewModels
                 return;
             else
                 changedList.Add(b);
+        }
+
+        public async void OpenFolder(string name)
+        {
+            var folder = AppCache.MusicFolder;
+            if (folder == null)
+                return;
+            var f = await folder.TryGetItemAsync(name) as StorageFolder;
+            if (f == null)
+                f = await folder.CreateFolderAsync(name);
+            await Launcher.LaunchFolderAsync(f);
         }
     }
 }

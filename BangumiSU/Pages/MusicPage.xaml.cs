@@ -43,5 +43,10 @@ namespace BangumiSU.Pages
             Model.Clear();
             base.OnNavigatedFrom(e);
         }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            Model.OpenFolder(args.QueryText);
+        }
     }
 }

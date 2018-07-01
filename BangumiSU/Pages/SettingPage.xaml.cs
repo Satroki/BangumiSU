@@ -42,6 +42,13 @@ namespace BangumiSU.Pages
             txtFinishFolder.Text = FinishFolder?.Path ?? string.Empty;
         }
 
+        private async void MusicFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var token = nameof(MusicFolder);
+            MusicFolder = await FolderHelper.PickFolder(token);
+            txtMusicFolder.Text = MusicFolder?.Path ?? string.Empty;
+        }
+
         private async void Apply_Click(object sender, RoutedEventArgs e)
         {
             //AppSettings.UserPassword = pwbPassword.Password;

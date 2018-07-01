@@ -36,7 +36,14 @@
                             </Button.Content>
                         </Button>
                     </Grid>
-
+                    <Grid Margin="0,0,0,10">
+                        <TextBox x:Name="txtMusicFolder" Header="音乐文件路径" IsReadOnly="True" HeaderTemplate="{StaticResource HeaderTemplate}"/>
+                        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="MusicFolder_Click" Background="{x:Null}">
+                            <Button.Content>
+                                <SymbolIcon Symbol="NewFolder"/>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
                     <TextBox x:Name="txtFolderFormat" Header="视频路径格式" Margin="0,0,0,10"/>
                     <TextBox x:Name="txtExtensions" Header="视频格式" Margin="0,0,0,10"/>
                     <ToggleSwitch x:Name="tsUseInternalBrowser" Header="内部浏览器" OnContent="启用" OffContent="禁用"/>

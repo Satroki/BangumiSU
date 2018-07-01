@@ -153,8 +153,15 @@ namespace BangumiSU.Models
             set
             {
                 SetProperty(ref _Scores, value);
-                OnPropertyChanged(nameof(Average));
             }
+        }
+
+        private string _MusicFolderName;
+
+        public string MusicFolderName
+        {
+            get => _MusicFolderName;
+            set => SetProperty(ref _MusicFolderName, value);
         }
 
         [JsonIgnore]
