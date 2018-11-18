@@ -59,10 +59,18 @@ namespace BangumiSU.Controls
         {
             Text = comment.Message;
             Mode = comment.Mode;
-            var r = (byte)(comment.Color >> 16 & 255);
-            var g = (byte)(comment.Color >> 8 & 255);
-            var b = (byte)(comment.Color & 255);
-            TextColor = new SolidColorBrush(Color.FromArgb(255, r, g, b));
+            if (comment.Color > 0)
+            {
+
+                var r = (byte)(comment.Color >> 16 & 255);
+                var g = (byte)(comment.Color >> 8 & 255);
+                var b = (byte)(comment.Color & 255);
+                TextColor = new SolidColorBrush(Color.FromArgb(255, r, g, b));
+            }
+            else
+            {
+                TextColor = new SolidColorBrush(Colors.White);
+            }
             //TextShadow = new SolidColorBrush(Color.FromArgb(255, (byte)(255 - r), (byte)(255 - g), (byte)(255 - b)));
             TextShadow = new SolidColorBrush(Colors.Black);
             StartTime = comment.Time;

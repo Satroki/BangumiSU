@@ -53,7 +53,7 @@ namespace BangumiSU.ApiClients
             return await ReadResponse<T>(resp);
         }
 
-        public async Task<T> Post<T>(T value, string route = "")
+        public async Task<T> Post<T>(object value, string route = "")
         {
             PrepareHeader();
             var uri = new Uri(BaseAddress, route);

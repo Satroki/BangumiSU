@@ -30,23 +30,52 @@ namespace BangumiSU.Models
 
     public class Comment : ModelBase
     {
+        public int Cid { get; set; }
+        public string P { get; set; }
+        public string M { get; set; }
+
         public double Time { get; set; }
         public Mode Mode { get; set; }
         public long Color { get; set; }
-        public int Timestamp { get; set; }
-        public int Pool { get; set; }
-        public int UId { get; set; }
-        public int CId { get; set; }
         public string Message { get; set; }
+
+        public void Parse()
+        {
+            var vs = P.Split(',');
+            Time = double.Parse(vs[0]);
+            Mode = (Mode)int.Parse(vs[1]);
+            Color = int.Parse(vs[2]);
+            Message = M;
+        }
     }
 
     public class Match : ModelBase
     {
         public int EpisodeId { get; set; }
+        public int AnimeId { get; set; }
         public string AnimeTitle { get; set; }
         public string EpisodeTitle { get; set; }
-        public int Type { get; set; }
+        public string Type { get; set; }
+        public string TypeDescription { get; set; }
         public double Shift { get; set; }
+    }
+
+    public class DanDanResult
+    {
+        public int Count { get; set; }
+        public bool IsMatched { get; set; }
+        public List<Comment> Comments { get; set; }
+
+        public List<Match> Matches { get; set; }
+
+        public List<Related> Relateds { get; set; }
+
+        public List<Anime> Animes { get; set; }
+
+        public bool HasMore { get; set; }
+        public int ErrorCode { get; set; }
+        public bool Success { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public class Related : ModelBase
@@ -58,15 +87,17 @@ namespace BangumiSU.Models
 
     public class Anime : ModelBase
     {
-        public string Title { get; set; }
-        public AnimeType Type { get; set; }
+        public int AnimeId { get; set; }
+        public string AnimeTitle { get; set; }
+        public string Type { get; set; }
+        public string TypeDescription { get; set; }
         public List<Episode> Episodes { get; set; }
     }
 
     public class Episode : ModelBase
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
+        public int EpisodeId { get; set; }
+        public string EpisodeTitle { get; set; }
     }
 
     public class SearchResult : ModelBase
@@ -76,5 +107,14 @@ namespace BangumiSU.Models
         public int Count { get; set; }
         public string Provider { get; set; }
         public string InfoString => $"{Provider} -- {Count}";
+    }
+
+    public class MatchRequest
+    {
+        public string FileName { get; set; }
+        public string FileHash { get; set; }
+        public long FileSize { get; set; }
+        public int VideoDuration { get; set; }
+        public string MatchMode { get; set; }
     }
 }

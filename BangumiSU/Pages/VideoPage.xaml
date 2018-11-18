@@ -189,7 +189,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="m:Anime">
                                 <StackPanel>
-                                    <ToggleButton x:Name="openGroup" Style="{StaticResource ExpanderHeaderToggleButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{x:Bind Title}" />
+                                    <ToggleButton x:Name="openGroup" Style="{StaticResource ExpanderHeaderToggleButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{x:Bind AnimeTitle}" />
                                     <ItemsControl ItemsSource="{x:Bind Episodes}" Visibility="{Binding ElementName=openGroup, Path=IsChecked, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   Margin="12,0,0,0">
                                         <ItemsControl.ItemContainerStyle>
@@ -200,7 +200,7 @@
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="m:Episode">
-                                                <RadioButton GroupName="ep" Content="{x:Bind Title}" Checked="RadioButton_Checked"/>
+                                                <RadioButton GroupName="ep" Content="{x:Bind EpisodeTitle}" Checked="RadioButton_Checked"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

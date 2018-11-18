@@ -306,7 +306,7 @@ namespace BangumiSU.Pages
                 {
                     ShowNotify(m);
                     Model.Message = "获取弹幕……";
-                    Comments = await DClient.GetAllComments(m.EpisodeId);
+                    Comments = await DClient.GetComments(m.EpisodeId, true);
                     CalcCommentsPosition();
                     Model.Message = $"共 {Comments.Count} 条";
                 }
@@ -394,7 +394,7 @@ namespace BangumiSU.Pages
                 try
                 {
                     Model.Message = "获取弹幕……";
-                    Comments = await DClient.GetAllComments(Model.SelectedEpisode.Id);
+                    Comments = await DClient.GetComments(Model.SelectedEpisode.EpisodeId, true);
                 }
                 finally
                 {

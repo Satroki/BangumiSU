@@ -10,7 +10,7 @@ namespace BangumiSU.ApiClients
 {
     class DanDanClient : ApiClient
     {
-        private const string ApiUrl = @"https://api.acplay.net/api/v1/";
+        private const string ApiUrl = @"https://api.acplay.net/api/v2/";
         public DanDanClient() : base(ApiUrl)
         {
             Providers = new List<CommentProvider>
@@ -24,28 +24,35 @@ namespace BangumiSU.ApiClients
 
         #region Comment
         //comment/{episodeId}?from={from}
-        public async Task<List<Comment>> GetComments(int episodeId)
-            => (await Get<TempObject>($"comment/{episodeId}")).Comments;
-
-        public async Task<List<Comment>> GetAllComments(int episodeId)
+        public async Task<List<Comment>> GetComments(int episodeId, bool withRelated = false)
         {
-            var list = new List<Comment>();
-            var dd = await GetComments(episodeId);
-            list.AddRange(dd);
-
-            var related = await GetRelateds(episodeId);
-            CommentProvider.IdList.Clear();
-            foreach (var r in related)
-            {
-                var pr = Providers.FirstOrDefault(p => p.Name == r.Provider);
-                if (pr == null)
-                    continue;
-                IEnumerable<Comment> temp = await pr.GetComments(r.Url);
-                if (!temp.IsEmpty())
-                    list.AddRange(temp);
-            }
-            return list.Distinct(new CommentEqualityComparer()).OrderBy(c => c.Time).ToList();
+            var r = await Get<DanDanResult>($"comment/{episodeId}?withRelated={withRelated}");
+            var list = r.Comments;
+            list.ForEach(c => c.Parse());
+            list.Distinct(new CommentEqualityComparer());
+            return list.OrderBy(c => c.Time).ToList();
         }
+            //=> (await Get<DanDanResult>()).Comments;
+
+        //public async Task<List<Comment>> GetAllComments(int episodeId)
+        //{
+        //    var list = new List<Comment>();
+        //    var dd = await GetComments(episodeId, true);
+        //    list.AddRange(dd);
+
+        //    var related = await GetRelateds(episodeId);
+        //    CommentProvider.IdList.Clear();
+        //    foreach (var r in related)
+        //    {
+        //        var pr = Providers.FirstOrDefault(p => p.Name == r.Provider);
+        //        if (pr == null)
+        //            continue;
+        //        IEnumerable<Comment> temp = await pr.GetComments(r.Url);
+        //        if (!temp.IsEmpty())
+        //            list.AddRange(temp);
+        //    }
+        //    return list.Distinct(new CommentEqualityComparer()).OrderBy(c => c.Time).ToList();
+        //}
 
         public async Task<List<SearchResult>> SearchAnime(string key)
         {
@@ -70,35 +77,40 @@ namespace BangumiSU.ApiClients
         #endregion
 
         #region Match
-        //match?fileName={fileName}&hash={hash}&length={length}&duration={duration}&force={force}
         public async Task<List<Match>> GetMatches(string fileName, string hash, long length, int duration = 0, int force = 0)
-            => (await Get<TempObject>($"match?fileName={fileName}&hash={hash}&length={length}&duration={duration}&force={force}")).Matches;
+        {
+            var mr = new MatchRequest
+            {
+                FileHash = hash,
+                FileName = fileName,
+                FileSize = length,
+                VideoDuration = duration,
+                MatchMode = "hashAndFileName"
+            };
+            var r = await Post<DanDanResult>(mr, "match");
+            return r.Matches;
+        }
         #endregion
 
         #region Related
         //related/{episodeId}
         public async Task<List<Related>> GetRelateds(int episodeId)
-            => (await Get<TempObject>($"related/{episodeId}")).Relateds;
+        {
+            var r = await Get<DanDanResult>($"related/{episodeId}");
+            return r.Relateds;
+        }
         #endregion
 
         #region SearchAll
         //searchall/{anime}/{episode}
         public async Task<List<Anime>> Search(string name, string episode)
-            => (await Get<TempObject>($"searchall/{name}/{episode}")).Animes;
+        {
+            var r = await Get<DanDanResult>($"search/episodes?anime={name}&episode={episode}");
+            return r.Animes;
+        }
         #endregion
 
-        private class TempObject
-        {
-            public List<Comment> Comments { get; set; }
 
-            public List<Match> Matches { get; set; }
-
-            public List<Related> Relateds { get; set; }
-
-            public List<Anime> Animes { get; set; }
-
-            public bool HasMore { get; set; }
-        }
 
         private class CommentEqualityComparer : IEqualityComparer<Comment>
         {
