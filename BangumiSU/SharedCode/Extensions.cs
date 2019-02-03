@@ -120,13 +120,13 @@ namespace BangumiSU.SharedCode
         public static async Task<StorageFile> AsFile(this string path)
         {
             var folder = AppCache.VideoFolder;
-            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFile;
+            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length).Trim('\\'))) as StorageFile;
         }
 
         public static async Task<StorageFolder> AsFolder(this string path)
         {
             var folder = AppCache.VideoFolder;
-            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length))) as StorageFolder;
+            return (await folder.TryGetItemAsync(path.Substring(folder.Path.Length).Trim('\\'))) as StorageFolder;
         }
 
         public static async Task LaunchAsFile(this string path)
