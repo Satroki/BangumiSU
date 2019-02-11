@@ -30,6 +30,14 @@ namespace BangumiSU.ViewModels
             set { AppSettings.VideoSettings.Filter = value; }
         }
 
+
+        public double Opacity
+        {
+            get { return AppSettings.VideoSettings.Opacity; }
+            set { AppSettings.VideoSettings.Opacity = value; }
+        }
+
+
         public int Offset { get; set; }
 
         public Tracking Tracking { get; set; }

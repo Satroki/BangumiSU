@@ -43,6 +43,7 @@ namespace BangumiSU.Pages
         private uint bufferMD5 = 16 * 1024 * 1024;
         private double fontSize = AppCache.AppSettings.VideoSettings.FontSize;
         private double duration = AppCache.AppSettings.VideoSettings.Duration;
+        private double opacity = AppCache.AppSettings.VideoSettings.Opacity;
         private string filter = AppCache.AppSettings.VideoSettings.Filter;
         private double lastTick = 0;
         private double[] rowTimeLines = new double[0];
@@ -122,6 +123,7 @@ namespace BangumiSU.Pages
             fontSize = AppCache.AppSettings.VideoSettings.FontSize;
             duration = AppCache.AppSettings.VideoSettings.Duration;
             filter = AppCache.AppSettings.VideoSettings.Filter;
+            opacity = AppCache.AppSettings.VideoSettings.Opacity;
             CalcCommentsPosition();
         }
 
@@ -156,6 +158,7 @@ namespace BangumiSU.Pages
             playList.SelectedIndex = Model.Files.IndexOf(s => s.Name == Model.CurrentFileName);
             mediaElement.SetPlaybackSource(MediaSource.CreateFromStorageFile(file));
             Comments.Clear();
+            Model.Offset = 0;
             SearchComments(file);
         }
 
@@ -480,6 +483,7 @@ namespace BangumiSU.Pages
             var cb = new CommentBlock(c);
             cb.FontSize = fontSize;
             cb.MeasureSize();
+            cb.Opacity = opacity;
             if (c.Mode == Mode.Top)
             {
                 cb.ShownTime = duration * 0.5 + cb.StartTime;
@@ -573,6 +577,10 @@ namespace BangumiSU.Pages
         {
             Model.Offset = Model.Offset + 5;
         }
+        private void Add30_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset + 30;
+        }
 
         private void Subtract1_Click(object sender, RoutedEventArgs e)
         {
@@ -582,6 +590,10 @@ namespace BangumiSU.Pages
         private void Subtract5_Click(object sender, RoutedEventArgs e)
         {
             Model.Offset = Model.Offset - 5;
+        }
+        private void Subtract30_Click(object sender, RoutedEventArgs e)
+        {
+            Model.Offset = Model.Offset - 30;
         }
 
         private void ResetOffset_Click(object sender, RoutedEventArgs e)

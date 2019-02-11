@@ -36,11 +36,13 @@
                 </AppBarButton.Icon>
                 <AppBarButton.Flyout>
                     <MenuFlyout>
+                        <MenuFlyoutItem Text="减 30 秒" Click="Subtract30_Click"/>
                         <MenuFlyoutItem Text="减 5 秒" Click="Subtract5_Click"/>
                         <MenuFlyoutItem Text="减 1 秒" Click="Subtract1_Click"/>
                         <MenuFlyoutItem Text="重置" Click="ResetOffset_Click"/>
                         <MenuFlyoutItem Text="加 1 秒" Click="Add1_Click"/>
                         <MenuFlyoutItem Text="加 5 秒" Click="Add5_Click"/>
+                        <MenuFlyoutItem Text="加 30 秒" Click="Add30_Click"/>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
@@ -87,6 +89,7 @@
                         </StackPanel>
                         <Slider Value="{x:Bind Model.FontSize,Mode=TwoWay}" Minimum="16" Maximum="48" Header="字体大小"/>
                         <Slider Value="{x:Bind Model.Duration,Mode=TwoWay}" Minimum="4" Maximum="16" Header="滚动时间"/>
+                        <Slider Value="{x:Bind Model.Opacity,Mode=TwoWay}" Minimum="0" Maximum="1" StepFrequency="0.1" Header="不透明度"/>
                         <TextBox Text="{x:Bind Model.Filter,Mode=TwoWay}" Header="正则过滤"/>
                         <Grid>
                             <StackPanel Orientation="Horizontal" Margin="0,20" HorizontalAlignment="Right">

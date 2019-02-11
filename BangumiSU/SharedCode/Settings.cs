@@ -60,5 +60,6 @@ namespace BangumiSU.SharedCode
         public double Duration { get; set; } = 8;
         public string Filter { get; set; } = "";
         public bool ContinuousPlayback { get; set; } = true;
+        public double Opacity { get; set; } = 1;
     }
 }

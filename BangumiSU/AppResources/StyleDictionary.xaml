@@ -29,8 +29,10 @@
                 <ControlTemplate TargetType="uc:CommentBlock">
                     <Grid Margin="{TemplateBinding Padding}">
                         <TextBlock Text="{TemplateBinding Text}" FontSize="{TemplateBinding FontSize}"
+                                   Opacity="{TemplateBinding Opacity}"
                                    Foreground="{TemplateBinding TextShadow}" Margin="1,1,0,0"/>
                         <TextBlock Text="{TemplateBinding Text}" FontSize="{TemplateBinding FontSize}"
+                                   Opacity="{TemplateBinding Opacity}"
                                    Foreground="{TemplateBinding TextColor}"/>
                     </Grid>
                 </ControlTemplate>
