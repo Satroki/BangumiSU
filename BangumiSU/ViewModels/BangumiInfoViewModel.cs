@@ -5,7 +5,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Storage.Pickers;
+using Windows.Storage;
 using Windows.UI.Popups;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace BangumiSU.ViewModels
 {
@@ -52,6 +55,20 @@ namespace BangumiSU.ViewModels
             if (Code > 0)
             {
                 var bgm = await AppCache.BClient.CreateByCode(Code.ToString());
+                await new MessageDialog("成功").ShowAsync();
+            }
+        }
+
+        public async void AddByFile()
+        {
+            var fp = new FileOpenPicker();
+            fp.FileTypeFilter.Add("*");
+            fp.SuggestedStartLocation = PickerLocationId.Desktop;
+            var file = await fp.PickSingleFileAsync();
+            if (file != null)
+            {
+                var buffer = await FileIO.ReadBufferAsync(file);
+                var bgm = await AppCache.BClient.CreateByFile(buffer.ToArray());
                 await new MessageDialog("成功").ShowAsync();
             }
         }

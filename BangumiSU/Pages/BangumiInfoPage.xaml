@@ -23,8 +23,13 @@
             <AutoSuggestBox QueryIcon="Filter" Text="{x:Bind Model.FilterKey,Mode=TwoWay}"
                             TextChanged="{x:Bind Model.Filter}"
                             VerticalAlignment="Center" HorizontalAlignment="Left" Width="200" Margin="8,0"/>
-            <AutoSuggestBox QueryIcon="Add" Text="{x:Bind Model.Code,Mode=TwoWay}" QuerySubmitted="{x:Bind Model.AddByCode}"
-                            VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="210,0,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="210,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <AutoSuggestBox QueryIcon="Add" Text="{x:Bind Model.Code,Mode=TwoWay}" QuerySubmitted="{x:Bind Model.AddByCode}"
+                            VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" />
+                <Button Margin="10,0,0,0" Click="{x:Bind Model.AddByFile}">
+                    <SymbolIcon Symbol="OpenFile"/>
+                </Button>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="8,0">
                 <DatePicker DayVisible="False" MinWidth="200"
                                 Date="{x:Bind Model.Date,Mode=TwoWay}"/>

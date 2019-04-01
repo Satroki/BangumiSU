@@ -61,6 +61,16 @@ namespace BangumiSU.ApiClients
             return await ReadResponse<T>(resp);
         }
 
+        public async Task<T> PostFile<T>(byte[] value, string route = "")
+        {
+            PrepareHeader();
+            var uri = new Uri(BaseAddress, route);
+            var bc = new ByteArrayContent(value);
+            bc.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            var resp = await hc.PostAsync(uri, bc);
+            return await ReadResponse<T>(resp);
+        }
+
         public async Task<T> Put<T>(T value, string route = "")
         {
             PrepareHeader();

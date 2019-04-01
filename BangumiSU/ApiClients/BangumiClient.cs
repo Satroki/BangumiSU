@@ -13,6 +13,9 @@ namespace BangumiSU.ApiClients
         public async Task<Bangumi> CreateByCode(string bangumiCode)
             => await Post<Bangumi>(null, bangumiCode);
 
+        public async Task<Bangumi> CreateByFile(byte[] html)
+            => await PostFile<Bangumi>(html, "raw");
+
         public async Task<Bangumi> Update(long id)
             => await Put<Bangumi>(null, id.ToString());
 
