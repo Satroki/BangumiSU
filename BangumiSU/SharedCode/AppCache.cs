@@ -24,6 +24,7 @@ namespace BangumiSU.SharedCode
         public static Settings AppSettings { get; set; }
 
         public static BangumiClient BClient { get; set; }
+        public static MusicInfoClient MIClient { get; set; }
 
         public static TrackingClient TClient { get; set; }
 
@@ -50,6 +51,7 @@ namespace BangumiSU.SharedCode
             BClient = new BangumiClient();
             TClient = new TrackingClient();
             IClient = new ImageClient();
+            MIClient = new MusicInfoClient();
         }
 
         public static async Task InitFolderAsync()

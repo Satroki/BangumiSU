@@ -105,6 +105,7 @@
     <Compile Include="ApiClients\DanDanClient.cs" />
     <Compile Include="ApiClients\ImageClient.cs" />
     <Compile Include="ApiClients\ManageClient.cs" />
+    <Compile Include="ApiClients\MusicInfoClient.cs" />
     <Compile Include="ApiClients\RssClient.cs" />
     <Compile Include="ApiClients\TrackingClient.cs" />
     <Compile Include="App.xaml.cs">
@@ -121,6 +122,7 @@
     <Compile Include="Models\Image.cs" />
     <Compile Include="Models\JWToken.cs" />
     <Compile Include="Models\ModelBase.cs" />
+    <Compile Include="Models\MusicInfo.cs" />
     <Compile Include="Models\RssItem.cs" />
     <Compile Include="Models\Tracking.cs" />
     <Compile Include="Pages\BangumiInfoPage.xaml.cs">

@@ -29,5 +29,7 @@ namespace BangumiSU.Models
             get { return _IsSelected; }
             set { SetProperty(ref _IsSelected, value); }
         }
+
+        public bool HasChanged { get; set; }
     }
 }

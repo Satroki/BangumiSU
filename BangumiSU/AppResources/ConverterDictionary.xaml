@@ -11,4 +11,5 @@
     <sc:BangumiConverter x:Key="BangumiConverter"/>
     <sc:IntToBoolConverter x:Key="IntToBoolConverter"/>
     <sc:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+    <sc:MusicLevelConverter x:Key="MusicLevelConverter"/>
 </ResourceDictionary>

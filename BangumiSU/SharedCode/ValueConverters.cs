@@ -182,4 +182,36 @@ namespace BangumiSU.SharedCode
             throw new NotImplementedException();
         }
     }
+
+    public class MusicLevelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var c = Colors.White;
+            if (value is MusicStorageLevel level)
+            {
+                switch (level)
+                {
+                    case MusicStorageLevel.None:
+                        c = Colors.LightGray;
+                        break;
+                    case MusicStorageLevel.MP3:
+                        c = Colors.ForestGreen;
+                        break;
+                    case MusicStorageLevel.CD:
+                        c = Colors.MediumOrchid;
+                        break;
+                    case MusicStorageLevel.HiRes:
+                        c = Colors.Gold;
+                        break;
+                }
+            }
+            return new SolidColorBrush(c);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

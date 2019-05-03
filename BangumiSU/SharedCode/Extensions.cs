@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -188,6 +190,30 @@ namespace BangumiSU.SharedCode
                 }
             }
             return null;
+        }
+
+        public static string GetEnumDisplay(this Enum e)
+        {
+            var type = e.GetType();
+            var mem = type.GetMember(e.ToString());
+            var attr = mem[0].GetCustomAttribute<DisplayAttribute>(false);
+            return attr?.Name ?? e.ToString(); ;
+        }
+
+        public static Dictionary<string, T> GetEnumDict<T>(params T[] enums) where T : Enum
+        {
+            var dict = new Dictionary<string, T>();
+            var type = typeof(T);
+            if (enums.IsEmpty())
+            {
+                var names = Enum.GetNames(typeof(T));
+                enums = names.Select(n => (T)Enum.Parse(type, n)).ToArray();
+            }
+            foreach (var e in enums)
+            {
+                dict.Add(e.GetEnumDisplay(), e);
+            }
+            return dict;
         }
     }
 }

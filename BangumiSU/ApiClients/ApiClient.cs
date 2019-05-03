@@ -89,8 +89,13 @@ namespace BangumiSU.ApiClients
 
         public async Task<T> Patch<T>(long id, JsonPatchDocument<T> model) where T : class
         {
+            return await Patch(id.ToString(), model);
+        }
+
+        public async Task<T> Patch<T>(string route, JsonPatchDocument<T> model) where T : class
+        {
             PrepareHeader();
-            var uri = new Uri(BaseAddress, id.ToString());
+            var uri = new Uri(BaseAddress, route);
             var method = new HttpMethod("PATCH");
             var request = new HttpRequestMessage(method, uri);
             request.Content = GetJsonContent(model);

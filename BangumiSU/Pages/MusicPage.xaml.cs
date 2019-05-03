@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,12 +30,13 @@ namespace BangumiSU.Pages
             this.InitializeComponent();
         }
 
-        public MusicViewModel Model { get; set; }
+        public MusicViewModel Model { get; set; } = new MusicViewModel();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var bangumis = e.Parameter as IEnumerable<Bangumi>;
             Model = new MusicViewModel(bangumis);
+            root.DataContext = Model;
             base.OnNavigatedTo(e);
         }
 
@@ -47,6 +49,28 @@ namespace BangumiSU.Pages
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             Model.OpenFolder(args.QueryText);
+        }
+
+        private async void Save_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b && b.DataContext is Bangumi bgm)
+                await Model.UpdateBangumiMusic(bgm);
+        }
+
+        private async void Sync_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b && b.DataContext is Bangumi bgm)
+                await Model.SyncBangumiMusic(bgm);
+        }
+
+        private void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b && b.DataContext is MusicInfo m)
+            {
+                var dp = new DataPackage();
+                dp.SetText(m.Name);
+                Clipboard.SetContent(dp);
+            }
         }
     }
 }

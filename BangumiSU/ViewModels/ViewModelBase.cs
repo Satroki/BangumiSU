@@ -50,5 +50,24 @@ namespace BangumiSU.ViewModels
                 OnLoading = false;
             }
         }
+
+        public async Task LoadingTask(Func<Task> func)
+        {
+            try
+            {
+                OnLoading = true;
+                await func();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                return;
+            }
+            finally
+            {
+                OnLoading = false;
+            }
+        }
     }
 }

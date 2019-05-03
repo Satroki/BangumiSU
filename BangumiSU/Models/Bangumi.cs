@@ -126,6 +126,9 @@ namespace BangumiSU.Models
             set { SetProperty(ref _Trackings, value); }
         }
 
+        [JsonIgnore]
+        public virtual ObservableCollection<MusicInfo> MusicInfos { get; set; }
+
         private ImageSource _Cover;
         [JsonIgnore]
         public ImageSource Cover
@@ -180,4 +183,5 @@ namespace BangumiSU.Models
         [DependsOn(nameof(Scores))]
         public Dict ScoreDict => JsonConvert.DeserializeObject<Dict>(Scores ?? "{}");
     }
+
 }
