@@ -85,6 +85,12 @@ namespace BangumiSU.ViewModels
             foreach (var b in changedList)
                 await AppCache.BClient.Update(b);
             changedList.Clear();
+
+            foreach (var m in Bangumis.SelectMany(b => b.MusicInfos).Where(b => b.HasChanged))
+            {
+                var r = await AppCache.MIClient.Update(m);
+                m.HasChanged = r == null;
+            }
         }
 
         public void Clear()
@@ -99,7 +105,17 @@ namespace BangumiSU.ViewModels
             if (changedList.Contains(b))
                 return;
             else
-                changedList.Add(b);
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(Bangumi.Opening):
+                    case nameof(Bangumi.Ending):
+                    case nameof(Bangumi.MusicInfo):
+                    case nameof(Bangumi.MusicFolderName):
+                        changedList.Add(b);
+                        break;
+                }
+            }
         }
 
         public async void OpenFolder(string name)

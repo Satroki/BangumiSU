@@ -41,8 +41,6 @@
                                 <Button Click="Sync_Click" Margin="10,0">
                                     <SymbolIcon Symbol="Sync"/>
                                 </Button>
-                                <TextBox PlaceholderText="OP" Text="{x:Bind Opening,Mode=TwoWay}" Width="100"/>
-                                <TextBox PlaceholderText="ED" Text="{x:Bind Ending,Mode=TwoWay}" Width="100"/>
                                 <TextBox PlaceholderText="…" Text="{x:Bind MusicInfo,Mode=TwoWay}" Width="150"/>
                             </StackPanel>
                         </Grid>
