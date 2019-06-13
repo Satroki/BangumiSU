@@ -42,7 +42,7 @@ namespace BangumiSU.ApiClients
                 }
                 hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(t.TokenType, t.AccessToken);
             }
-            var resp = await hc.GetAsync("https://bgm.ayaneru.moe/api/account/check");
+            var resp = await hc.GetAsync("https://bgm.ayaneru.moe:4433/api/account/check");
             if (resp.IsSuccessStatusCode)
                 return true;
             else
@@ -55,7 +55,7 @@ namespace BangumiSU.ApiClients
 
         public async Task<string> GetToken(FormUrlEncodedContent form)
         {
-            var resp = await hc.PostAsync("https://identity.ayaneru.moe/connect/token", form);
+            var resp = await hc.PostAsync("https://identity.ayaneru.moe:4433/connect/token", form);
             if (resp.IsSuccessStatusCode)
             {
                 var json = await resp.Content.ReadAsStringAsync();
