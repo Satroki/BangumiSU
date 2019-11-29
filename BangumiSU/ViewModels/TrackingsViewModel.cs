@@ -137,7 +137,7 @@ namespace BangumiSU.ViewModels
         {
             if (SelectedTracking?.Bangumi?.BangumiCode?.IsEmpty() == false)
             {
-                var uri = "http://bangumi.tv/subject/" + SelectedTracking.Bangumi.BangumiCode;
+                var uri = "https://bangumi.tv/subject/" + SelectedTracking.Bangumi.BangumiCode;
                 await uri.LaunchToWeb();
             }
         }

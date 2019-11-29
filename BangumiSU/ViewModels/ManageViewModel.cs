@@ -83,7 +83,7 @@ namespace BangumiSU.ViewModels
         public async void VisitBgm()
         {
             if (SelectedBangumi != null)
-                await ("http://bangumi.tv/subject/" + SelectedBangumi.BangumiCode).LaunchToWeb();
+                await ("https://bangumi.tv/subject/" + SelectedBangumi.BangumiCode).LaunchToWeb();
         }
 
         public async void EditBgm()
