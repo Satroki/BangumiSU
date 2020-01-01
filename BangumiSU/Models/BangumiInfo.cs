@@ -5,6 +5,7 @@ namespace BangumiSU.Models
     public class BangumiInfo : ModelBase
     {
         public string Url { get; set; }
+        public string Code { get; set; }
         public string LocalName { get; set; }
         public string Name { get; set; }
         public string Info { get; set; }

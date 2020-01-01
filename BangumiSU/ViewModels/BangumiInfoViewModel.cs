@@ -9,6 +9,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using Windows.UI.Popups;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Collections.Generic;
 
 namespace BangumiSU.ViewModels
 {
@@ -22,6 +23,8 @@ namespace BangumiSU.ViewModels
 
         public DateTimeOffset Date { get; set; } = DateTimeOffset.Now;
 
+        private HashSet<string> AddedCode = new HashSet<string>();
+
         public string FilterKey { get; set; }
         public long Code { get; set; }
 
@@ -32,7 +35,19 @@ namespace BangumiSU.ViewModels
 
         private async Task getItems()
         {
-            BangumiInfoListBak = BangumiInfoList = (await biClient.GetBangumis(Date.Year, Date.Month)).ToObservableCollection();
+            var items = await biClient.GetBangumis(Date.Year, Date.Month);
+            foreach (var bi in items)
+            {
+                bi.Code = bi.Url.Substring(bi.Url.LastIndexOf('/') + 1);
+            }
+            BangumiInfoListBak = BangumiInfoList = items.Where(bi => !AddedCode.Contains(bi.Code)).ToObservableCollection();
+        }
+
+        private void UpdateSource(BangumiInfo bi)
+        {
+            //BangumiInfoListBak = BangumiInfoListBak.Where(bi => !AddedCode.Contains(bi.Code)).ToObservableCollection();
+            BangumiInfoList.Remove(bi);
+            BangumiInfoListBak.Remove(bi);
         }
 
         public async void Add(BangumiInfo bi)
@@ -48,6 +63,12 @@ namespace BangumiSU.ViewModels
             {
                 bi.State = ex.Message.Contains("存在") ? BangumiInfoState.Extist : BangumiInfoState.Error;
             }
+            if (bi.State == BangumiInfoState.Added || bi.State == BangumiInfoState.Extist)
+            {
+                AddedCode.Add(code);
+                UpdateSource(bi);
+                //Filter();
+            }
         }
 
         public async void AddByCode()
@@ -56,6 +77,7 @@ namespace BangumiSU.ViewModels
             {
                 var bgm = await AppCache.BClient.CreateByCode(Code.ToString());
                 await new MessageDialog("成功").ShowAsync();
+                AddedCode.Add(Code.ToString());
             }
         }
 
