@@ -99,7 +99,7 @@ namespace BangumiSU.Models
         public string ProgressString => $"{Progress:D2} / {Count:00.#}";
 
         [JsonIgnore]
-        [DependsOn(nameof(Progress), nameof(Count),nameof(LastUpdate))]
+        [DependsOn(nameof(Progress), nameof(Count), nameof(LastUpdate))]
         public Brush StateBrush
         {
             get
@@ -125,6 +125,8 @@ namespace BangumiSU.Models
             {
                 if (url.Contains("bilibili"))
                     SubGroup = "哔哩哔哩";
+                else if (url.Contains("acfun"))
+                    SubGroup = "AcFun";
                 else if (url.Contains("tudou") || url.Contains("youku"))
                     SubGroup = "优土豆";
                 else if (url.Contains("iqiyi"))
