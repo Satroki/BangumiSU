@@ -117,7 +117,7 @@ namespace BangumiSU.Models
 
         [JsonIgnore]
         [DependsOn(nameof(LastUpdate))]
-        public string LastUpdateString => LastUpdate.LocalDateTime.ToString("MM/dd HH:mm");
+        public string LastUpdateString => LastUpdate.LocalDateTime.ToString("MM/dd ddd HH:mm");
 
         public void GetSubGroup(string url)
         {
