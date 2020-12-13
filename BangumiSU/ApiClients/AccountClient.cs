@@ -42,7 +42,7 @@ namespace BangumiSU.ApiClients
                 }
                 hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(t.TokenType, t.AccessToken);
             }
-            var resp = await hc.GetAsync("https://bgm.ayaneru.moe:4433/api/account/check");
+            var resp = await hc.GetAsync($"{AppCache.ApiUrl}account/check");
             if (resp.IsSuccessStatusCode)
                 return true;
             else

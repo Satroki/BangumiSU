@@ -11,7 +11,7 @@ namespace BangumiSU.ApiClients
     class DanDanClient : ApiClient
     {
         private const string ApiUrl = @"https://api.acplay.net/api/v2/";
-        public DanDanClient() : base(ApiUrl)
+        public DanDanClient() : base(ApiUrl, false)
         {
             Providers = new List<CommentProvider>
             {
@@ -32,7 +32,7 @@ namespace BangumiSU.ApiClients
             list.Distinct(new CommentEqualityComparer());
             return list.OrderBy(c => c.Time).ToList();
         }
-            //=> (await Get<DanDanResult>()).Comments;
+        //=> (await Get<DanDanResult>()).Comments;
 
         //public async Task<List<Comment>> GetAllComments(int episodeId)
         //{

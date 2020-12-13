@@ -15,9 +15,11 @@ namespace BangumiSU.ApiClients
     public abstract class ApiClient
     {
         protected static HttpClient hc;
+        private readonly bool withToken;
+
         protected virtual Uri BaseAddress { get; set; }
 
-        public ApiClient(string baseAddress)
+        public ApiClient(string baseAddress, bool withToken = true)
         {
             if (hc == null)
             {
@@ -31,18 +33,23 @@ namespace BangumiSU.ApiClients
                 hc.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
                 hc.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+                hc.DefaultRequestHeaders.UserAgent.ParseAdd("bangumi_su/windows 1.0");
             }
             if (baseAddress.Last() != '/')
                 baseAddress = baseAddress + "/";
             BaseAddress = new Uri(baseAddress);
+            this.withToken = withToken;
         }
 
         private void PrepareHeader()
         {
-            var token = AppCache.AppSettings.UserToken?.AccessToken;
-            if (!token.IsEmpty())
-                if (hc.DefaultRequestHeaders.Authorization?.Parameter != token)
-                    hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            if (withToken)
+            {
+                var token = AppCache.AppSettings.UserToken?.AccessToken;
+                if (!token.IsEmpty())
+                    if (hc.DefaultRequestHeaders.Authorization?.Parameter != token)
+                        hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
         }
 
         public async Task<T> Get<T>(string route = "")
